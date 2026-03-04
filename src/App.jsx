@@ -1,8 +1,8 @@
 import { useState, useEffect, useRef } from "react";
 
-/* ─────────────────────────────────────────────────────────────────────────────
+/* âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
    CONSTANTS
-───────────────────────────────────────────────────────────────────────────── */
+âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ */
 const PALETTES = [
   {id:"noir",   label:"Noir",   bg:"#0a0a0a",surface:"#141414",accent:"#f5f500",text:"#fafafa"},
   {id:"slate",  label:"Slate",  bg:"#0f172a",surface:"#1e293b",accent:"#38bdf8",text:"#f1f5f9"},
@@ -19,22 +19,22 @@ const VIBES = [
   {id:"warm",     label:"Warm & Friendly",    desc:"Human, approachable, local"},
 ];
 const SECTIONS = [
-  {id:"hero",        label:"Hero Banner",      icon:"⚡",locked:true},
-  {id:"social_proof",label:"Social Proof Bar", icon:"★",locked:true},
-  {id:"services",    label:"Services",         icon:"◈"},
-  {id:"about",       label:"About / Story",    icon:"◎"},
-  {id:"benefits",    label:"Why Choose Us",    icon:"✦"},
-  {id:"testimonials",label:"Testimonials",     icon:"❝"},
-  {id:"pricing",     label:"Pricing",          icon:"💰"},
-  {id:"gallery",     label:"Gallery",          icon:"▦"},
+  {id:"hero",        label:"Hero Banner",      icon:"â¡",locked:true},
+  {id:"social_proof",label:"Social Proof Bar", icon:"â",locked:true},
+  {id:"services",    label:"Services",         icon:"â"},
+  {id:"about",       label:"About / Story",    icon:"â"},
+  {id:"benefits",    label:"Why Choose Us",    icon:"â¦"},
+  {id:"testimonials",label:"Testimonials",     icon:"â"},
+  {id:"pricing",     label:"Pricing",          icon:"ð°"},
+  {id:"gallery",     label:"Gallery",          icon:"â¦"},
   {id:"faq",         label:"FAQ",              icon:"?"},
-  {id:"booking",     label:"Booking Form",     icon:"📅"},
-  {id:"contact",     label:"Contact",          icon:"✉"},
-  {id:"cta",         label:"CTA Banner",       icon:"→"},
+  {id:"booking",     label:"Booking Form",     icon:"ð"},
+  {id:"contact",     label:"Contact",          icon:"â"},
+  {id:"cta",         label:"CTA Banner",       icon:"â"},
 ];
 const INDUSTRIES = [
   "Yoga & Fitness","Pilates & Barre","Gym & CrossFit","Personal Training",
-  "Beauty & Hair Salon","Nail Studio & Spa","Barbershop","Restaurant & Café",
+  "Beauty & Hair Salon","Nail Studio & Spa","Barbershop","Restaurant & CafÃ©",
   "Coffee Shop & Bakery","Photography","Videography","Real Estate Agency",
   "Life Coaching","Business Consulting","Healthcare & Wellness","Dental Practice",
   "Clothing Boutique","Online Store","Education & Tutoring","Tech Startup",
@@ -42,11 +42,11 @@ const INDUSTRIES = [
   "Cleaning Services","Landscaping","Automotive","Construction","Other",
 ];
 
-// 🔑 REPLACE THESE WITH YOUR REAL LEMON SQUEEZY CHECKOUT LINKS
-// ── CREDIT PACKS ─────────────────────────────────────────────────────────────
+// ð REPLACE THESE WITH YOUR REAL LEMON SQUEEZY CHECKOUT LINKS
+// ââ CREDIT PACKS âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
 // Your cost per generation: ~$0.25 (Claude API)
-// Your profit per credit:   $7–9 after costs
-// ─────────────────────────────────────────────────────────────────────────────
+// Your profit per credit:   $7â9 after costs
+// âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
 const PLANS = [
   {
     id:"starter",
@@ -54,7 +54,7 @@ const PLANS = [
     price:"$19",
     credits:3,
     perPage:"$6.33",
-    period:"3 credits · one-time",
+    period:"3 credits Â· one-time",
     color:"#22c55e",
     badge:null,
     desc:"Try it out, no commitment",
@@ -67,7 +67,7 @@ const PLANS = [
     price:"$49",
     credits:10,
     perPage:"$4.90",
-    period:"10 credits · one-time",
+    period:"10 credits Â· one-time",
     color:"#f97316",
     badge:"BEST VALUE",
     desc:"For freelancers & small agencies",
@@ -80,7 +80,7 @@ const PLANS = [
     price:"$99",
     credits:25,
     perPage:"$3.96",
-    period:"25 credits · one-time",
+    period:"25 credits Â· one-time",
     color:"#8b5cf6",
     badge:null,
     desc:"Built for agencies & resellers",
@@ -89,11 +89,11 @@ const PLANS = [
   },
 ];
 
-/* ─────────────────────────────────────────────────────────────────────────────
+/* âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
    PROMPT
-───────────────────────────────────────────────────────────────────────────── */
-// Unsplash keyword map — niche → best search terms
-// Per-section targeted keyword map — each industry has 6 specific searches
+âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ */
+// Unsplash keyword map â niche â best search terms
+// Per-section targeted keyword map â each industry has 6 specific searches
 // hero, about, gallery1, gallery2, service1, service2
 function getSectionKeywords(industry) {
   const map = {
@@ -104,7 +104,7 @@ function getSectionKeywords(industry) {
     "Beauty & Hair Salon":  ["luxury hair salon interior","hairstylist cutting hair","hair salon modern interior","hair styling professional","salon chair mirror","hair color treatment"],
     "Nail Studio & Spa":    ["nail salon luxury interior","nail technician manicure","spa treatment hands","nail art close up","nail salon modern","manicure pedicure spa"],
     "Barbershop":           ["barber shop interior vintage","barber cutting hair","barbershop chair mirror","barber shave razor","barbershop modern","barber tools scissors"],
-    "Restaurant & Café":    ["restaurant interior elegant lighting","chef cooking kitchen","restaurant table setting","fine dining food presentation","restaurant atmosphere candles","waiter serving food"],
+    "Restaurant & CafÃ©":    ["restaurant interior elegant lighting","chef cooking kitchen","restaurant table setting","fine dining food presentation","restaurant atmosphere candles","waiter serving food"],
     "Coffee Shop & Bakery": ["coffee shop cozy interior","barista making coffee","bakery fresh bread pastries","coffee latte art close up","coffee shop morning light","bakery interior warm"],
     "Photography":          ["photography studio professional lighting","photographer camera shoot","photography studio setup","camera lens close up","photo shoot behind scenes","photographer portrait session"],
     "Videography":          ["video production studio","videographer filming camera","video camera professional","film production set","videography outdoor shoot","video editing studio"],
@@ -131,7 +131,7 @@ function getSectionKeywords(industry) {
   return map[industry] || map["Other"];
 }
 
-// Fetch 6 targeted images from Pexels — one per section
+// Fetch 6 targeted images from Pexels â one per section
 async function fetchPexelsImages(industry, apiKey) {
   const queries = getSectionKeywords(industry);
   const fetchOne = (q) =>
@@ -176,13 +176,13 @@ CTA: ${f.cta||"Get Started Today"}
 
 DESIGN:
 Palette bg:${pal.bg} surface:${pal.surface} accent:${pal.accent} text:${pal.text}
-Vibe: ${vib.label} — ${vib.desc}
-Font: ONE distinctive Google Font pair (NOT Inter/Roboto — something memorable for this vibe)
+Vibe: ${vib.label} â ${vib.desc}
+Font: ONE distinctive Google Font pair (NOT Inter/Roboto â something memorable for this vibe)
 
-${hasImages ? `REAL PHOTOS PROVIDED — each was specifically searched for its section. Use EXACTLY as specified:
+${hasImages ? `REAL PHOTOS PROVIDED â each was specifically searched for its section. Use EXACTLY as specified:
 
-HERO: background-image: url('${img(0)}') — full viewport, cover, with dark gradient overlay (rgba 0,0,0,0.6) so text is readable
-ABOUT SECTION: <img src="${img(1)}" style="width:100%;height:100%;object-fit:cover"> — full height left column, professional/team photo
+HERO: background-image: url('${img(0)}') â full viewport, cover, with dark gradient overlay (rgba 0,0,0,0.6) so text is readable
+ABOUT SECTION: <img src="${img(1)}" style="width:100%;height:100%;object-fit:cover"> â full height left column, professional/team photo
 GALLERY: Use all of these as <img> tags with object-fit:cover:
   - ${img(0)} (hero/wide shot)
   - ${img(1)} (team/people)
@@ -191,10 +191,10 @@ GALLERY: Use all of these as <img> tags with object-fit:cover:
   - ${img(4)} (service specific)
   - ${img(5)||img(0)} (service specific 2)
 SERVICE CARDS: Each card is a full-bleed image card. Cycle through ALL provided images as background-image per card, with a dark gradient overlay. Use object-fit:cover.
-CTA BANNER: background-image: url('${img(2)||img(0)}') — with dark overlay
+CTA BANNER: background-image: url('${img(2)||img(0)}') â with dark overlay
 
 CRITICAL RULES FOR IMAGES:
-1. Use the EXACT URLs provided — do NOT modify, shorten or fake them
+1. Use the EXACT URLs provided â do NOT modify, shorten or fake them
 2. Every image tag must have object-fit:cover and a defined height
 3. Hero and CTA must always have a dark overlay so text is readable
 4. Do NOT use placeholder.com, picsum, or any other image service
@@ -203,46 +203,46 @@ CRITICAL RULES FOR IMAGES:
 SECTIONS:
 1. Full SEO <head>: title, meta description, keywords, OG tags, Twitter card, canonical, schema.org LocalBusiness JSON-LD
 2. Sticky header: name left, nav right, mobile hamburger
-3. Hero: 100vh, H1 with keyword, subheadline, 2 CTAs, star rating trust line${heroImg ? ` — use hero background image with dark overlay` : ` — stunning CSS gradient/geometric pattern`}
+3. Hero: 100vh, H1 with keyword, subheadline, 2 CTAs, star rating trust line${heroImg ? ` â use hero background image with dark overlay` : ` â stunning CSS gradient/geometric pattern`}
 4. Social proof bar: 4 stats
 ${secs.map((s,i)=>{
   const m={
-    services:`${i+5}. SERVICES: 6 cards in a 3-col grid, each with icon, name, description, price, hover glow effect${hasImages?" — subtle image texture in card background":""}`,
+    services:`${i+5}. SERVICES: 6 cards in a 3-col grid, each with icon, name, description, price, hover glow effect${hasImages?" â subtle image texture in card background":""}`,
     about:`${i+5}. ABOUT: 2-col layout${aboutImg?`, left col = full image (${aboutImg}) with rounded corners, right col = story text + 4 stats`:", story left, 4 stats right"}`,
     benefits:`${i+5}. BENEFITS: 6-item grid, icon+title+desc, niche-specific`,
     testimonials:`${i+5}. TESTIMONIALS: 3 realistic reviews, name+location+stars+quote`,
     pricing:`${i+5}. PRICING: 3 tiers, feature lists, Most Popular badge`,
-    gallery:`${i+5}. GALLERY: ${hasImages?`6-item CSS grid using these real images: ${[galleryImg1,galleryImg2,galleryImg3,galleryImg4,heroImg,aboutImg].filter(Boolean).join(", ")} — each as object-fit cover, caption overlay on hover`:"6-item CSS grid, gradient placeholders, caption hover"}`,
+    gallery:`${i+5}. GALLERY: ${hasImages?`6-item CSS grid using these real images: ${[galleryImg1,galleryImg2,galleryImg3,galleryImg4,heroImg,aboutImg].filter(Boolean).join(", ")} â each as object-fit cover, caption overlay on hover`:"6-item CSS grid, gradient placeholders, caption hover"}`,
     faq:`${i+5}. FAQ: 5 accordion items with JS click-to-expand`,
     booking:`${i+5}. BOOKING: full form with name/email/phone/service/date/message`,
     contact:`${i+5}. CONTACT: split layout, info left, form right`,
-    cta:`${i+5}. CTA BANNER: full-width urgent headline + big button${heroImg?` — background image with dark overlay`:""}`,
+    cta:`${i+5}. CTA BANNER: full-width urgent headline + big button${heroImg?` â background image with dark overlay`:""}`,
   };
   return m[s]||`${i+5}. ${s.toUpperCase()}`;
 }).join("\n")}
 - Footer: logo, tagline, 3 link columns, social icons, copyright 2026
 
 GOOGLE MAPS:
-${f.location ? `Address: "${f.location}" — you MUST include ALL THREE of these in the contact section:
+${f.location ? `Address: "${f.location}" â you MUST include ALL THREE of these in the contact section:
 
-1. CLICKABLE MAP IMAGE — a static map image wrapped in a link. Use this exact code:
+1. CLICKABLE MAP IMAGE â a static map image wrapped in a link. Use this exact code:
 <a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(f.location)}" target="_blank" rel="noopener" style="display:block;border-radius:12px;overflow:hidden;margin-bottom:12px;position:relative;text-decoration:none">
   <img src="https://maps.googleapis.com/maps/api/staticmap?center=${encodeURIComponent(f.location)}&zoom=15&size=800x300&scale=2&maptype=roadmap&markers=color:red%7C${encodeURIComponent(f.location)}&style=feature:all|element:labels.text.fill|color:0x444444&style=feature:landscape|element:all|color:0xf2f2f2&style=feature:road|element:all|saturation:-100|lightness:45&style=feature:water|element:all|color:0xc9d6de&key=AIzaSyD-9tSrke72PouQMnMX-a7eZSW0jkFMBWY" alt="Map showing ${f.location}" style="width:100%;height:200px;object-fit:cover;display:block;border-radius:12px"/>
   <div style="position:absolute;bottom:10px;right:10px;background:white;border-radius:6px;padding:5px 10px;font-size:12px;font-weight:600;color:#374151;box-shadow:0 2px 8px rgba(0,0,0,.15);display:flex;align-items:center;gap:5px">
     <svg width="12" height="12" viewBox="0 0 24 24" fill="#ea4335"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
-    View on Google Maps →
+    View on Google Maps â
   </div>
 </a>
 
-2. STREET VIEW LINK — a separate clickable button below the map:
+2. STREET VIEW LINK â a separate clickable button below the map:
 <a href="https://www.google.com/maps/@?api=1&map_action=pano&viewpoint=&query=${encodeURIComponent(f.location)}" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:7px;padding:9px 16px;border-radius:8px;background:#f8fafc;border:1px solid #e2e8f0;font-size:13px;font-weight:600;color:#374151;text-decoration:none;margin-bottom:16px">
-  🚶 View Street View
+  ð¶ View Street View
 </a>
 
 3. PLAIN TEXT ADDRESS with map link:
 <a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(f.location)}" target="_blank" rel="noopener" style="display:flex;align-items:center;gap:8px;color:inherit;text-decoration:none;font-size:14px">
-  📍 ${f.location}
-</a>` : 'No address — omit map entirely.'}
+  ð ${f.location}
+</a>` : 'No address â omit map entirely.'}
 
 RULES:
 1. CSS in <style>, JS in <script> at bottom. One Google Fonts @import only.
@@ -258,9 +258,9 @@ RULES:
 OUTPUT: Raw HTML only. Start with <!DOCTYPE html>. End with </html>. Nothing else.\`;
 }
 
-/* ─────────────────────────────────────────────────────────────────────────────
+/* âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
    GLOBAL STYLES
-───────────────────────────────────────────────────────────────────────────── */
+âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ */
 const GS = () => (
   <style>{`
     @import url('https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@300;400;500;600;700;800&display=swap');
@@ -281,9 +281,9 @@ const GS = () => (
   `}</style>
 );
 
-/* ─────────────────────────────────────────────────────────────────────────────
+/* âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
    TYPEWRITER
-───────────────────────────────────────────────────────────────────────────── */
+âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ */
 function TW({words,color="#f97316"}) {
   const [txt,set]=useState(""); const [wi,setWi]=useState(0);
   const [ci,setCi]=useState(0); const [del,setDel]=useState(false);
@@ -298,9 +298,9 @@ function TW({words,color="#f97316"}) {
   return <span style={{color}}>{txt}<span style={{animation:"blink 1s infinite",color}}>|</span></span>;
 }
 
-/* ─────────────────────────────────────────────────────────────────────────────
+/* âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
    FIELD COMPONENT
-───────────────────────────────────────────────────────────────────────────── */
+âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ */
 function Field({label,value,onChange,placeholder,required}) {
   return (
     <div>
@@ -315,9 +315,9 @@ function Field({label,value,onChange,placeholder,required}) {
 }
 
 
-/* ───────────────────────────────────────────────────────────────────────────────
+/* âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
    ADDRESS FIELD WITH GOOGLE PLACES AUTOCOMPLETE
-─────────────────────────────────────────────────────────────────────────────── */
+âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ */
 function AddressField({value, onChange}) {
   const [query, setQuery] = useState(value||"");
   const [suggestions, setSuggestions] = useState([]);
@@ -423,7 +423,7 @@ function AddressField({value, onChange}) {
           style={{width:"100%",padding:"10px 36px 10px 13px",border:"1.5px solid #e5e7eb",borderRadius:9,fontSize:13,color:"#111827",background:"white",transition:"border-color .15s",fontFamily:"inherit",outline:"none"}}
         />
         <div style={{position:"absolute",right:11,top:"50%",transform:"translateY(-50%)",pointerEvents:"none",fontSize:13,lineHeight:1}}>
-          {loading ? <span style={{display:"inline-block",animation:"spin .7s linear infinite",color:"#9ca3af"}}>◌</span> : "📍"}
+          {loading ? <span style={{display:"inline-block",animation:"spin .7s linear infinite",color:"#9ca3af"}}>â</span> : "ð"}
         </div>
       </div>
 
@@ -441,7 +441,7 @@ function AddressField({value, onChange}) {
                 onMouseEnter={e=>e.currentTarget.style.background="#fff7ed"}
                 onMouseLeave={e=>e.currentTarget.style.background="white"}
               >
-                <div style={{width:30,height:30,background:"#fff7ed",border:"1px solid #fed7aa",borderRadius:7,display:"flex",alignItems:"center",justifyContent:"center",fontSize:14,flexShrink:0}}>📍</div>
+                <div style={{width:30,height:30,background:"#fff7ed",border:"1px solid #fed7aa",borderRadius:7,display:"flex",alignItems:"center",justifyContent:"center",fontSize:14,flexShrink:0}}>ð</div>
                 <div style={{flex:1,minWidth:0}}>
                   <div style={{fontSize:13,color:"#6b7280",whiteSpace:"nowrap",overflow:"hidden",textOverflow:"ellipsis"}}>
                     {highlightText(main, mainMatches)}
@@ -461,9 +461,9 @@ function AddressField({value, onChange}) {
   );
 }
 
-/* ─────────────────────────────────────────────────────────────────────────────
+/* âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
    LIVE MINI PREVIEW
-───────────────────────────────────────────────────────────────────────────── */
+âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ */
 function LivePreview({form}) {
   const pal=PALETTES.find(p=>p.id===form.palette)||PALETTES[0];
   const filled=form.name||form.industry;
@@ -471,7 +471,7 @@ function LivePreview({form}) {
     <div style={{height:"100%",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",padding:28,background:"#f1f5f9"}}>
       {!filled ? (
         <div style={{textAlign:"center",color:"#9ca3af"}}>
-          <div style={{fontSize:44,marginBottom:14,opacity:.3}}>✦</div>
+          <div style={{fontSize:44,marginBottom:14,opacity:.3}}>â¦</div>
           <div style={{fontSize:13,fontWeight:600,color:"#6b7280",marginBottom:6}}>Preview appears here</div>
           <div style={{fontSize:12}}>Fill in your business details</div>
         </div>
@@ -479,7 +479,7 @@ function LivePreview({form}) {
         <div style={{width:"100%",maxWidth:500,animation:"popIn .4s ease"}}>
           <div style={{background:"#e2e8f0",borderRadius:"10px 10px 0 0",padding:"9px 14px",display:"flex",alignItems:"center",gap:8}}>
             <div style={{display:"flex",gap:5}}>{["#ef4444","#f59e0b","#22c55e"].map(c=><div key={c} style={{width:9,height:9,borderRadius:"50%",background:c}}/>)}</div>
-            <div style={{flex:1,background:"white",borderRadius:20,padding:"4px 11px",fontSize:10,color:"#6b7280"}}>🔒 {(form.name||"yourbusiness").toLowerCase().replace(/\s+/g,"-")}.com</div>
+            <div style={{flex:1,background:"white",borderRadius:20,padding:"4px 11px",fontSize:10,color:"#6b7280"}}>ð {(form.name||"yourbusiness").toLowerCase().replace(/\s+/g,"-")}.com</div>
           </div>
           <div style={{background:pal.bg,borderRadius:"0 0 10px 10px",overflow:"hidden",boxShadow:"0 16px 50px rgba(0,0,0,.12)"}}>
             <div style={{padding:"10px 18px",display:"flex",justifyContent:"space-between",alignItems:"center",borderBottom:`1px solid ${pal.accent}22`}}>
@@ -509,7 +509,7 @@ function LivePreview({form}) {
           </div>
           <div style={{marginTop:10,display:"flex",justifyContent:"space-between",fontSize:10,color:"#9ca3af",padding:"0 2px"}}>
             <span>{form.sections.length} sections</span>
-            <span style={{color:pal.accent}}>{form.palette} · {form.vibe}</span>
+            <span style={{color:pal.accent}}>{form.palette} Â· {form.vibe}</span>
           </div>
         </div>
       )}
@@ -517,16 +517,16 @@ function LivePreview({form}) {
   );
 }
 
-/* ─────────────────────────────────────────────────────────────────────────────
+/* âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
    BUILDER PANEL (left side)
-───────────────────────────────────────────────────────────────────────────── */
+âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ */
 function BuilderPanel({form,up,togSec,onNext,ready}) {
   const [tab,setTab]=useState("info");
   return (
     <div style={{display:"flex",flexDirection:"column",height:"100%",background:"white"}}>
       <div style={{padding:"18px 22px 0",borderBottom:"1px solid #f3f4f6"}}>
         <div style={{display:"flex",alignItems:"center",gap:9,marginBottom:14}}>
-          <div style={{width:30,height:30,background:"#fff7ed",borderRadius:8,display:"flex",alignItems:"center",justifyContent:"center",fontSize:15}}>✦</div>
+          <div style={{width:30,height:30,background:"#fff7ed",borderRadius:8,display:"flex",alignItems:"center",justifyContent:"center",fontSize:15}}>â¦</div>
           <div>
             <div style={{fontSize:13,fontWeight:700,color:"#111827"}}>Let's build something amazing</div>
             <div style={{fontSize:11,color:"#9ca3af"}}>Fill in your details below</div>
@@ -550,14 +550,14 @@ function BuilderPanel({form,up,togSec,onNext,ready}) {
               <select value={form.industry} onChange={e=>up("industry",e.target.value)} style={{width:"100%",padding:"10px 13px",border:"1.5px solid #e5e7eb",borderRadius:9,fontSize:13,color:form.industry?"#111827":"#9ca3af",background:"white",cursor:"pointer",fontFamily:"inherit"}}
                 onFocus={e=>e.target.style.borderColor="#f97316"}
                 onBlur={e=>e.target.style.borderColor="#e5e7eb"}>
-                <option value="">Select your industry…</option>
+                <option value="">Select your industryâ¦</option>
                 {INDUSTRIES.map(i=><option key={i}>{i}</option>)}
               </select>
             </div>
             <Field label="Tagline" value={form.tagline} onChange={v=>up("tagline",v)} placeholder="e.g. Beautiful gardens, one yard at a time"/>
             <div>
-              <label style={{fontSize:11,fontWeight:700,color:"#374151",letterSpacing:.5,display:"block",marginBottom:6,textTransform:"uppercase"}}>Describe your business <span style={{color:"#f97316"}}>*</span> <span style={{color:"#f97316",fontSize:9,fontWeight:400}}>— more detail = better page</span></label>
-              <textarea value={form.description} onChange={e=>up("description",e.target.value)} rows={4} placeholder="What do you offer? Who are your clients? What makes you different? Include services, prices, unique selling points…"
+              <label style={{fontSize:11,fontWeight:700,color:"#374151",letterSpacing:.5,display:"block",marginBottom:6,textTransform:"uppercase"}}>Describe your business <span style={{color:"#f97316"}}>*</span> <span style={{color:"#f97316",fontSize:9,fontWeight:400}}>â more detail = better page</span></label>
+              <textarea value={form.description} onChange={e=>up("description",e.target.value)} rows={4} placeholder="What do you offer? Who are your clients? What makes you different? Include services, prices, unique selling pointsâ¦"
                 style={{width:"100%",padding:"10px 13px",border:"1.5px solid #e5e7eb",borderRadius:9,fontSize:13,color:"#111827",background:"white",resize:"none",lineHeight:1.6,fontFamily:"inherit",transition:"border-color .15s"}}
                 onFocus={e=>e.target.style.borderColor="#f97316"}
                 onBlur={e=>e.target.style.borderColor="#e5e7eb"}
@@ -619,7 +619,7 @@ function BuilderPanel({form,up,togSec,onNext,ready}) {
                   {s.locked
                     ? <span style={{fontSize:9,color:"#d1d5db",background:"#f9fafb",padding:"2px 6px",borderRadius:4,border:"1px solid #e5e7eb"}}>Always on</span>
                     : <div style={{width:15,height:15,borderRadius:4,border:`2px solid ${form.sections.includes(s.id)?"#f97316":"#d1d5db"}`,background:form.sections.includes(s.id)?"#f97316":"transparent",display:"flex",alignItems:"center",justifyContent:"center",fontSize:9,color:"white",fontWeight:900,flexShrink:0}}>
-                        {form.sections.includes(s.id)&&"✓"}
+                        {form.sections.includes(s.id)&&"â"}
                       </div>
                   }
                 </div>
@@ -632,22 +632,22 @@ function BuilderPanel({form,up,togSec,onNext,ready}) {
       {/* CTA */}
       <div style={{padding:"14px 22px",borderTop:"1px solid #f3f4f6",background:"white"}}>
         <button onClick={onNext} disabled={!ready} style={{width:"100%",padding:"13px",background:ready?"#f97316":"#e5e7eb",color:ready?"white":"#9ca3af",border:"none",borderRadius:10,fontSize:14,fontWeight:700,cursor:ready?"pointer":"not-allowed",fontFamily:"inherit",display:"flex",alignItems:"center",justifyContent:"center",gap:8,transition:"all .2s",animation:ready?"glow 3s ease-in-out infinite":"none"}}>
-          <span>✦</span> {ready?"See Pricing & Continue →":"Fill in required fields first"}
+          <span>â¦</span> {ready?"See Pricing & Continue â":"Fill in required fields first"}
         </button>
         {!ready&&<div style={{marginTop:7,fontSize:11,color:"#f97316",textAlign:"center"}}>
           Missing: {[!form.name&&"Name",!form.industry&&"Industry",!form.description&&"Description"].filter(Boolean).join(", ")}
         </div>}
         <div style={{marginTop:9,display:"flex",justifyContent:"center",gap:14,fontSize:10,color:"#9ca3af"}}>
-          <span>✓ Real photos included</span><span>✓ SEO optimised</span><span>✓ Mobile ready</span>
+          <span>â Real photos included</span><span>â SEO optimised</span><span>â Mobile ready</span>
         </div>
       </div>
     </div>
   );
 }
 
-/* ─────────────────────────────────────────────────────────────────────────────
-   PRICING WALL — shown BEFORE generation
-───────────────────────────────────────────────────────────────────────────── */
+/* âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+   PRICING WALL â shown BEFORE generation
+âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ */
 function PricingWall({form, onBack, onPurchase}) {
   const pal=PALETTES.find(p=>p.id===form.palette)||PALETTES[0];
   return (
@@ -656,7 +656,7 @@ function PricingWall({form, onBack, onPurchase}) {
       {/* Top bar */}
       <div style={{height:52,background:"white",borderBottom:"1px solid #f3f4f6",display:"flex",alignItems:"center",justifyContent:"space-between",padding:"0 24px",position:"sticky",top:0,zIndex:10}}>
         <button onClick={onBack} style={{display:"flex",alignItems:"center",gap:6,background:"transparent",border:"none",cursor:"pointer",fontSize:13,color:"#6b7280",fontFamily:"inherit"}}>
-          ← Back to builder
+          â Back to builder
         </button>
         <div style={{display:"flex",alignItems:"center",gap:7}}>
           <div style={{width:24,height:24,background:"#f97316",borderRadius:6,display:"flex",alignItems:"center",justifyContent:"center",fontSize:12,color:"white",fontWeight:800}}>S</div>
@@ -670,16 +670,16 @@ function PricingWall({form, onBack, onPurchase}) {
         {/* Page summary */}
         <div style={{background:"white",border:"1px solid #f3f4f6",borderRadius:16,padding:"20px 24px",marginBottom:36,display:"flex",alignItems:"center",gap:16,boxShadow:"0 1px 4px rgba(0,0,0,.04)"}}>
           <div style={{width:48,height:48,background:`linear-gradient(135deg,${pal.bg},${pal.surface})`,borderRadius:10,border:`2px solid ${pal.accent}33`,flexShrink:0,display:"flex",alignItems:"center",justifyContent:"center"}}>
-            <span style={{fontSize:20,color:pal.accent}}>✦</span>
+            <span style={{fontSize:20,color:pal.accent}}>â¦</span>
           </div>
           <div style={{flex:1}}>
             <div style={{fontSize:16,fontWeight:800,color:"#111827",marginBottom:2}}>{form.name}</div>
-            <div style={{fontSize:12,color:"#6b7280"}}>{form.industry} · {form.sections.length} sections · {form.palette} palette · {form.vibe} vibe</div>
+            <div style={{fontSize:12,color:"#6b7280"}}>{form.industry} Â· {form.sections.length} sections Â· {form.palette} palette Â· {form.vibe} vibe</div>
           </div>
           <div style={{display:"flex",gap:12,fontSize:11}}>
             {["SEO Ready","Mobile","Niche Copy"].map(t=>(
               <div key={t} style={{display:"flex",alignItems:"center",gap:4,color:"#16a34a"}}>
-                <span style={{fontWeight:700}}>✓</span>{t}
+                <span style={{fontWeight:700}}>â</span>{t}
               </div>
             ))}
           </div>
@@ -706,7 +706,7 @@ function PricingWall({form, onBack, onPurchase}) {
 
               <div style={{fontSize:10,fontWeight:700,color:plan.color,letterSpacing:2,textTransform:"uppercase",marginBottom:10}}>{plan.name}</div>
 
-              {/* Credit counter — big and prominent */}
+              {/* Credit counter â big and prominent */}
               <div style={{background:`${plan.color}10`,border:`1px solid ${plan.color}30`,borderRadius:10,padding:"14px 16px",marginBottom:14,display:"flex",alignItems:"center",justifyContent:"space-between"}}>
                 <div>
                   <div style={{fontSize:11,color:plan.color,fontWeight:700,letterSpacing:1,textTransform:"uppercase",marginBottom:2}}>Credits included</div>
@@ -720,20 +720,20 @@ function PricingWall({form, onBack, onPurchase}) {
 
               <div style={{marginBottom:4,display:"flex",alignItems:"baseline",gap:6}}>
                 <span style={{fontSize:38,fontWeight:800,color:"#111827",fontFamily:"'Instrument Serif',serif"}}>{plan.price}</span>
-                <span style={{fontSize:12,color:"#9ca3af"}}>one-time · no subscription</span>
+                <span style={{fontSize:12,color:"#9ca3af"}}>one-time Â· no subscription</span>
               </div>
               <div style={{fontSize:11,color:"#6b7280",marginBottom:16}}>{plan.desc}</div>
 
               <div style={{display:"flex",flexDirection:"column",gap:7,marginBottom:20}}>
                 {plan.features.map(f=>(
                   <div key={f} style={{display:"flex",gap:8,fontSize:12,color:"#374151",alignItems:"flex-start"}}>
-                    <span style={{color:plan.color,flexShrink:0,fontWeight:700}}>✓</span>{f}
+                    <span style={{color:plan.color,flexShrink:0,fontWeight:700}}>â</span>{f}
                   </div>
                 ))}
               </div>
 
               <button onClick={()=>onPurchase(plan)} style={{width:"100%",padding:"12px",borderRadius:10,fontFamily:"'Geist',sans-serif",fontSize:13,fontWeight:700,cursor:"pointer",background:plan.badge?plan.color:"transparent",border:plan.badge?"none":`2px solid ${plan.color}`,color:plan.badge?"white":plan.color,transition:"all .2s"}}>
-                {plan.badge?"Get "+plan.credits+" Credits →":"Get "+plan.credits+" Credits →"}
+                {plan.badge?"Get "+plan.credits+" Credits â":"Get "+plan.credits+" Credits â"}
               </button>
             </div>
           ))}
@@ -741,7 +741,7 @@ function PricingWall({form, onBack, onPurchase}) {
 
         {/* Trust signals */}
         <div style={{display:"flex",justifyContent:"center",gap:32,fontSize:12,color:"#9ca3af",flexWrap:"wrap"}}>
-          {["🔒 Secure checkout via Lemon Squeezy","⚡ 1 credit = 1 full landing page","💾 Credits never expire","↩ 7-day money back guarantee"].map(t=>(
+          {["ð Secure checkout via Lemon Squeezy","â¡ 1 credit = 1 full landing page","ð¾ Credits never expire","â© 7-day money back guarantee"].map(t=>(
             <span key={t}>{t}</span>
           ))}
         </div>
@@ -750,23 +750,23 @@ function PricingWall({form, onBack, onPurchase}) {
   );
 }
 
-/* ─────────────────────────────────────────────────────────────────────────────
+/* âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
    GENERATING SCREEN
-───────────────────────────────────────────────────────────────────────────── */
+âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ */
 function GeneratingScreen({form,onDone,onError}) {
   const [pct,setPct]=useState(0);
   const [si,setSi]=useState(0);
-  const [imgStatus,setImgStatus]=useState("Sourcing photos for your industry…");
+  const [imgStatus,setImgStatus]=useState("Sourcing photos for your industryâ¦");
   const stages=[
-    "Sourcing photos for your industry…",
-    "Reading your business details…",
-    "Researching your niche…",
-    "Planning SEO strategy…",
-    "Writing headlines & copy…",
-    "Designing hero with your images…",
-    "Building all sections…",
-    "Adding conversion elements…",
-    "Finalising your page…",
+    "Sourcing photos for your industryâ¦",
+    "Reading your business detailsâ¦",
+    "Researching your nicheâ¦",
+    "Planning SEO strategyâ¦",
+    "Writing headlines & copyâ¦",
+    "Designing hero with your imagesâ¦",
+    "Building all sectionsâ¦",
+    "Adding conversion elementsâ¦",
+    "Finalising your pageâ¦",
   ];
 
   useEffect(()=>{
@@ -796,12 +796,12 @@ function GeneratingScreen({form,onDone,onError}) {
         })
         .catch(()=>null);
 
-    setImgStatus("Sourcing photos for your industry…");
+    setImgStatus("Sourcing photos for your industryâ¦");
 
     Promise.all(queries.map(q=>fetchImg(q)))
       .then(images=>{
         const validImages = images.filter(Boolean);
-        if(!cancelled) setImgStatus(validImages.length>0 ? `Found ${validImages.length} photos ✓`:"Using styled design…");
+        if(!cancelled) setImgStatus(validImages.length>0 ? `Found ${validImages.length} photos â`:"Using styled designâ¦");
         // Now generate the page with the images
         return fetch("https://api.anthropic.com/v1/messages",{
           method:"POST",
@@ -842,7 +842,7 @@ function GeneratingScreen({form,onDone,onError}) {
         <div style={{position:"absolute",inset:0,borderRadius:"50%",border:"1px solid #f3f4f6"}}/>
         <div style={{position:"absolute",inset:0,borderRadius:"50%",border:"3px solid transparent",borderTopColor:"#f97316",animation:"spin .8s linear infinite"}}/>
         <div style={{position:"absolute",inset:10,borderRadius:"50%",border:"2px solid transparent",borderTopColor:"#f9731640",animation:"spin 1.5s linear infinite reverse"}}/>
-        <div style={{position:"absolute",inset:0,display:"flex",alignItems:"center",justifyContent:"center",fontSize:26}}>✦</div>
+        <div style={{position:"absolute",inset:0,display:"flex",alignItems:"center",justifyContent:"center",fontSize:26}}>â¦</div>
       </div>
       <div style={{fontSize:18,fontWeight:700,color:"#111827",marginBottom:6,minHeight:28}}>{stages[si]}</div>
       {si===0&&<div style={{fontSize:12,color:"#f97316",marginBottom:8,fontWeight:600}}>{imgStatus}</div>}
@@ -854,7 +854,7 @@ function GeneratingScreen({form,onDone,onError}) {
           <div style={{height:"100%",background:"linear-gradient(90deg,#f97316,#fb923c)",borderRadius:2,width:`${pct}%`,transition:"width .8s ease"}}/>
         </div>
         <div style={{display:"flex",justifyContent:"space-between",marginTop:6,fontSize:11,color:"#9ca3af"}}>
-          <span>{si===0?"Fetching industry photos…":"Writing niche-specific copy…"}</span><span>{pct}%</span>
+          <span>{si===0?"Fetching industry photosâ¦":"Writing niche-specific copyâ¦"}</span><span>{pct}%</span>
         </div>
       </div>
       <div style={{padding:"14px 20px",background:"#fff7ed",border:"1px solid #fed7aa",borderRadius:12}}>
@@ -866,9 +866,9 @@ function GeneratingScreen({form,onDone,onError}) {
   );
 }
 
-/* ─────────────────────────────────────────────────────────────────────────────
+/* âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
    RESULT SCREEN
-───────────────────────────────────────────────────────────────────────────── */
+âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ */
 function ResultScreen({html,form,onReset}) {
   const [blobUrl,setBlobUrl]=useState(null);
   const [copied,setCopied]=useState(false);
@@ -889,43 +889,43 @@ function ResultScreen({html,form,onReset}) {
     <div style={{height:"100%",display:"flex",flexDirection:"column",background:"white"}}>
       <div style={{padding:"18px 22px",borderBottom:"1px solid #f3f4f6"}}>
         <div style={{display:"flex",alignItems:"center",gap:10,marginBottom:14}}>
-          <div style={{width:34,height:34,borderRadius:"50%",background:"#f0fdf4",border:"2px solid #86efac",display:"flex",alignItems:"center",justifyContent:"center",fontSize:16}}>✓</div>
+          <div style={{width:34,height:34,borderRadius:"50%",background:"#f0fdf4",border:"2px solid #86efac",display:"flex",alignItems:"center",justifyContent:"center",fontSize:16}}>â</div>
           <div>
             <div style={{fontSize:14,fontWeight:700,color:"#111827"}}>Your page is ready!</div>
-            <div style={{fontSize:11,color:"#6b7280"}}>{html.length.toLocaleString()} chars · {form.sections.length} sections</div>
+            <div style={{fontSize:11,color:"#6b7280"}}>{html.length.toLocaleString()} chars Â· {form.sections.length} sections</div>
           </div>
         </div>
         <button onClick={open} style={{width:"100%",padding:"12px",background:"#f97316",color:"white",border:"none",borderRadius:9,fontSize:14,fontWeight:700,cursor:"pointer",marginBottom:8,display:"flex",alignItems:"center",justifyContent:"center",gap:8,fontFamily:"inherit"}}>
-          🔗 Open Preview in New Tab
+          ð Open Preview in New Tab
         </button>
-        {opened&&<div style={{fontSize:11,color:"#16a34a",textAlign:"center",marginBottom:8}}>✓ Opened! Allow popups if blocked.</div>}
+        {opened&&<div style={{fontSize:11,color:"#16a34a",textAlign:"center",marginBottom:8}}>â Opened! Allow popups if blocked.</div>}
         <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:8}}>
-          <button onClick={dl} style={{padding:"9px",background:"white",color:"#374151",border:"1px solid #e5e7eb",borderRadius:8,fontSize:12,fontWeight:600,cursor:"pointer",fontFamily:"inherit"}}>↓ Download HTML</button>
-          <button onClick={copy} style={{padding:"9px",background:"white",color:copied?"#16a34a":"#374151",border:`1px solid ${copied?"#86efac":"#e5e7eb"}`,borderRadius:8,fontSize:12,fontWeight:600,cursor:"pointer",fontFamily:"inherit"}}>{copied?"✓ Copied!":"{ } Copy Code"}</button>
+          <button onClick={dl} style={{padding:"9px",background:"white",color:"#374151",border:"1px solid #e5e7eb",borderRadius:8,fontSize:12,fontWeight:600,cursor:"pointer",fontFamily:"inherit"}}>â Download HTML</button>
+          <button onClick={copy} style={{padding:"9px",background:"white",color:copied?"#16a34a":"#374151",border:`1px solid ${copied?"#86efac":"#e5e7eb"}`,borderRadius:8,fontSize:12,fontWeight:600,cursor:"pointer",fontFamily:"inherit"}}>{copied?"â Copied!":"{ } Copy Code"}</button>
         </div>
       </div>
       <div style={{flex:1,overflowY:"auto",padding:"16px 22px"}}>
         <div style={{display:"flex",flexDirection:"column",gap:7,marginBottom:18}}>
-          {[["🔍","SEO + Schema Markup"],["🎯","5+ Conversion CTAs"],["📱","Mobile Responsive"],["🖼️","Real photos for "+form.industry],["✍️","Niche-specific copy"]].map(([ic,t])=>(
+          {[["ð","SEO + Schema Markup"],["ð¯","5+ Conversion CTAs"],["ð±","Mobile Responsive"],["ð¼ï¸","Real photos for "+form.industry],["âï¸","Niche-specific copy"]].map(([ic,t])=>(
             <div key={t} style={{display:"flex",gap:9,padding:"8px 11px",background:"#f9fafb",borderRadius:7,fontSize:12,color:"#374151",alignItems:"center"}}>
               <span>{ic}</span><span>{t}</span>
             </div>
           ))}
         </div>
         <button onClick={onReset} style={{width:"100%",padding:"10px",background:"white",color:"#374151",border:"1px solid #e5e7eb",borderRadius:8,fontSize:13,fontWeight:500,cursor:"pointer",fontFamily:"inherit"}}>
-          ← Build Another Page
+          â Build Another Page
         </button>
         <div style={{marginTop:12,fontSize:11,color:"#9ca3af",textAlign:"center",lineHeight:1.6}}>
-          Upload your .html file to Netlify (free) — live in 30 seconds
+          Upload your .html file to Netlify (free) â live in 30 seconds
         </div>
       </div>
     </div>
   );
 }
 
-/* ─────────────────────────────────────────────────────────────────────────────
+/* âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
    HOME PAGE
-───────────────────────────────────────────────────────────────────────────── */
+âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ */
 function HomePage({onBuild,onPricing,onExample,onHelp}) {
   return (
     <div style={{minHeight:"100vh",background:"#fafaf9",color:"#111827"}}>
@@ -938,8 +938,8 @@ function HomePage({onBuild,onPricing,onExample,onHelp}) {
         <div style={{display:"flex",gap:8}}>
           <button onClick={onPricing} style={{padding:"7px 16px",background:"transparent",border:"1px solid #e5e7eb",borderRadius:8,fontSize:13,cursor:"pointer",color:"#374151",fontFamily:"inherit",fontWeight:500}}>Pricing</button>
           <button onClick={onExample} style={{padding:"7px 16px",background:"transparent",border:"1px solid #e5e7eb",borderRadius:8,fontSize:13,cursor:"pointer",color:"#374151",fontFamily:"inherit",fontWeight:500}}>See Example</button>
-          <button onClick={onHelp} style={{padding:"7px 16px",background:"transparent",border:"1px solid #e5e7eb",borderRadius:8,fontSize:13,cursor:"pointer",color:"#6b7280",fontFamily:"inherit",fontWeight:500}}>🛟 Help</button>
-          <button onClick={onBuild} style={{padding:"8px 20px",background:"#f97316",border:"none",borderRadius:8,fontSize:13,cursor:"pointer",color:"white",fontFamily:"inherit",fontWeight:700}}>Start Building →</button>
+          <button onClick={onHelp} style={{padding:"7px 16px",background:"transparent",border:"1px solid #e5e7eb",borderRadius:8,fontSize:13,cursor:"pointer",color:"#6b7280",fontFamily:"inherit",fontWeight:500}}>ð Help</button>
+          <button onClick={onBuild} style={{padding:"8px 20px",background:"#f97316",border:"none",borderRadius:8,fontSize:13,cursor:"pointer",color:"white",fontFamily:"inherit",fontWeight:700}}>Start Building â</button>
         </div>
       </nav>
 
@@ -960,15 +960,15 @@ function HomePage({onBuild,onPricing,onExample,onHelp}) {
         </p>
         <div style={{display:"flex",gap:10,justifyContent:"center",flexWrap:"wrap",marginBottom:14,animation:"fadeUp .6s .3s ease both"}}>
           <button onClick={onBuild} style={{padding:"14px 34px",background:"#f97316",color:"white",border:"none",borderRadius:10,fontSize:16,fontWeight:700,cursor:"pointer",fontFamily:"inherit",boxShadow:"0 4px 20px #f9731640"}}>
-            Start Building for Free →
+            Start Building for Free â
           </button>
           <button onClick={onExample} style={{padding:"14px 22px",background:"white",color:"#374151",border:"1px solid #e5e7eb",borderRadius:10,fontSize:14,cursor:"pointer",fontFamily:"inherit"}}>
-            👁 See Example
+            ð See Example
           </button>
         </div>
-        <div style={{fontSize:12,color:"#9ca3af",animation:"fadeUp .6s .4s ease both"}}>No credit card to preview · Pay only when you're ready to download</div>
+        <div style={{fontSize:12,color:"#9ca3af",animation:"fadeUp .6s .4s ease both"}}>No credit card to preview Â· Pay only when you're ready to download</div>
         <div style={{display:"flex",gap:40,marginTop:48,animation:"fadeUp .6s .5s ease both"}}>
-          {[["⚡","60 sec","Average build time"],["★","4.9/5","User rating"],["🏢","500+","Pages generated"]].map(([ic,n,l])=>(
+          {[["â¡","60 sec","Average build time"],["â","4.9/5","User rating"],["ð¢","500+","Pages generated"]].map(([ic,n,l])=>(
             <div key={l} style={{textAlign:"center"}}>
               <div style={{fontSize:18,marginBottom:3}}>{ic}</div>
               <div style={{fontSize:22,fontWeight:800,color:"#111827"}}>{n}</div>
@@ -984,7 +984,7 @@ function HomePage({onBuild,onPricing,onExample,onHelp}) {
           {[...Array(2)].map((_,r)=>
             ["Yoga Studios","Gyms","Salons","Restaurants","Photographers","Coaches","Real Estate","Boutiques","Clinics","Cafes","Freelancers","Agencies"].map((l,i)=>(
               <span key={`${r}-${i}`} style={{fontSize:12,color:"#9ca3af",whiteSpace:"nowrap"}}>
-                <span style={{color:"#f97316",marginRight:7}}>✦</span>{l}
+                <span style={{color:"#f97316",marginRight:7}}>â¦</span>{l}
               </span>
             ))
           )}
@@ -999,10 +999,10 @@ function HomePage({onBuild,onPricing,onExample,onHelp}) {
         </div>
         <div style={{display:"grid",gridTemplateColumns:"repeat(4,1fr)",gap:16}}>
           {[
-            {n:"01",ic:"📝",t:"Describe it",d:"Tell us about your business. 60 seconds of input."},
-            {n:"02",ic:"🎨",t:"Choose style",d:"Pick your colours, vibe and sections."},
-            {n:"03",ic:"💳",t:"Choose a plan",d:"Pay once. No subscriptions. Cancel anytime."},
-            {n:"04",ic:"⚡",t:"Get your page",d:"AI generates. You download. Go live today."},
+            {n:"01",ic:"ð",t:"Describe it",d:"Tell us about your business. 60 seconds of input."},
+            {n:"02",ic:"ð¨",t:"Choose style",d:"Pick your colours, vibe and sections."},
+            {n:"03",ic:"ð³",t:"Choose a plan",d:"Pay once. No subscriptions. Cancel anytime."},
+            {n:"04",ic:"â¡",t:"Get your page",d:"AI generates. You download. Go live today."},
           ].map(s=>(
             <div key={s.n} style={{padding:22,borderRadius:14,background:"white",border:"1px solid #f3f4f6",boxShadow:"0 1px 3px rgba(0,0,0,.04)"}}>
               <div style={{width:32,height:32,background:"#fff7ed",borderRadius:8,display:"flex",alignItems:"center",justifyContent:"center",fontSize:16,marginBottom:12}}>{s.ic}</div>
@@ -1020,12 +1020,12 @@ function HomePage({onBuild,onPricing,onExample,onHelp}) {
           <h2 style={{fontSize:32,fontWeight:800,color:"#111827",textAlign:"center",marginBottom:36}}>Loved by business owners</h2>
           <div style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:16}}>
             {[
-              {q:"My yoga studio page was live in 4 minutes. The AI wrote better copy than any agency I've used. Worth every cent.",n:"Thandi M.",r:"Yoga Studio · Cape Town"},
-              {q:"Was quoted $2,500 by a web designer. Sitefliq did it better for $59. The SEO is already bringing traffic.",n:"Sipho K.",r:"Personal Trainer · Johannesburg"},
-              {q:"I described my pilates studio and it built me an entire professional website. Downloaded it, uploaded to Netlify — live same day.",n:"Jessica R.",r:"Pilates Studio · Sandton"},
+              {q:"My yoga studio page was live in 4 minutes. The AI wrote better copy than any agency I've used. Worth every cent.",n:"Thandi M.",r:"Yoga Studio Â· Cape Town"},
+              {q:"Was quoted $2,500 by a web designer. Sitefliq did it better for $59. The SEO is already bringing traffic.",n:"Sipho K.",r:"Personal Trainer Â· Johannesburg"},
+              {q:"I described my pilates studio and it built me an entire professional website. Downloaded it, uploaded to Netlify â live same day.",n:"Jessica R.",r:"Pilates Studio Â· Sandton"},
             ].map((t,i)=>(
               <div key={i} style={{padding:22,borderRadius:14,background:"#fafaf9",border:"1px solid #f3f4f6"}}>
-                <div style={{color:"#f97316",fontSize:12,marginBottom:10,letterSpacing:2}}>★★★★★</div>
+                <div style={{color:"#f97316",fontSize:12,marginBottom:10,letterSpacing:2}}>âââââ</div>
                 <p style={{fontSize:13,color:"#374151",lineHeight:1.75,marginBottom:16,fontStyle:"italic"}}>"{t.q}"</p>
                 <div style={{fontSize:13,fontWeight:600,color:"#111827"}}>{t.n}</div>
                 <div style={{fontSize:11,color:"#9ca3af"}}>{t.r}</div>
@@ -1039,21 +1039,21 @@ function HomePage({onBuild,onPricing,onExample,onHelp}) {
       <div style={{textAlign:"center",padding:"70px 40px 90px"}}>
         <h2 style={{fontSize:"clamp(28px,4vw,48px)",fontWeight:800,color:"#111827",marginBottom:24}}>Your landing page is waiting.</h2>
         <button onClick={onBuild} style={{padding:"15px 42px",background:"#f97316",color:"white",border:"none",borderRadius:10,fontSize:16,fontWeight:700,cursor:"pointer",fontFamily:"inherit",boxShadow:"0 4px 20px #f9731640"}}>
-          Build It Now →
+          Build It Now â
         </button>
         <div style={{marginTop:12,fontSize:12,color:"#9ca3af"}}>See your page before you pay</div>
       </div>
 
       <div style={{textAlign:"center",padding:"16px 40px",borderTop:"1px solid #f3f4f6",fontSize:11,color:"#9ca3af",background:"white"}}>
-        © 2026 Sitefliq · AI Landing Page Builder · sitefliq.com
+        Â© 2026 Sitefliq Â· AI Landing Page Builder Â· sitefliq.com
       </div>
     </div>
   );
 }
 
-/* ─────────────────────────────────────────────────────────────────────────────
+/* âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
    PRICING PAGE (standalone)
-───────────────────────────────────────────────────────────────────────────── */
+âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ */
 function PricingPage({onBuild,onHome}) {
   return (
     <div style={{minHeight:"100vh",background:"#fafaf9"}}>
@@ -1063,14 +1063,14 @@ function PricingPage({onBuild,onHome}) {
           <div style={{width:27,height:27,background:"#f97316",borderRadius:6,display:"flex",alignItems:"center",justifyContent:"center",fontSize:12,color:"white",fontWeight:800}}>S</div>
           <span style={{fontSize:17,fontWeight:800,color:"#111827"}}>Sitefliq</span>
         </div>
-        <button onClick={onBuild} style={{padding:"8px 18px",background:"#f97316",border:"none",borderRadius:8,fontSize:13,cursor:"pointer",color:"white",fontFamily:"inherit",fontWeight:700}}>Start Free →</button>
+        <button onClick={onBuild} style={{padding:"8px 18px",background:"#f97316",border:"none",borderRadius:8,fontSize:13,cursor:"pointer",color:"white",fontFamily:"inherit",fontWeight:700}}>Start Free â</button>
       </nav>
       <div style={{maxWidth:860,margin:"0 auto",padding:"70px 40px"}}>
         <h1 style={{fontSize:46,fontWeight:800,textAlign:"center",color:"#111827",marginBottom:8,fontFamily:"'Instrument Serif',serif",fontStyle:"italic"}}>Simple pricing</h1>
         <p style={{textAlign:"center",color:"#6b7280",marginBottom:32,fontSize:14}}>Buy credits once. Use them whenever. 1 credit = 1 complete landing page. No subscriptions, ever.</p>
         {/* Credit explainer */}
         <div style={{display:"flex",justifyContent:"center",gap:32,marginBottom:40,flexWrap:"wrap"}}>
-          {[["⚡","1 credit = 1 full page","Complete SEO-optimised HTML"],["💾","Credits never expire","Use them whenever you need"],["🔒","One-time payment","No subscriptions, ever"]].map(([ic,t,d])=>(
+          {[["â¡","1 credit = 1 full page","Complete SEO-optimised HTML"],["ð¾","Credits never expire","Use them whenever you need"],["ð","One-time payment","No subscriptions, ever"]].map(([ic,t,d])=>(
             <div key={t} style={{display:"flex",alignItems:"center",gap:10,padding:"12px 18px",background:"white",border:"1px solid #f3f4f6",borderRadius:10,boxShadow:"0 1px 3px rgba(0,0,0,.04)"}}>
               <span style={{fontSize:20}}>{ic}</span>
               <div><div style={{fontSize:12,fontWeight:700,color:"#111827"}}>{t}</div><div style={{fontSize:11,color:"#9ca3af"}}>{d}</div></div>
@@ -1096,30 +1096,30 @@ function PricingPage({onBuild,onHome}) {
               <div style={{display:"flex",alignItems:"baseline",gap:6,marginBottom:2}}>
                 <span style={{fontSize:36,fontWeight:800,color:"#111827",fontFamily:"'Instrument Serif',serif"}}>{p.price}</span>
               </div>
-              <div style={{fontSize:11,color:"#9ca3af",marginBottom:16}}>one-time · no subscription</div>
+              <div style={{fontSize:11,color:"#9ca3af",marginBottom:16}}>one-time Â· no subscription</div>
               <div style={{display:"flex",flexDirection:"column",gap:8,marginBottom:22}}>
-                {p.features.map(f=><div key={f} style={{display:"flex",gap:8,fontSize:12,color:"#374151"}}><span style={{color:p.color,flexShrink:0,fontWeight:700}}>✓</span>{f}</div>)}
+                {p.features.map(f=><div key={f} style={{display:"flex",gap:8,fontSize:12,color:"#374151"}}><span style={{color:p.color,flexShrink:0,fontWeight:700}}>â</span>{f}</div>)}
               </div>
               <button onClick={onBuild} style={{width:"100%",padding:11,borderRadius:9,fontFamily:"'Geist',sans-serif",fontSize:13,fontWeight:700,cursor:"pointer",background:p.badge?p.color:"transparent",border:p.badge?"none":`2px solid ${p.color}`,color:p.badge?"white":p.color,transition:"all .2s"}}>
-                Get {p.credits} Credits →
+                Get {p.credits} Credits â
               </button>
             </div>
           ))}
         </div>
         <div style={{marginTop:24,textAlign:"center",fontSize:12,color:"#9ca3af"}}>
-          🔒 Secure checkout · Credits never expire · 7-day money back guarantee
+          ð Secure checkout Â· Credits never expire Â· 7-day money back guarantee
         </div>
       </div>
     </div>
   );
 }
 
-/* ─────────────────────────────────────────────────────────────────────────────
+/* âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
    MAIN APP
-───────────────────────────────────────────────────────────────────────────── */
-/* ─────────────────────────────────────────────────────────────────────────────
-   EXAMPLE PAGE — pre-built sample to show clients
-───────────────────────────────────────────────────────────────────────────── */
+âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ */
+/* âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+   EXAMPLE PAGE â pre-built sample to show clients
+âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ */
 const EXAMPLE_HTML = `<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -1156,7 +1156,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;height:64px;display:flex;ali
 .mobile-menu.open{display:flex}
 .mobile-menu a{padding:12px 16px;font-size:14px;color:var(--muted);border-radius:6px;display:block}
 
-/* HERO — full real photo */
+/* HERO â full real photo */
 .hero{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:100px 48px 80px;position:relative;overflow:hidden;text-align:center}
 .hero-img{position:absolute;inset:0;background-image:url('https://images.pexels.com/photos/3822906/pexels-photo-3822906.jpeg?auto=compress&cs=tinysrgb&w=1600');background-size:cover;background-position:center top}
 .hero-overlay{position:absolute;inset:0;background:linear-gradient(180deg,rgba(10,14,10,.72) 0%,rgba(10,14,10,.55) 40%,rgba(10,14,10,.88) 100%)}
@@ -1182,7 +1182,7 @@ section{padding:90px 48px}
 .eyebrow::before{content:'';width:28px;height:1px;background:var(--accent);flex-shrink:0}
 h2{font-family:'Cormorant Garamond',serif;font-size:clamp(36px,5vw,62px);font-weight:600;line-height:1;letter-spacing:-1px;margin-bottom:16px}
 
-/* SERVICES — image cards */
+/* SERVICES â image cards */
 .services-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--border);border:1px solid var(--border);border-radius:12px;overflow:hidden;margin-top:48px}
 .svc-card{position:relative;min-height:320px;overflow:hidden;display:flex;flex-direction:column;justify-content:flex-end;cursor:pointer}
 .svc-card-img{position:absolute;inset:0;background-size:cover;background-position:center;transition:transform .5s}
@@ -1193,7 +1193,7 @@ h2{font-family:'Cormorant Garamond',serif;font-size:clamp(36px,5vw,62px);font-we
 .svc-name{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:600;margin-bottom:6px}
 .svc-desc{font-size:12px;color:rgba(240,245,240,.6);line-height:1.65}
 
-/* ABOUT — image left */
+/* ABOUT â image left */
 .about-grid{display:grid;grid-template-columns:1fr 1fr;gap:72px;align-items:center}
 .about-img{position:relative;height:580px;border-radius:8px;overflow:hidden}
 .about-img img{width:100%;height:100%;object-fit:cover}
@@ -1297,21 +1297,21 @@ footer{background:var(--surface);border-top:1px solid var(--border);padding:56px
   <a href="#faq" onclick="this.closest('.mobile-menu').classList.remove('open')">FAQ</a>
 </div>
 
-<!-- HERO — real yoga photo background -->
+<!-- HERO â real yoga photo background -->
 <section class="hero">
   <div class="hero-img"></div>
   <div class="hero-overlay"></div>
   <div class="hero-content">
-    <div class="hero-eyebrow"><span style="width:5px;height:5px;border-radius:50%;background:var(--accent);animation:pulse 2s infinite"></span>Cape Town · Est. 2016</div>
+    <div class="hero-eyebrow"><span style="width:5px;height:5px;border-radius:50%;background:var(--accent);animation:pulse 2s infinite"></span>Cape Town Â· Est. 2016</div>
     <h1>Find Your<br/><em>Flow.</em></h1>
-    <p class="hero-sub">Transform your body, calm your mind, and rediscover yourself through the ancient practice of yoga — guided by Cape Town's finest instructors.</p>
+    <p class="hero-sub">Transform your body, calm your mind, and rediscover yourself through the ancient practice of yoga â guided by Cape Town's finest instructors.</p>
     <div class="hero-btns">
-      <a href="#contact" class="btn btn-primary">Book Free Trial Class →</a>
+      <a href="#contact" class="btn btn-primary">Book Free Trial Class â</a>
       <a href="#classes" class="btn btn-outline">View Schedule</a>
     </div>
     <div class="hero-trust">
-      <span style="color:var(--accent);letter-spacing:3px">★★★★★</span>
-      &nbsp;4.9/5 from 312 reviews &nbsp;·&nbsp; 500+ students &nbsp;·&nbsp; First class free
+      <span style="color:var(--accent);letter-spacing:3px">âââââ</span>
+      &nbsp;4.9/5 from 312 reviews &nbsp;Â·&nbsp; 500+ students &nbsp;Â·&nbsp; First class free
     </div>
   </div>
 </section>
@@ -1319,12 +1319,12 @@ footer{background:var(--surface);border-top:1px solid var(--border);padding:56px
 <!-- PROOF BAR -->
 <div class="proof-bar">
   <div class="proof-item"><div class="proof-num">500+</div><div class="proof-label">Happy Students</div></div>
-  <div class="proof-item"><div class="proof-num">4.9★</div><div class="proof-label">Average Rating</div></div>
+  <div class="proof-item"><div class="proof-num">4.9â</div><div class="proof-label">Average Rating</div></div>
   <div class="proof-item"><div class="proof-num">8 Yrs</div><div class="proof-label">Experience</div></div>
   <div class="proof-item"><div class="proof-num">20+</div><div class="proof-label">Classes Weekly</div></div>
 </div>
 
-<!-- CLASSES — image cards -->
+<!-- CLASSES â image cards -->
 <section id="classes">
   <div class="container">
     <div class="eyebrow">Our Classes</div>
@@ -1334,16 +1334,16 @@ footer{background:var(--surface);border-top:1px solid var(--border);padding:56px
         <div class="svc-card-img" style="background-image:url('https://images.pexels.com/photos/4056535/pexels-photo-4056535.jpeg?auto=compress&cs=tinysrgb&w=800')"></div>
         <div class="svc-card-overlay"></div>
         <div class="svc-card-body">
-          <div class="svc-price">From R180 · 75 min</div>
+          <div class="svc-price">From R180 Â· 75 min</div>
           <div class="svc-name">Hot Yoga</div>
-          <div class="svc-desc">Practiced in a heated room at 37°C. Deep stretching, detoxification, and intense focus. Our most popular class.</div>
+          <div class="svc-desc">Practiced in a heated room at 37Â°C. Deep stretching, detoxification, and intense focus. Our most popular class.</div>
         </div>
       </div>
       <div class="svc-card">
         <div class="svc-card-img" style="background-image:url('https://images.pexels.com/photos/3822647/pexels-photo-3822647.jpeg?auto=compress&cs=tinysrgb&w=800')"></div>
         <div class="svc-card-overlay"></div>
         <div class="svc-card-body">
-          <div class="svc-price">From R160 · 60 min</div>
+          <div class="svc-price">From R160 Â· 60 min</div>
           <div class="svc-name">Vinyasa Flow</div>
           <div class="svc-desc">Dynamic movement synchronised with breath. Builds strength, flexibility and mental clarity through flowing sequences.</div>
         </div>
@@ -1352,16 +1352,16 @@ footer{background:var(--surface);border-top:1px solid var(--border);padding:56px
         <div class="svc-card-img" style="background-image:url('https://images.pexels.com/photos/3759657/pexels-photo-3759657.jpeg?auto=compress&cs=tinysrgb&w=800')"></div>
         <div class="svc-card-overlay"></div>
         <div class="svc-card-body">
-          <div class="svc-price">From R140 · 75 min</div>
+          <div class="svc-price">From R140 Â· 75 min</div>
           <div class="svc-name">Yin & Restore</div>
-          <div class="svc-desc">Deep passive stretches held for 3–5 minutes each. Perfect for recovery, stress relief, and improving flexibility.</div>
+          <div class="svc-desc">Deep passive stretches held for 3â5 minutes each. Perfect for recovery, stress relief, and improving flexibility.</div>
         </div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- ABOUT — real photo left -->
+<!-- ABOUT â real photo left -->
 <section id="about" style="background:var(--surface)">
   <div class="container">
     <div class="about-grid">
@@ -1378,13 +1378,13 @@ footer{background:var(--surface);border-top:1px solid var(--border);padding:56px
         <p>Zenflow was born from a simple idea: that everyone deserves access to a yoga practice that genuinely transforms their life. Founded in 2016 by two Cape Town yogis who believed that authentic teaching matters more than Instagram aesthetics.</p>
         <p>Eight years later, we've built a community of over 500 students who come not just for the classes, but for the connection, the growth, and the stillness they find here. Our instructors bring decades of combined experience across multiple disciplines.</p>
         <p>Whether you've never done yoga before or you're deepening an existing practice, Zenflow is where you belong.</p>
-        <a href="#contact" class="btn btn-primary" style="margin-top:8px">Start With a Free Class →</a>
+        <a href="#contact" class="btn btn-primary" style="margin-top:8px">Start With a Free Class â</a>
       </div>
     </div>
   </div>
 </section>
 
-<!-- GALLERY — real photos -->
+<!-- GALLERY â real photos -->
 <section id="gallery">
   <div class="container">
     <div class="eyebrow">The Studio</div>
@@ -1421,19 +1421,19 @@ footer{background:var(--surface);border-top:1px solid var(--border);padding:56px
     <h2>Real Transformations</h2>
     <div class="tgrid">
       <div class="tcard">
-        <div class="tcard-stars">★★★★★</div>
+        <div class="tcard-stars">âââââ</div>
         <div class="tcard-text">"I started Zenflow as a complete beginner, terrified and inflexible. Six months later I'm attending four classes a week and my body and mind have completely transformed. The instructors create the most welcoming environment I've ever experienced."</div>
-        <div class="tcard-name">Amelia Rousseau</div><div class="tcard-loc">Student · Sea Point</div>
+        <div class="tcard-name">Amelia Rousseau</div><div class="tcard-loc">Student Â· Sea Point</div>
       </div>
       <div class="tcard">
-        <div class="tcard-stars">★★★★★</div>
+        <div class="tcard-stars">âââââ</div>
         <div class="tcard-text">"The hot yoga classes here are unlike anything I've done before. The heat, the instruction, and the energy in the room combine into something truly special. I've tried studios across Cape Town and nothing comes close to Zenflow's standard."</div>
-        <div class="tcard-name">Marcus van Wyk</div><div class="tcard-loc">Student · Green Point</div>
+        <div class="tcard-name">Marcus van Wyk</div><div class="tcard-loc">Student Â· Green Point</div>
       </div>
       <div class="tcard">
-        <div class="tcard-stars">★★★★★</div>
+        <div class="tcard-stars">âââââ</div>
         <div class="tcard-text">"Yin & Restore on Thursday evenings has become the non-negotiable highlight of my week. After a stressful work week, 75 minutes of deep stretching and stillness completely resets me. I leave feeling like a different person every single time."</div>
-        <div class="tcard-name">Priya Naidoo</div><div class="tcard-loc">Student · Gardens</div>
+        <div class="tcard-name">Priya Naidoo</div><div class="tcard-loc">Student Â· Gardens</div>
       </div>
     </div>
   </div>
@@ -1459,7 +1459,7 @@ footer{background:var(--surface);border-top:1px solid var(--border);padding:56px
       </div>
       <div class="faq-item">
         <div class="faq-q" onclick="toggleFaq(this)"><span class="faq-q-text">What are your class prices?</span><div class="faq-icon">+</div></div>
-        <div class="faq-a">Drop-in classes start from R140. Monthly unlimited memberships from R980. Your first class is always free, no strings attached. We also offer student and senior discounts — ask at reception.</div>
+        <div class="faq-a">Drop-in classes start from R140. Monthly unlimited memberships from R980. Your first class is always free, no strings attached. We also offer student and senior discounts â ask at reception.</div>
       </div>
       <div class="faq-item">
         <div class="faq-q" onclick="toggleFaq(this)"><span class="faq-q-text">Where are you located?</span><div class="faq-icon">+</div></div>
@@ -1469,15 +1469,15 @@ footer{background:var(--surface);border-top:1px solid var(--border);padding:56px
   </div>
 </section>
 
-<!-- CTA BANNER — real photo bg -->
+<!-- CTA BANNER â real photo bg -->
 <div class="cta-banner">
   <div class="cta-img"></div>
   <div class="cta-overlay"></div>
   <div class="cta-content">
-    <div style="display:inline-block;background:rgba(168,224,99,.1);border:1px solid rgba(168,224,99,.2);color:var(--accent);font-size:10px;font-weight:600;letter-spacing:2px;text-transform:uppercase;padding:5px 14px;border-radius:100px;margin-bottom:20px">✦ First Class Free</div>
+    <div style="display:inline-block;background:rgba(168,224,99,.1);border:1px solid rgba(168,224,99,.2);color:var(--accent);font-size:10px;font-weight:600;letter-spacing:2px;text-transform:uppercase;padding:5px 14px;border-radius:100px;margin-bottom:20px">â¦ First Class Free</div>
     <h2>Your First Class<br/>is on Us</h2>
     <p>No commitment. No pressure. Just show up, breathe, and see what yoga can do for you.</p>
-    <a href="#contact" class="btn btn-primary" style="font-size:14px;padding:15px 40px;letter-spacing:.5px">Book Your Free Class →</a>
+    <a href="#contact" class="btn btn-primary" style="font-size:14px;padding:15px 40px;letter-spacing:.5px">Book Your Free Class â</a>
   </div>
 </div>
 
@@ -1505,13 +1505,13 @@ footer{background:var(--surface);border-top:1px solid var(--border);padding:56px
     <div>
       <div class="footer-col-title">Contact</div>
       <div class="footer-links">
-        <a href="#">Cape Town</a><a href="#">Mon–Sat: 6am–8pm</a>
+        <a href="#">Cape Town</a><a href="#">MonâSat: 6amâ8pm</a>
         <a href="#">Instagram</a><a href="#">WhatsApp</a>
       </div>
     </div>
   </div>
   <div class="footer-bottom">
-    <span>© 2026 Zenflow Yoga Studio. All rights reserved.</span>
+    <span>Â© 2026 Zenflow Yoga Studio. All rights reserved.</span>
     <span>Built with <a href="https://sitefliq.com" style="color:var(--accent)">Sitefliq</a></span>
   </div>
 </footer>
@@ -1529,9 +1529,9 @@ function toggleFaq(el) {
 </body>
 </html>`;
 
-/* ─────────────────────────────────────────────────────────────────────────────
+/* âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
    HELP PAGE
-───────────────────────────────────────────────────────────────────────────── */
+âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ */
 function HelpPage({onHome}) {
   const [category, setCategory] = useState(null);
   const [form, setForm] = useState({name:"",email:"",subject:"",message:""});
@@ -1540,19 +1540,19 @@ function HelpPage({onHome}) {
   const [openFaq, setOpenFaq] = useState(null);
 
   const categories = [
-    {id:"feature", icon:"💡", label:"Feature Request"},
-    {id:"bug",     icon:"🐛", label:"Bug / Issue"},
-    {id:"question",icon:"❓", label:"General Question"},
-    {id:"other",   icon:"💬", label:"Other"},
+    {id:"feature", icon:"ð¡", label:"Feature Request"},
+    {id:"bug",     icon:"ð", label:"Bug / Issue"},
+    {id:"question",icon:"â", label:"General Question"},
+    {id:"other",   icon:"ð¬", label:"Other"},
   ];
 
   const faqs = [
-    {q:"My page didn't generate — what happened?", a:"Usually a network timeout or very short description. Try again with a longer business description (3–5 sentences). If you see 'API 401' contact us immediately."},
-    {q:"I paid but nothing happened", a:"After paying, return to Sitefliq and click 'I've Paid — Generate My Page'. If credits aren't showing, email us your payment receipt and we'll sort it within the hour."},
-    {q:"The images don't match my business", a:"Make sure you select the correct industry from the dropdown — this controls which photos are sourced. If matches are still poor for your industry, let us know and we'll improve the search terms."},
+    {q:"My page didn't generate â what happened?", a:"Usually a network timeout or very short description. Try again with a longer business description (3â5 sentences). If you see 'API 401' contact us immediately."},
+    {q:"I paid but nothing happened", a:"After paying, return to Sitefliq and click 'I've Paid â Generate My Page'. If credits aren't showing, email us your payment receipt and we'll sort it within the hour."},
+    {q:"The images don't match my business", a:"Make sure you select the correct industry from the dropdown â this controls which photos are sourced. If matches are still poor for your industry, let us know and we'll improve the search terms."},
     {q:"How do I host my downloaded HTML file?", a:"Go to netlify.com, create a free account, and drag-and-drop your HTML file onto the dashboard. Your site goes live instantly at a free URL. You can connect a custom domain anytime."},
-    {q:"Do my credits expire?", a:"Never. Credits are yours to use whenever you're ready — no time pressure, no subscription."},
-    {q:"Can I edit the page after downloading?", a:"Yes — open the file in any text editor (VS Code, Notepad) and edit the text between HTML tags directly. For major redesigns, it's faster to regenerate with new settings."},
+    {q:"Do my credits expire?", a:"Never. Credits are yours to use whenever you're ready â no time pressure, no subscription."},
+    {q:"Can I edit the page after downloading?", a:"Yes â open the file in any text editor (VS Code, Notepad) and edit the text between HTML tags directly. For major redesigns, it's faster to regenerate with new settings."},
     {q:"What does 'No Sitefliq branding' mean?", a:"Starter pages include a small 'Built with Sitefliq' link in the footer. Pro and Agency plans remove this completely so your clients see a clean, unbranded page."},
   ];
 
@@ -1573,7 +1573,7 @@ function HelpPage({onHome}) {
       {/* Top bar */}
       <div style={{height:52,background:"white",borderBottom:"1px solid #f3f4f6",display:"flex",alignItems:"center",justifyContent:"space-between",padding:"0 28px",position:"sticky",top:0,zIndex:10}}>
         <button onClick={onHome} style={{display:"flex",alignItems:"center",gap:6,background:"transparent",border:"none",cursor:"pointer",fontSize:13,color:"#6b7280",fontFamily:"inherit",fontWeight:500}}>
-          ← Back
+          â Back
         </button>
         <div style={{display:"flex",alignItems:"center",gap:7}}>
           <div style={{width:24,height:24,background:"#f97316",borderRadius:6,display:"flex",alignItems:"center",justifyContent:"center",fontSize:11,color:"white",fontWeight:800}}>S</div>
@@ -1613,7 +1613,7 @@ function HelpPage({onHome}) {
         <div style={{background:"white",border:"1px solid #e5e7eb",borderRadius:14,padding:"28px 28px 24px",marginBottom:40,boxShadow:"0 1px 4px rgba(0,0,0,.04)"}}>
           {submitted ? (
             <div style={{textAlign:"center",padding:"32px 0"}}>
-              <div style={{fontSize:44,marginBottom:16}}>✅</div>
+              <div style={{fontSize:44,marginBottom:16}}>â</div>
               <div style={{fontSize:18,fontWeight:800,color:"#111827",marginBottom:8}}>Query Submitted!</div>
               <p style={{fontSize:13,color:"#6b7280",lineHeight:1.7}}>Your email client opened with your message pre-filled. We'll respond to <strong>{form.email}</strong> within 24 hours.</p>
               <button onClick={()=>setSubmitted(false)} style={{marginTop:20,padding:"10px 22px",background:"#f97316",border:"none",borderRadius:8,fontSize:13,fontWeight:700,color:"white",cursor:"pointer",fontFamily:"inherit"}}>Submit Another</button>
@@ -1668,7 +1668,7 @@ function HelpPage({onHome}) {
                 disabled={!form.name||!form.email||!form.message||!category}
                 style={{width:"100%",padding:"13px",background:(!form.name||!form.email||!form.message||!category)?"#fde8d8":"#f97316",border:"none",borderRadius:10,fontSize:14,fontWeight:700,color:"white",cursor:(!form.name||!form.email||!form.message||!category)?"not-allowed":"pointer",fontFamily:"inherit",display:"flex",alignItems:"center",justifyContent:"center",gap:8,transition:"background .2s"}}
               >
-                ✈️ Submit Query
+                âï¸ Submit Query
               </button>
             </>
           )}
@@ -1711,29 +1711,29 @@ function ExamplePage({onBack,onBuild}) {
       <GS/>
       {/* Top bar */}
       <div style={{height:54,background:"white",borderBottom:"1px solid #f3f4f6",display:"flex",alignItems:"center",justifyContent:"space-between",padding:"0 28px",position:"sticky",top:0,zIndex:10}}>
-        <button onClick={onBack} style={{display:"flex",alignItems:"center",gap:6,background:"transparent",border:"none",cursor:"pointer",fontSize:13,color:"#6b7280",fontFamily:"inherit"}}>← Back</button>
+        <button onClick={onBack} style={{display:"flex",alignItems:"center",gap:6,background:"transparent",border:"none",cursor:"pointer",fontSize:13,color:"#6b7280",fontFamily:"inherit"}}>â Back</button>
         <div style={{display:"flex",alignItems:"center",gap:8}}>
           <div style={{width:24,height:24,background:"#f97316",borderRadius:6,display:"flex",alignItems:"center",justifyContent:"center",fontSize:11,color:"white",fontWeight:800}}>S</div>
           <span style={{fontSize:14,fontWeight:800,color:"#111827"}}>Example Output</span>
         </div>
-        <button onClick={onBuild} style={{padding:"8px 18px",background:"#f97316",border:"none",borderRadius:8,fontSize:13,cursor:"pointer",color:"white",fontFamily:"inherit",fontWeight:700}}>Build Mine →</button>
+        <button onClick={onBuild} style={{padding:"8px 18px",background:"#f97316",border:"none",borderRadius:8,fontSize:13,cursor:"pointer",color:"white",fontFamily:"inherit",fontWeight:700}}>Build Mine â</button>
       </div>
       {/* Info banner */}
       <div style={{background:"#fff7ed",borderBottom:"1px solid #fed7aa",padding:"12px 28px",display:"flex",alignItems:"center",justifyContent:"space-between",flexWrap:"wrap",gap:10}}>
         <div style={{display:"flex",alignItems:"center",gap:10,fontSize:13}}>
-          <span style={{fontSize:16}}>✦</span>
+          <span style={{fontSize:16}}>â¦</span>
           <span style={{fontWeight:600,color:"#111827"}}>Zenflow Yoga Studio</span>
-          <span style={{color:"#9ca3af"}}>— Sample page generated by Sitefliq AI</span>
+          <span style={{color:"#9ca3af"}}>â Sample page generated by Sitefliq AI</span>
           <span style={{background:"#f97316",color:"white",padding:"2px 8px",borderRadius:4,fontSize:10,fontWeight:700}}>EXAMPLE</span>
         </div>
         <div style={{display:"flex",gap:8}}>
-          {blobUrl&&<button onClick={()=>window.open(blobUrl,"_blank")} style={{padding:"7px 14px",background:"white",border:"1px solid #e5e7eb",borderRadius:7,fontSize:12,cursor:"pointer",fontFamily:"inherit",fontWeight:600}}>🔗 Open Full Page</button>}
-          <button onClick={onBuild} style={{padding:"7px 16px",background:"#f97316",border:"none",borderRadius:7,fontSize:12,cursor:"pointer",color:"white",fontFamily:"inherit",fontWeight:700}}>Build Your Page →</button>
+          {blobUrl&&<button onClick={()=>window.open(blobUrl,"_blank")} style={{padding:"7px 14px",background:"white",border:"1px solid #e5e7eb",borderRadius:7,fontSize:12,cursor:"pointer",fontFamily:"inherit",fontWeight:600}}>ð Open Full Page</button>}
+          <button onClick={onBuild} style={{padding:"7px 16px",background:"#f97316",border:"none",borderRadius:7,fontSize:12,cursor:"pointer",color:"white",fontFamily:"inherit",fontWeight:700}}>Build Your Page â</button>
         </div>
       </div>
       {/* What's included callouts */}
       <div style={{background:"white",borderBottom:"1px solid #f3f4f6",padding:"12px 28px",display:"flex",gap:20,flexWrap:"wrap"}}>
-        {[["🔍","Full SEO meta tags"],["🎯","5+ Conversion CTAs"],["📱","Mobile responsive"],["✍️","Niche-specific copy"],["⚡","FAQ accordion"],["🌙","Dark luxury theme"]].map(([ic,t])=>(
+        {[["ð","Full SEO meta tags"],["ð¯","5+ Conversion CTAs"],["ð±","Mobile responsive"],["âï¸","Niche-specific copy"],["â¡","FAQ accordion"],["ð","Dark luxury theme"]].map(([ic,t])=>(
           <div key={t} style={{display:"flex",alignItems:"center",gap:6,fontSize:12,color:"#374151"}}>
             <span>{ic}</span><span style={{fontWeight:500}}>{t}</span>
           </div>
@@ -1746,15 +1746,15 @@ function ExamplePage({onBack,onBuild}) {
           <div style={{background:"#f1f5f9",padding:"10px 16px",display:"flex",alignItems:"center",gap:10,borderBottom:"1px solid #e5e7eb"}}>
             <div style={{display:"flex",gap:5}}>{["#ef4444","#f59e0b","#22c55e"].map(c=><div key={c} style={{width:10,height:10,borderRadius:"50%",background:c}}/>)}</div>
             <div style={{flex:1,background:"white",borderRadius:20,padding:"5px 14px",fontSize:11,color:"#6b7280",display:"flex",alignItems:"center",gap:6,maxWidth:400,margin:"0 auto"}}>
-              <span>🔒</span> zenflow-yoga-studio.com
+              <span>ð</span> zenflow-yoga-studio.com
             </div>
           </div>
           {blobUrl
             ? <iframe src={blobUrl} style={{width:"100%",height:"85vh",border:"none",display:"block"}} title="Example landing page"/>
             : <div style={{height:"85vh",display:"flex",alignItems:"center",justifyContent:"center",background:"#f9fafb"}}>
                 <div style={{textAlign:"center",color:"#9ca3af"}}>
-                  <div style={{fontSize:32,marginBottom:8,animation:"spin 1s linear infinite",display:"inline-block"}}>◌</div>
-                  <div style={{fontSize:13}}>Loading example…</div>
+                  <div style={{fontSize:32,marginBottom:8,animation:"spin 1s linear infinite",display:"inline-block"}}>â</div>
+                  <div style={{fontSize:13}}>Loading exampleâ¦</div>
                 </div>
               </div>
           }
@@ -1764,7 +1764,7 @@ function ExamplePage({onBack,onBuild}) {
       <div style={{textAlign:"center",padding:"32px 28px 48px"}}>
         <div style={{fontSize:14,color:"#6b7280",marginBottom:16}}>Ready to build your own version? It takes 60 seconds.</div>
         <button onClick={onBuild} style={{padding:"14px 40px",background:"#f97316",color:"white",border:"none",borderRadius:10,fontSize:15,fontWeight:700,cursor:"pointer",fontFamily:"inherit",boxShadow:"0 4px 20px #f9731640"}}>
-          Build My Landing Page →
+          Build My Landing Page â
         </button>
       </div>
     </div>
@@ -1789,7 +1789,7 @@ export default function Sitefliq() {
   };
   const ready=form.name.trim()&&form.industry.trim()&&form.description.trim();
 
-  // When user clicks a plan — redirect to Lemon Squeezy with their details in URL
+  // When user clicks a plan â redirect to Lemon Squeezy with their details in URL
   const handlePurchase=(plan)=>{
     // Store form in sessionStorage so we can retrieve after payment
     sessionStorage.setItem("sitefliq_form",JSON.stringify(form));
@@ -1811,19 +1811,19 @@ export default function Sitefliq() {
     <div style={{minHeight:"100vh",background:"#fafaf9",display:"flex",alignItems:"center",justifyContent:"center",fontFamily:"'Geist',sans-serif"}}>
       <GS/>
       <div style={{textAlign:"center",maxWidth:480,padding:40}}>
-        <div style={{fontSize:48,marginBottom:20}}>💳</div>
+        <div style={{fontSize:48,marginBottom:20}}>ð³</div>
         <h2 style={{fontSize:26,fontWeight:800,color:"#111827",marginBottom:12}}>Complete your payment</h2>
         <p style={{fontSize:14,color:"#6b7280",marginBottom:28,lineHeight:1.7}}>
           A Lemon Squeezy checkout tab has opened. Complete your payment there, then come back here and click the button below.
         </p>
         <button onClick={()=>setScreen("generating")} style={{width:"100%",padding:"14px",background:"#f97316",color:"white",border:"none",borderRadius:10,fontSize:15,fontWeight:700,cursor:"pointer",fontFamily:"inherit",marginBottom:12}}>
-          ✓ I've Paid — Generate My Page →
+          â I've Paid â Generate My Page â
         </button>
         <button onClick={()=>setScreen("pricing_wall")} style={{width:"100%",padding:"12px",background:"white",color:"#6b7280",border:"1px solid #e5e7eb",borderRadius:10,fontSize:13,cursor:"pointer",fontFamily:"inherit"}}>
-          ← Go back
+          â Go back
         </button>
         <p style={{marginTop:16,fontSize:11,color:"#9ca3af"}}>
-          🔒 Payments secured by Lemon Squeezy · 7-day money back guarantee
+          ð Payments secured by Lemon Squeezy Â· 7-day money back guarantee
         </p>
       </div>
     </div>
@@ -1836,14 +1836,14 @@ export default function Sitefliq() {
       {/* Top bar */}
       <div style={{height:50,background:"white",borderBottom:"1px solid #f3f4f6",display:"flex",alignItems:"center",justifyContent:"space-between",padding:"0 20px",flexShrink:0}}>
         <div onClick={()=>setScreen("home")} style={{display:"flex",alignItems:"center",gap:7,cursor:"pointer"}}>
-          <span style={{fontSize:15,color:"#9ca3af"}}>←</span>
+          <span style={{fontSize:15,color:"#9ca3af"}}>â</span>
           <div style={{width:23,height:23,background:"#f97316",borderRadius:5,display:"flex",alignItems:"center",justifyContent:"center",fontSize:11,color:"white",fontWeight:800}}>S</div>
           <span style={{fontSize:13,fontWeight:700,color:"#111827"}}>Landing Page Builder</span>
         </div>
         <div style={{fontSize:11,color:"#9ca3af"}}>
-          {screen==="builder"&&"⚡ Powered by Claude AI"}
-          {screen==="result"&&<span style={{color:"#16a34a",fontWeight:600}}>✓ Page Ready — {form.name}</span>}
-          {screen==="generating"&&<span style={{color:"#f97316"}}>⚡ Generating…</span>}
+          {screen==="builder"&&"â¡ Powered by Claude AI"}
+          {screen==="result"&&<span style={{color:"#16a34a",fontWeight:600}}>â Page Ready â {form.name}</span>}
+          {screen==="generating"&&<span style={{color:"#f97316"}}>â¡ Generatingâ¦</span>}
         </div>
         <div style={{width:80}}/>
       </div>
@@ -1855,10 +1855,10 @@ export default function Sitefliq() {
           {screen==="builder"&&<BuilderPanel form={form} up={up} togSec={togSec} ready={ready} onNext={()=>setScreen("pricing_wall")}/>}
           {screen==="generating"&&(
             <div style={{padding:"22px",display:"flex",flexDirection:"column",gap:9,height:"100%",overflowY:"auto",background:"white"}}>
-              <div style={{fontSize:12,fontWeight:700,color:"#374151",marginBottom:4}}>Building your page…</div>
-              {[["✓","SEO meta tags & schema"],["✓","Niche-specific copy"],["✓","Conversion CTAs"],["✓","Mobile responsive"],["⏳","Finalising HTML…"]].map(([ic,t],i)=>(
-                <div key={t} style={{display:"flex",gap:8,alignItems:"center",fontSize:12,color:ic==="⏳"?"#f97316":"#16a34a",animation:`slideIn .3s ${i*.08}s ease both`}}>
-                  <span>{ic==="⏳"?<span style={{animation:"spin .8s linear infinite",display:"inline-block"}}>◌</span>:"✓"}</span>{t}
+              <div style={{fontSize:12,fontWeight:700,color:"#374151",marginBottom:4}}>Building your pageâ¦</div>
+              {[["â","SEO meta tags & schema"],["â","Niche-specific copy"],["â","Conversion CTAs"],["â","Mobile responsive"],["â³","Finalising HTMLâ¦"]].map(([ic,t],i)=>(
+                <div key={t} style={{display:"flex",gap:8,alignItems:"center",fontSize:12,color:ic==="â³"?"#f97316":"#16a34a",animation:`slideIn .3s ${i*.08}s ease both`}}>
+                  <span>{ic==="â³"?<span style={{animation:"spin .8s linear infinite",display:"inline-block"}}>â</span>:"â"}</span>{t}
                 </div>
               ))}
             </div>
@@ -1872,7 +1872,7 @@ export default function Sitefliq() {
           {screen==="generating"&&<GeneratingScreen form={form} onDone={h=>{setResHtml(h);setScreen("result");}} onError={e=>{setGenErr(e);setScreen("builder");}}/>}
           {screen==="result"&&(
             <div style={{height:"100%",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",padding:40,background:"#f1f5f9",gap:18,textAlign:"center"}}>
-              <div style={{fontSize:44}}>🎉</div>
+              <div style={{fontSize:44}}>ð</div>
               <div style={{fontSize:20,fontWeight:800,color:"#111827"}}>{form.name}</div>
               <p style={{fontSize:13,color:"#6b7280",maxWidth:340,lineHeight:1.7}}>
                 Click <strong>"Open Preview in New Tab"</strong> on the left to see your full website in the browser.
@@ -1880,7 +1880,7 @@ export default function Sitefliq() {
               <div style={{padding:"14px 22px",background:"white",borderRadius:12,border:"1px solid #e5e7eb",maxWidth:380,width:"100%"}}>
                 <div style={{fontSize:10,color:"#9ca3af",marginBottom:8,textTransform:"uppercase",letterSpacing:1}}>Page Summary</div>
                 <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:8,fontSize:12}}>
-                  {[["Sections",form.sections.length],["Size",Math.round(resHtml.length/1000)+"KB"],["SEO","✓ Included"],["Mobile","✓ Ready"]].map(([k,v])=>(
+                  {[["Sections",form.sections.length],["Size",Math.round(resHtml.length/1000)+"KB"],["SEO","â Included"],["Mobile","â Ready"]].map(([k,v])=>(
                     <div key={k} style={{padding:"8px 11px",background:"#f9fafb",borderRadius:7}}>
                       <div style={{color:"#9ca3af",fontSize:10}}>{k}</div>
                       <div style={{fontWeight:700,color:"#111827",marginTop:1}}>{v}</div>
