@@ -62,7 +62,7 @@ const PLANS = [
     badge:null,
     desc:"Try it out, no commitment",
     features:["3 page generations","All styles & colour palettes","Full SEO + conversion copy","Download HTML instantly","Email support","Credits never expire"],
-    checkoutUrl:"https://sitefliq.lemonsqueezy.com/checkout/buy/YOUR_STARTER_LINK",
+    priceId:"pri_01kjxa8pggzk3j8hekhsadx0pe",
   },
   {
     id:"pro",
@@ -75,7 +75,7 @@ const PLANS = [
     badge:"BEST VALUE",
     desc:"For freelancers & small agencies",
     features:["10 page generations","All styles & colour palettes","Full SEO + conversion copy","Download HTML instantly","No Sitefliq branding","Priority generation speed","Priority support","Credits never expire"],
-    checkoutUrl:"https://sitefliq.lemonsqueezy.com/checkout/buy/YOUR_PRO_LINK",
+    priceId:"pri_01kjxachhq3afcqc0gj54x2yq7",
   },
   {
     id:"agency",
@@ -88,7 +88,7 @@ const PLANS = [
     badge:null,
     desc:"Built for agencies & resellers",
     features:["25 page generations","All styles & colour palettes","Full SEO + conversion copy","Download HTML instantly","White-label (no branding)","Priority generation speed","Dedicated support","Credits never expire","Best per-page rate"],
-    checkoutUrl:"https://sitefliq.lemonsqueezy.com/checkout/buy/YOUR_AGENCY_LINK",
+    priceId:"pri_01kjxafb31r7g5gc23se78j10a",
   },
 ];
 
@@ -755,7 +755,7 @@ function PricingWall({form, onBack, onPurchase}) {
 
         {/* Trust signals */}
         <div style={{display:"flex",justifyContent:"center",gap:32,fontSize:12,color:"#9ca3af",flexWrap:"wrap"}}>
-          {["🔒 Secure checkout via Lemon Squeezy","⚡ 1 credit = 1 full landing page","💾 Credits never expire","↩ 7-day money back guarantee"].map(t=>(
+          {["🔒 Secure checkout via Paddle","⚡ 1 credit = 1 full landing page","💾 Credits never expire","↩ 7-day money back guarantee"].map(t=>(
             <span key={t}>{t}</span>
           ))}
         </div>
@@ -1121,7 +1121,7 @@ function PricingPage({onBuild,onHome}) {
           ))}
         </div>
         <div style={{marginTop:24,textAlign:"center",fontSize:12,color:"#9ca3af"}}>
-          🔒 Secure checkout · Credits never expire · 7-day money back guarantee
+          🔒 Secure checkout via Paddle · Credits never expire · 7-day money back guarantee
         </div>
       </div>
     </div>
@@ -1803,14 +1803,28 @@ export default function Sitefliq() {
   };
   const ready=form.name.trim()&&form.industry.trim()&&form.description.trim();
 
-  // When user clicks a plan — redirect to Lemon Squeezy with their details in URL
+  // Load Paddle SDK once
+  useEffect(()=>{
+    if(window.Paddle) return;
+    const s=document.createElement("script");
+    s.src="https://cdn.paddle.com/paddle/v2/paddle.js";
+    s.onload=()=>{
+      window.Paddle.Setup({token:"live_b719e178798ff8d1da2e0d42565"});
+    };
+    document.head.appendChild(s);
+  },[]);
+
+  // When user clicks a plan — open Paddle overlay checkout
   const handlePurchase=(plan)=>{
-    // Store form in sessionStorage so we can retrieve after payment
     sessionStorage.setItem("sitefliq_form",JSON.stringify(form));
     sessionStorage.setItem("sitefliq_plan",plan.id);
-    // Open checkout in new tab
-    window.open(plan.checkoutUrl,"_blank");
-    // Show a "waiting for payment" state
+    if(window.Paddle){
+      window.Paddle.Checkout.open({
+        items:[{priceId:plan.priceId, quantity:1}],
+        successUrl: window.location.origin + "?payment=success",
+        customData:{plan:plan.id},
+      });
+    }
     setScreen("waiting_payment");
   };
 
@@ -1828,7 +1842,7 @@ export default function Sitefliq() {
         <div style={{fontSize:48,marginBottom:20}}>💳</div>
         <h2 style={{fontSize:26,fontWeight:800,color:"#111827",marginBottom:12}}>Complete your payment</h2>
         <p style={{fontSize:14,color:"#6b7280",marginBottom:28,lineHeight:1.7}}>
-          A Lemon Squeezy checkout tab has opened. Complete your payment there, then come back here and click the button below.
+          A A Paddle checkout window has opened. Complete your payment there, then come back here and click the button below.
         </p>
         <button onClick={()=>setScreen("generating")} style={{width:"100%",padding:"14px",background:"#f97316",color:"white",border:"none",borderRadius:10,fontSize:15,fontWeight:700,cursor:"pointer",fontFamily:"inherit",marginBottom:12}}>
           ✓ I've Paid — Generate My Page →
@@ -1837,7 +1851,7 @@ export default function Sitefliq() {
           ← Go back
         </button>
         <p style={{marginTop:16,fontSize:11,color:"#9ca3af"}}>
-          🔒 Payments secured by Lemon Squeezy · 7-day money back guarantee
+          🔒 Payments secured by Paddle · 7-day money back guarantee
         </p>
       </div>
     </div>
