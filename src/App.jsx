@@ -956,189 +956,406 @@ const EXAMPLE_HTML = `<!DOCTYPE html>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
 <title>Zenflow Yoga Studio | Yoga Classes Cape Town | Transform Your Practice</title>
-<meta name="description" content="Zenflow Yoga Studio offers expert yoga classes in Cape Town. Beginner to advanced. Hot yoga, vinyasa, yin & meditation. Book your free trial class today."/>
+<meta name="description" content="Zenflow Yoga Studio offers expert yoga classes in Cape Town. Hot yoga, vinyasa, yin & meditation. Beginner to advanced. Book your free trial class today."/>
+<meta property="og:title" content="Zenflow Yoga Studio | Cape Town"/>
+<meta property="og:description" content="Transform your body and mind with expert yoga in Cape Town. First class free."/>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"LocalBusiness","name":"Zenflow Yoga Studio","description":"Expert yoga classes in Cape Town","address":{"@type":"PostalAddress","addressLocality":"Cape Town"},"aggregateRating":{"@type":"AggregateRating","ratingValue":"4.9","reviewCount":"312"}}</script>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-:root{--bg:#0a0e0a;--surface:#111811;--accent:#a8e063;--text:#f0f5f0;--muted:#6b7f6b}
-body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);-webkit-font-smoothing:antialiased}
-@keyframes fadeUp{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
-@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+:root{--bg:#0a0e0a;--surface:#111811;--surface2:#1a231a;--accent:#a8e063;--text:#f0f5f0;--muted:#7a9a7a;--border:rgba(168,224,99,.1)}
+html{scroll-behavior:smooth}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);-webkit-font-smoothing:antialiased;overflow-x:hidden}
+h1,h2,h3,.logo{font-family:'Cormorant Garamond',serif}
 a{color:inherit;text-decoration:none}
-.btn-primary{display:inline-block;padding:14px 32px;background:var(--accent);color:var(--bg);font-weight:700;border-radius:50px;font-size:14px;cursor:pointer;border:none;font-family:'DM Sans',sans-serif;transition:all .2s;letter-spacing:.3px}
-.btn-primary:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(168,224,99,.3)}
-.btn-outline{display:inline-block;padding:14px 32px;border:1.5px solid var(--accent);color:var(--accent);font-weight:600;border-radius:50px;font-size:14px;cursor:pointer;background:transparent;font-family:'DM Sans',sans-serif;transition:all .2s}
-.btn-outline:hover{background:var(--accent);color:var(--bg)}
-nav{position:fixed;top:0;left:0;right:0;z-index:100;height:64px;display:flex;align-items:center;justify-content:space-between;padding:0 48px;background:rgba(10,14,10,.85);backdrop-filter:blur(20px);border-bottom:1px solid rgba(168,224,99,.1)}
-.nav-logo{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:700;color:var(--accent);letter-spacing:1px}
-.nav-links{display:flex;gap:28px;font-size:13px;color:var(--muted)}
-.nav-links a:hover{color:var(--accent)}
-.hero{min-height:100vh;display:flex;align-items:center;justify-content:center;text-align:center;padding:100px 40px 60px;position:relative;overflow:hidden}
-.hero-bg{position:absolute;inset:0;background:radial-gradient(ellipse 80% 60% at 50% 40%,rgba(168,224,99,.08) 0%,transparent 70%)}
-.hero-pattern{position:absolute;inset:0;opacity:.04;background-image:repeating-linear-gradient(0deg,var(--accent) 0,var(--accent) 1px,transparent 1px,transparent 60px),repeating-linear-gradient(90deg,var(--accent) 0,var(--accent) 1px,transparent 1px,transparent 60px)}
-.hero-content{position:relative;z-index:1;max-width:800px;animation:fadeUp .8s ease both}
-.hero-label{display:inline-flex;align-items:center;gap:8px;padding:6px 16px;background:rgba(168,224,99,.1);border:1px solid rgba(168,224,99,.2);border-radius:100px;font-size:11px;color:var(--accent);letter-spacing:2px;text-transform:uppercase;margin-bottom:24px}
-h1{font-family:'Cormorant Garamond',serif;font-size:clamp(48px,7vw,88px);font-weight:700;line-height:1.0;margin-bottom:20px;letter-spacing:-1px}
-h1 em{font-style:italic;color:var(--accent)}
-.hero-sub{font-size:17px;color:var(--muted);max-width:480px;margin:0 auto 36px;line-height:1.8}
-.hero-btns{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-bottom:20px}
-.hero-trust{font-size:12px;color:var(--muted)}
-.hero-trust span{color:var(--accent)}
-.proof-bar{background:var(--surface);border-top:1px solid rgba(168,224,99,.08);border-bottom:1px solid rgba(168,224,99,.08);padding:20px 40px;display:flex;justify-content:center;gap:60px}
-.proof-item{text-align:center}
-.proof-num{font-size:26px;font-weight:700;color:var(--accent);font-family:'Cormorant Garamond',serif}
-.proof-label{font-size:11px;color:var(--muted);margin-top:2px}
-section{padding:80px 40px}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:13px 30px;border-radius:4px;font-size:13px;font-weight:600;cursor:pointer;border:none;font-family:'DM Sans',sans-serif;transition:all .25s;letter-spacing:.5px}
+.btn-primary{background:var(--accent);color:#0a0e0a}
+.btn-primary:hover{background:#bef264;transform:translateY(-1px);box-shadow:0 8px 24px rgba(168,224,99,.25)}
+.btn-outline{background:transparent;border:1.5px solid var(--accent);color:var(--accent)}
+.btn-outline:hover{background:rgba(168,224,99,.08)}
+
+/* NAV */
+nav{position:fixed;top:0;left:0;right:0;z-index:100;height:64px;display:flex;align-items:center;justify-content:space-between;padding:0 48px;background:rgba(10,14,10,.9);backdrop-filter:blur(16px);border-bottom:1px solid var(--border)}
+.logo{font-size:20px;font-weight:700;color:var(--accent);letter-spacing:1px}
+.nav-links{display:flex;gap:32px;font-size:13px;color:var(--muted);letter-spacing:.3px}
+.nav-links a:hover{color:var(--text)}
+.hamburger{display:none;flex-direction:column;gap:5px;cursor:pointer}
+.hamburger span{width:22px;height:1.5px;background:var(--text);transition:all .3s}
+.mobile-menu{display:none;position:fixed;top:64px;left:0;right:0;background:var(--surface);padding:16px;border-bottom:1px solid var(--border);z-index:99;flex-direction:column;gap:4px}
+.mobile-menu.open{display:flex}
+.mobile-menu a{padding:12px 16px;font-size:14px;color:var(--muted);border-radius:6px;display:block}
+
+/* HERO — full real photo */
+.hero{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:100px 48px 80px;position:relative;overflow:hidden;text-align:center}
+.hero-img{position:absolute;inset:0;background-image:url('https://images.pexels.com/photos/3822906/pexels-photo-3822906.jpeg?auto=compress&cs=tinysrgb&w=1600');background-size:cover;background-position:center top}
+.hero-overlay{position:absolute;inset:0;background:linear-gradient(180deg,rgba(10,14,10,.72) 0%,rgba(10,14,10,.55) 40%,rgba(10,14,10,.88) 100%)}
+.hero-content{position:relative;z-index:1;max-width:800px;animation:fadeUp .9s ease both}
+.hero-eyebrow{display:inline-flex;align-items:center;gap:8px;padding:6px 18px;background:rgba(168,224,99,.1);border:1px solid rgba(168,224,99,.2);border-radius:100px;font-size:10px;color:var(--accent);letter-spacing:3px;text-transform:uppercase;margin-bottom:28px;font-family:'DM Sans',sans-serif}
+.hero h1{font-size:clamp(56px,8vw,104px);font-weight:600;line-height:.9;margin-bottom:24px;letter-spacing:-2px;color:var(--text)}
+.hero h1 em{font-style:italic;color:var(--accent)}
+.hero-sub{font-size:17px;color:rgba(240,245,240,.7);max-width:480px;margin:0 auto 40px;line-height:1.85;font-weight:300}
+.hero-btns{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-bottom:24px}
+.hero-trust{font-size:12px;color:rgba(240,245,240,.45);display:flex;align-items:center;justify-content:center;gap:6px}
+
+/* PROOF BAR */
+.proof-bar{background:var(--surface);border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:24px 48px;display:grid;grid-template-columns:repeat(4,1fr);gap:0}
+.proof-item{text-align:center;padding:0 16px;border-right:1px solid var(--border)}
+.proof-item:last-child{border-right:none}
+.proof-num{font-family:'Cormorant Garamond',serif;font-size:36px;font-weight:700;color:var(--accent);line-height:1}
+.proof-label{font-size:11px;color:var(--muted);margin-top:4px;letter-spacing:.5px}
+
+/* SECTIONS */
+section{padding:90px 48px}
 .container{max-width:1100px;margin:0 auto}
-.section-label{font-size:10px;color:var(--accent);letter-spacing:3px;text-transform:uppercase;font-weight:600;margin-bottom:12px}
-h2{font-family:'Cormorant Garamond',serif;font-size:clamp(32px,4.5vw,52px);font-weight:700;line-height:1.1;margin-bottom:16px}
-.section-desc{font-size:15px;color:var(--muted);line-height:1.8;max-width:540px}
-.services-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-top:44px}
-.service-card{background:var(--surface);border:1px solid rgba(168,224,99,.08);border-radius:16px;padding:32px;transition:all .3s;position:relative;overflow:hidden}
-.service-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--accent),transparent);opacity:0;transition:opacity .3s}
-.service-card:hover{transform:translateY(-4px);border-color:rgba(168,224,99,.2);box-shadow:0 16px 40px rgba(0,0,0,.3)}
-.service-card:hover::before{opacity:1}
-.service-icon{font-size:32px;margin-bottom:16px}
-.service-name{font-size:17px;font-weight:700;color:var(--text);margin-bottom:8px;font-family:'Cormorant Garamond',serif}
-.service-desc{font-size:13px;color:var(--muted);line-height:1.7;margin-bottom:16px}
-.service-price{font-size:13px;color:var(--accent);font-weight:600}
-.testimonials-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:44px}
-.tcard{background:var(--surface);border:1px solid rgba(168,224,99,.08);border-radius:14px;padding:26px}
-.tcard-stars{color:var(--accent);font-size:13px;letter-spacing:2px;margin-bottom:12px}
-.tcard-quote{font-size:14px;color:rgba(240,245,240,.7);line-height:1.75;margin-bottom:18px;font-style:italic}
-.tcard-name{font-size:13px;font-weight:600;color:var(--text)}
+.eyebrow{font-size:10px;color:var(--accent);letter-spacing:3px;text-transform:uppercase;font-weight:600;margin-bottom:14px;display:flex;align-items:center;gap:10px}
+.eyebrow::before{content:'';width:28px;height:1px;background:var(--accent);flex-shrink:0}
+h2{font-family:'Cormorant Garamond',serif;font-size:clamp(36px,5vw,62px);font-weight:600;line-height:1;letter-spacing:-1px;margin-bottom:16px}
+
+/* SERVICES — image cards */
+.services-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--border);border:1px solid var(--border);border-radius:12px;overflow:hidden;margin-top:48px}
+.svc-card{position:relative;min-height:320px;overflow:hidden;display:flex;flex-direction:column;justify-content:flex-end;cursor:pointer}
+.svc-card-img{position:absolute;inset:0;background-size:cover;background-position:center;transition:transform .5s}
+.svc-card:hover .svc-card-img{transform:scale(1.06)}
+.svc-card-overlay{position:absolute;inset:0;background:linear-gradient(0deg,rgba(10,14,10,.93) 0%,rgba(10,14,10,.3) 70%,transparent 100%)}
+.svc-card-body{position:relative;z-index:1;padding:24px}
+.svc-price{font-size:11px;color:var(--accent);font-weight:600;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:8px}
+.svc-name{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:600;margin-bottom:6px}
+.svc-desc{font-size:12px;color:rgba(240,245,240,.6);line-height:1.65}
+
+/* ABOUT — image left */
+.about-grid{display:grid;grid-template-columns:1fr 1fr;gap:72px;align-items:center}
+.about-img{position:relative;height:580px;border-radius:8px;overflow:hidden}
+.about-img img{width:100%;height:100%;object-fit:cover}
+.about-badge{position:absolute;bottom:28px;right:-20px;background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:16px 20px;backdrop-filter:blur(12px)}
+.about-badge-num{font-family:'Cormorant Garamond',serif;font-size:36px;font-weight:700;color:var(--accent);line-height:1}
+.about-badge-label{font-size:11px;color:var(--muted);margin-top:3px}
+.about-text p{font-size:14px;color:var(--muted);line-height:1.95;margin-bottom:18px}
+
+/* GALLERY */
+.gallery-grid{display:grid;grid-template-columns:2fr 1fr 1fr;grid-template-rows:260px 260px;gap:8px;margin-top:48px}
+.gal-item{border-radius:6px;overflow:hidden;position:relative}
+.gal-item:first-child{grid-row:span 2}
+.gal-item img{width:100%;height:100%;object-fit:cover;transition:transform .5s}
+.gal-item:hover img{transform:scale(1.05)}
+.gal-caption{position:absolute;inset:0;background:rgba(10,14,10,.65);display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity .3s}
+.gal-item:hover .gal-caption{opacity:1}
+.gal-caption span{font-family:'Cormorant Garamond',serif;font-size:16px;color:var(--accent);letter-spacing:1px}
+
+/* TESTIMONIALS */
+.tgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:48px}
+.tcard{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:28px;transition:border-color .2s}
+.tcard:hover{border-color:rgba(168,224,99,.2)}
+.tcard-stars{color:var(--accent);font-size:11px;letter-spacing:4px;margin-bottom:14px}
+.tcard-text{font-size:13px;color:rgba(240,245,240,.6);line-height:1.85;margin-bottom:20px;font-style:italic}
+.tcard-name{font-family:'Cormorant Garamond',serif;font-size:15px;font-weight:600}
 .tcard-loc{font-size:11px;color:var(--muted);margin-top:2px}
-.benefits-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:44px}
-.benefit{padding:24px;border-radius:12px;background:rgba(168,224,99,.04);border:1px solid rgba(168,224,99,.08)}
-.benefit-icon{font-size:24px;margin-bottom:10px}
-.benefit-title{font-size:14px;font-weight:700;margin-bottom:6px;color:var(--text)}
-.benefit-desc{font-size:12px;color:var(--muted);line-height:1.65}
-.faq-list{max-width:700px;margin:40px auto 0;display:flex;flex-direction:column;gap:0}
-.faq-item{border-bottom:1px solid rgba(168,224,99,.08)}
-.faq-q{padding:18px 0;display:flex;justify-content:space-between;align-items:center;cursor:pointer;font-size:15px;font-weight:500;color:var(--text)}
-.faq-icon{font-size:18px;color:var(--accent);transition:transform .3s;flex-shrink:0}
-.faq-a{font-size:14px;color:var(--muted);line-height:1.75;max-height:0;overflow:hidden;transition:max-height .4s ease,padding .3s}
-.faq-a.open{max-height:200px;padding-bottom:16px}
-.cta-banner{background:linear-gradient(135deg,rgba(168,224,99,.12),rgba(168,224,99,.04));border-top:1px solid rgba(168,224,99,.15);border-bottom:1px solid rgba(168,224,99,.15);padding:70px 40px;text-align:center}
-.cta-banner h2{margin-bottom:24px}
-footer{background:var(--surface);border-top:1px solid rgba(168,224,99,.08);padding:50px 40px 24px}
-.footer-grid{max-width:1100px;margin:0 auto;display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:40px;margin-bottom:40px}
-.footer-brand{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:700;color:var(--accent);margin-bottom:10px}
-.footer-tagline{font-size:13px;color:var(--muted);line-height:1.7}
-.footer-heading{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--accent);font-weight:600;margin-bottom:12px}
-.footer-links{display:flex;flex-direction:column;gap:8px;font-size:13px;color:var(--muted)}
+
+/* FAQ */
+.faq-wrap{max-width:720px;margin:40px auto 0}
+.faq-item{border-bottom:1px solid var(--border)}
+.faq-q{padding:20px 0;display:flex;justify-content:space-between;align-items:center;cursor:pointer;gap:16px}
+.faq-q-text{font-family:'Cormorant Garamond',serif;font-size:18px;font-weight:600;color:var(--text);line-height:1.3}
+.faq-icon{width:28px;height:28px;border-radius:50%;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;color:var(--accent);font-size:18px;font-weight:300;flex-shrink:0;transition:all .3s}
+.faq-a{font-size:13px;color:var(--muted);line-height:1.85;max-height:0;overflow:hidden;transition:max-height .4s,padding .3s}
+.faq-a.open{max-height:200px;padding-bottom:20px}
+.faq-item.active .faq-icon{transform:rotate(45deg);background:rgba(168,224,99,.1);border-color:rgba(168,224,99,.3)}
+
+/* CTA BANNER */
+.cta-banner{position:relative;overflow:hidden;padding:100px 48px;text-align:center}
+.cta-img{position:absolute;inset:0;background-image:url('https://images.pexels.com/photos/4056723/pexels-photo-4056723.jpeg?auto=compress&cs=tinysrgb&w=1600');background-size:cover;background-position:center}
+.cta-overlay{position:absolute;inset:0;background:rgba(10,14,10,.82)}
+.cta-content{position:relative;z-index:1}
+.cta-banner h2{font-size:clamp(36px,5vw,64px);font-weight:600;letter-spacing:-1.5px;margin-bottom:14px}
+.cta-banner p{font-size:15px;color:var(--muted);margin-bottom:32px;max-width:440px;margin-left:auto;margin-right:auto;line-height:1.75}
+
+/* FOOTER */
+footer{background:var(--surface);border-top:1px solid var(--border);padding:56px 48px 24px}
+.footer-grid{max-width:1100px;margin:0 auto;display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:48px;padding-bottom:48px;border-bottom:1px solid var(--border);margin-bottom:24px}
+.footer-brand{font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:700;color:var(--accent);margin-bottom:12px;letter-spacing:1px}
+.footer-tagline{font-size:12px;color:var(--muted);line-height:1.8;max-width:220px}
+.footer-col-title{font-size:9px;font-weight:700;color:var(--accent);letter-spacing:2.5px;text-transform:uppercase;margin-bottom:16px}
+.footer-links{display:flex;flex-direction:column;gap:10px;font-size:12px;color:var(--muted)}
 .footer-links a:hover{color:var(--accent)}
-.footer-bottom{max-width:1100px;margin:0 auto;padding-top:20px;border-top:1px solid rgba(168,224,99,.06);display:flex;justify-content:space-between;font-size:11px;color:var(--muted)}
-@media(max-width:768px){
-  nav{padding:0 20px}.nav-links{display:none}
-  .hero{padding:80px 20px 40px}
-  .proof-bar{gap:24px;flex-wrap:wrap;padding:20px}
+.footer-bottom{max-width:1100px;margin:0 auto;display:flex;justify-content:space-between;font-size:11px;color:var(--muted)}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(28px)}to{opacity:1;transform:translateY(0)}}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+
+@media(max-width:900px){
+  nav{padding:0 20px}.nav-links,.nav-cta{display:none}.hamburger{display:flex}
+  .hero{padding:90px 20px 60px}
+  .proof-bar{grid-template-columns:repeat(2,1fr);padding:20px}
+  .proof-item{border-right:none;border-bottom:1px solid var(--border);padding:14px 0}
+  .proof-item:nth-child(3),.proof-item:nth-child(4){border-bottom:none}
   section{padding:60px 20px}
-  .services-grid,.testimonials-grid,.benefits-grid{grid-template-columns:1fr}
-  .footer-grid{grid-template-columns:1fr 1fr}
-  .footer-bottom{flex-direction:column;gap:8px}
+  .services-grid{grid-template-columns:1fr}
+  .about-grid{grid-template-columns:1fr;gap:32px}
+  .about-img{height:300px}.about-badge{right:0}
+  .gallery-grid{grid-template-columns:1fr 1fr;grid-template-rows:auto}
+  .gal-item:first-child{grid-row:span 1;grid-column:span 2;height:220px}
+  .gal-item{height:180px}
+  .tgrid{grid-template-columns:1fr}
+  .cta-banner{padding:60px 20px}
+  .footer-grid{grid-template-columns:1fr 1fr;gap:28px}
+  footer{padding:40px 20px 20px}
 }
 </style>
 </head>
 <body>
+
 <nav>
-  <div class="nav-logo">Zenflow</div>
+  <div class="logo">ZENFLOW</div>
   <div class="nav-links">
-    <a href="#services">Classes</a>
+    <a href="#classes">Classes</a>
     <a href="#about">About</a>
+    <a href="#gallery">Gallery</a>
     <a href="#testimonials">Reviews</a>
     <a href="#faq">FAQ</a>
+    <a href="#contact">Contact</a>
   </div>
-  <button class="btn-primary" style="padding:10px 22px;font-size:13px">Book Free Trial</button>
+  <a href="#contact" class="btn btn-primary nav-cta" style="padding:9px 22px;font-size:12px;letter-spacing:1px">BOOK FREE CLASS</a>
+  <div class="hamburger" onclick="document.querySelector('.mobile-menu').classList.toggle('open')">
+    <span></span><span></span><span></span>
+  </div>
 </nav>
+<div class="mobile-menu">
+  <a href="#classes" onclick="this.closest('.mobile-menu').classList.remove('open')">Classes</a>
+  <a href="#about" onclick="this.closest('.mobile-menu').classList.remove('open')">About</a>
+  <a href="#gallery" onclick="this.closest('.mobile-menu').classList.remove('open')">Gallery</a>
+  <a href="#testimonials" onclick="this.closest('.mobile-menu').classList.remove('open')">Reviews</a>
+  <a href="#faq" onclick="this.closest('.mobile-menu').classList.remove('open')">FAQ</a>
+</div>
+
+<!-- HERO — real yoga photo background -->
 <section class="hero">
-  <div class="hero-bg"></div>
-  <div class="hero-pattern"></div>
+  <div class="hero-img"></div>
+  <div class="hero-overlay"></div>
   <div class="hero-content">
-    <div class="hero-label">✦ Yoga Studio · Cape Town</div>
-    <h1>Find Your<br/><em>Flow</em></h1>
-    <p class="hero-sub">Expert-led yoga classes for every level. Hot yoga, vinyasa, yin & meditation in the heart of Cape Town.</p>
+    <div class="hero-eyebrow"><span style="width:5px;height:5px;border-radius:50%;background:var(--accent);animation:pulse 2s infinite"></span>Cape Town · Est. 2016</div>
+    <h1>Find Your<br/><em>Flow.</em></h1>
+    <p class="hero-sub">Transform your body, calm your mind, and rediscover yourself through the ancient practice of yoga — guided by Cape Town's finest instructors.</p>
     <div class="hero-btns">
-      <button class="btn-primary">Book Your Free Trial Class</button>
-      <button class="btn-outline">View Class Schedule</button>
+      <a href="#contact" class="btn btn-primary">Book Free Trial Class →</a>
+      <a href="#classes" class="btn btn-outline">View Schedule</a>
     </div>
-    <div class="hero-trust">★★★★★ <span>500+ students</span> · Trusted since 2016 · <span>4.9/5 rating</span></div>
+    <div class="hero-trust">
+      <span style="color:var(--accent);letter-spacing:3px">★★★★★</span>
+      &nbsp;4.9/5 from 312 reviews &nbsp;·&nbsp; 500+ students &nbsp;·&nbsp; First class free
+    </div>
   </div>
 </section>
+
+<!-- PROOF BAR -->
 <div class="proof-bar">
   <div class="proof-item"><div class="proof-num">500+</div><div class="proof-label">Happy Students</div></div>
-  <div class="proof-item"><div class="proof-num">4.9★</div><div class="proof-label">Google Rating</div></div>
-  <div class="proof-item"><div class="proof-num">8 Yrs</div><div class="proof-label">In Business</div></div>
+  <div class="proof-item"><div class="proof-num">4.9★</div><div class="proof-label">Average Rating</div></div>
+  <div class="proof-item"><div class="proof-num">8 Yrs</div><div class="proof-label">Experience</div></div>
   <div class="proof-item"><div class="proof-num">20+</div><div class="proof-label">Classes Weekly</div></div>
 </div>
-<section id="services">
+
+<!-- CLASSES — image cards -->
+<section id="classes">
   <div class="container">
-    <div class="section-label">What We Offer</div>
-    <h2>Classes For Every Journey</h2>
-    <p class="section-desc">Whether you're stepping onto the mat for the first time or deepening a decades-long practice, we have the perfect class for you.</p>
+    <div class="eyebrow">Our Classes</div>
+    <h2>Every Body.<br/>Every Level.</h2>
     <div class="services-grid">
-      <div class="service-card"><div class="service-icon">🔥</div><div class="service-name">Hot Yoga</div><div class="service-desc">Practised in a heated room at 37°C. Build strength, flexibility, and mental clarity while detoxifying your body through sweat.</div><div class="service-price">From $18 per class</div></div>
-      <div class="service-card"><div class="service-icon">🌊</div><div class="service-name">Vinyasa Flow</div><div class="service-desc">Dynamic, breath-linked movement sequences that build heat and flow. Perfect for those who love a moving meditation.</div><div class="service-price">From $16 per class</div></div>
-      <div class="service-card"><div class="service-icon">🌙</div><div class="service-name">Yin & Restore</div><div class="service-desc">Slow, meditative practice targeting deep connective tissue. Ideal for stress relief, flexibility, and deep relaxation.</div><div class="service-price">From $14 per class</div></div>
+      <div class="svc-card">
+        <div class="svc-card-img" style="background-image:url('https://images.pexels.com/photos/4056535/pexels-photo-4056535.jpeg?auto=compress&cs=tinysrgb&w=800')"></div>
+        <div class="svc-card-overlay"></div>
+        <div class="svc-card-body">
+          <div class="svc-price">From R180 · 75 min</div>
+          <div class="svc-name">Hot Yoga</div>
+          <div class="svc-desc">Practiced in a heated room at 37°C. Deep stretching, detoxification, and intense focus. Our most popular class.</div>
+        </div>
+      </div>
+      <div class="svc-card">
+        <div class="svc-card-img" style="background-image:url('https://images.pexels.com/photos/3822647/pexels-photo-3822647.jpeg?auto=compress&cs=tinysrgb&w=800')"></div>
+        <div class="svc-card-overlay"></div>
+        <div class="svc-card-body">
+          <div class="svc-price">From R160 · 60 min</div>
+          <div class="svc-name">Vinyasa Flow</div>
+          <div class="svc-desc">Dynamic movement synchronised with breath. Builds strength, flexibility and mental clarity through flowing sequences.</div>
+        </div>
+      </div>
+      <div class="svc-card">
+        <div class="svc-card-img" style="background-image:url('https://images.pexels.com/photos/3759657/pexels-photo-3759657.jpeg?auto=compress&cs=tinysrgb&w=800')"></div>
+        <div class="svc-card-overlay"></div>
+        <div class="svc-card-body">
+          <div class="svc-price">From R140 · 75 min</div>
+          <div class="svc-name">Yin & Restore</div>
+          <div class="svc-desc">Deep passive stretches held for 3–5 minutes each. Perfect for recovery, stress relief, and improving flexibility.</div>
+        </div>
+      </div>
     </div>
   </div>
 </section>
-<section id="benefits" style="background:var(--surface)">
+
+<!-- ABOUT — real photo left -->
+<section id="about" style="background:var(--surface)">
   <div class="container">
-    <div class="section-label">Why Zenflow</div>
-    <h2>More Than Just Yoga</h2>
-    <div class="benefits-grid">
-      <div class="benefit"><div class="benefit-icon">👩‍🏫</div><div class="benefit-title">Expert Instructors</div><div class="benefit-desc">All teachers are 200hr+ certified with 5+ years experience in their speciality.</div></div>
-      <div class="benefit"><div class="benefit-icon">🏛️</div><div class="benefit-title">Beautiful Studio Space</div><div class="benefit-desc">Thoughtfully designed spaces with natural wood, plants and calming lighting.</div></div>
-      <div class="benefit"><div class="benefit-icon">📱</div><div class="benefit-title">Easy Online Booking</div><div class="benefit-desc">Book, cancel or reschedule any class from your phone in seconds.</div></div>
-      <div class="benefit"><div class="benefit-icon">🧘</div><div class="benefit-title">All Levels Welcome</div><div class="benefit-desc">We never make beginners feel lost. Every class has modifications for every body.</div></div>
-      <div class="benefit"><div class="benefit-icon">🤝</div><div class="benefit-title">Vibrant Community</div><div class="benefit-desc">Join 500+ students who support, inspire and grow together both on and off the mat.</div></div>
-      <div class="benefit"><div class="benefit-icon">💚</div><div class="benefit-title">First Class Free</div><div class="benefit-desc">New students get their first class completely free. No strings attached.</div></div>
+    <div class="about-grid">
+      <div class="about-img">
+        <img src="https://images.pexels.com/photos/3823488/pexels-photo-3823488.jpeg?auto=compress&cs=tinysrgb&w=900" alt="Zenflow yoga instructor" loading="lazy"/>
+        <div class="about-badge">
+          <div class="about-badge-num">500+</div>
+          <div class="about-badge-label">Lives Transformed</div>
+        </div>
+      </div>
+      <div>
+        <div class="eyebrow">Our Story</div>
+        <h2>Where Yoga Becomes a Way of Life</h2>
+        <p>Zenflow was born from a simple idea: that everyone deserves access to a yoga practice that genuinely transforms their life. Founded in 2016 by two Cape Town yogis who believed that authentic teaching matters more than Instagram aesthetics.</p>
+        <p>Eight years later, we've built a community of over 500 students who come not just for the classes, but for the connection, the growth, and the stillness they find here. Our instructors bring decades of combined experience across multiple disciplines.</p>
+        <p>Whether you've never done yoga before or you're deepening an existing practice, Zenflow is where you belong.</p>
+        <a href="#contact" class="btn btn-primary" style="margin-top:8px">Start With a Free Class →</a>
+      </div>
     </div>
   </div>
 </section>
-<section id="testimonials">
+
+<!-- GALLERY — real photos -->
+<section id="gallery">
   <div class="container">
-    <div class="section-label">Student Love</div>
-    <h2>What Our Community Says</h2>
-    <div class="testimonials-grid">
-      <div class="tcard"><div class="tcard-stars">★★★★★</div><div class="tcard-quote">"I walked in knowing nothing about yoga and left feeling like I'd found something I'd been missing my whole life. The instructors are warm, knowledgeable and never make you feel out of place."</div><div class="tcard-name">Sarah K.</div><div class="tcard-loc">Member since 2022 · Cape Town</div></div>
-      <div class="tcard"><div class="tcard-stars">★★★★★</div><div class="tcard-quote">"The hot yoga classes have completely transformed my flexibility and stress levels. I've tried 6 studios in this city and Zenflow is on another level. Worth every cent of the membership."</div><div class="tcard-name">Marcus T.</div><div class="tcard-loc">Member since 2021 · Camps Bay</div></div>
-      <div class="tcard"><div class="tcard-stars">★★★★★</div><div class="tcard-quote">"Yin yoga on Thursday evenings is my non-negotiable. After 18 months of attending, my chronic back pain is practically gone. The teachers genuinely care about your progress and wellbeing."</div><div class="tcard-name">Priya N.</div><div class="tcard-loc">Member since 2023 · Sea Point</div></div>
+    <div class="eyebrow">The Studio</div>
+    <h2>See Our Space</h2>
+    <div class="gallery-grid">
+      <div class="gal-item">
+        <img src="https://images.pexels.com/photos/3822906/pexels-photo-3822906.jpeg?auto=compress&cs=tinysrgb&w=1200" alt="Yoga studio" loading="lazy"/>
+        <div class="gal-caption"><span>The Studio</span></div>
+      </div>
+      <div class="gal-item">
+        <img src="https://images.pexels.com/photos/4056535/pexels-photo-4056535.jpeg?auto=compress&cs=tinysrgb&w=800" alt="Hot yoga" loading="lazy"/>
+        <div class="gal-caption"><span>Hot Yoga</span></div>
+      </div>
+      <div class="gal-item">
+        <img src="https://images.pexels.com/photos/3759657/pexels-photo-3759657.jpeg?auto=compress&cs=tinysrgb&w=800" alt="Yin yoga" loading="lazy"/>
+        <div class="gal-caption"><span>Yin & Restore</span></div>
+      </div>
+      <div class="gal-item">
+        <img src="https://images.pexels.com/photos/3823488/pexels-photo-3823488.jpeg?auto=compress&cs=tinysrgb&w=800" alt="Instructor" loading="lazy"/>
+        <div class="gal-caption"><span>Our Instructors</span></div>
+      </div>
+      <div class="gal-item">
+        <img src="https://images.pexels.com/photos/3822647/pexels-photo-3822647.jpeg?auto=compress&cs=tinysrgb&w=800" alt="Vinyasa" loading="lazy"/>
+        <div class="gal-caption"><span>Vinyasa Flow</span></div>
+      </div>
     </div>
   </div>
 </section>
-<section id="faq" style="background:var(--surface)">
+
+<!-- TESTIMONIALS -->
+<section id="testimonials" style="background:var(--surface)">
+  <div class="container">
+    <div class="eyebrow">What Students Say</div>
+    <h2>Real Transformations</h2>
+    <div class="tgrid">
+      <div class="tcard">
+        <div class="tcard-stars">★★★★★</div>
+        <div class="tcard-text">"I started Zenflow as a complete beginner, terrified and inflexible. Six months later I'm attending four classes a week and my body and mind have completely transformed. The instructors create the most welcoming environment I've ever experienced."</div>
+        <div class="tcard-name">Amelia Rousseau</div><div class="tcard-loc">Student · Sea Point</div>
+      </div>
+      <div class="tcard">
+        <div class="tcard-stars">★★★★★</div>
+        <div class="tcard-text">"The hot yoga classes here are unlike anything I've done before. The heat, the instruction, and the energy in the room combine into something truly special. I've tried studios across Cape Town and nothing comes close to Zenflow's standard."</div>
+        <div class="tcard-name">Marcus van Wyk</div><div class="tcard-loc">Student · Green Point</div>
+      </div>
+      <div class="tcard">
+        <div class="tcard-stars">★★★★★</div>
+        <div class="tcard-text">"Yin & Restore on Thursday evenings has become the non-negotiable highlight of my week. After a stressful work week, 75 minutes of deep stretching and stillness completely resets me. I leave feeling like a different person every single time."</div>
+        <div class="tcard-name">Priya Naidoo</div><div class="tcard-loc">Student · Gardens</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section id="faq">
   <div class="container" style="text-align:center">
-    <div class="section-label">Got Questions?</div>
-    <h2>Frequently Asked Questions</h2>
-    <div class="faq-list">
-      <div class="faq-item"><div class="faq-q" onclick="this.nextElementSibling.classList.toggle('open');this.querySelector('.faq-icon').style.transform=this.nextElementSibling.classList.contains('open')?'rotate(45deg)':'rotate(0)'"><span>Do I need any experience to start?</span><span class="faq-icon">+</span></div><div class="faq-a">Not at all! We welcome complete beginners in every class. Our instructors offer modifications for all poses so you can practice at your own level. We recommend starting with our Foundations class if you're brand new.</div></div>
-      <div class="faq-item"><div class="faq-q" onclick="this.nextElementSibling.classList.toggle('open');this.querySelector('.faq-icon').style.transform=this.nextElementSibling.classList.contains('open')?'rotate(45deg)':'rotate(0)'"><span>What should I bring to my first class?</span><span class="faq-icon">+</span></div><div class="faq-a">Bring a water bottle, comfortable workout clothes, and an open mind. We provide mats, blocks and straps. For hot yoga, bring a small towel. Arrive 10 minutes early so we can show you around.</div></div>
-      <div class="faq-item"><div class="faq-q" onclick="this.nextElementSibling.classList.toggle('open');this.querySelector('.faq-icon').style.transform=this.nextElementSibling.classList.contains('open')?'rotate(45deg)':'rotate(0)'"><span>How much does a membership cost?</span><span class="faq-icon">+</span></div><div class="faq-a">We offer a casual class pass from $14, a 10-class pack for $120, and unlimited monthly memberships from $89/month. Your first class is completely free — no commitment needed.</div></div>
-      <div class="faq-item"><div class="faq-q" onclick="this.nextElementSibling.classList.toggle('open');this.querySelector('.faq-icon').style.transform=this.nextElementSibling.classList.contains('open')?'rotate(45deg)':'rotate(0)'"><span>Can I cancel or reschedule a booking?</span><span class="faq-icon">+</span></div><div class="faq-a">Yes! You can cancel or reschedule up to 2 hours before class through our app or website. Late cancellations within 2 hours may use one class credit.</div></div>
-      <div class="faq-item"><div class="faq-q" onclick="this.nextElementSibling.classList.toggle('open');this.querySelector('.faq-icon').style.transform=this.nextElementSibling.classList.contains('open')?'rotate(45deg)':'rotate(0)'"><span>Is hot yoga safe for beginners?</span><span class="faq-icon">+</span></div><div class="faq-a">Yes, with proper preparation. Stay well-hydrated before class, eat lightly 2 hours before, and listen to your body. Our hot yoga teachers are trained to guide beginners safely. Many of our most dedicated hot yoga students started as complete beginners.</div></div>
+    <div class="eyebrow" style="justify-content:center">Questions</div>
+    <h2>Everything You Need to Know</h2>
+    <div class="faq-wrap">
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)"><span class="faq-q-text">Do I need any experience to join?</span><div class="faq-icon">+</div></div>
+        <div class="faq-a">Absolutely not. All of our classes welcome complete beginners. Our instructors offer modifications for every pose so you can work at your own level and progress at your own pace.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)"><span class="faq-q-text">What should I bring to my first class?</span><div class="faq-icon">+</div></div>
+        <div class="faq-a">Just yourself and comfortable workout clothes. We provide mats, blocks, straps and all props. For hot yoga, bring a small towel and a water bottle. Arrive 10 minutes early for your first visit so we can show you around.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)"><span class="faq-q-text">How do I book classes?</span><div class="faq-icon">+</div></div>
+        <div class="faq-a">Use the contact form below to book your free trial class. After that, you can book through our studio app or by WhatsApp. We recommend booking 24 hours in advance as classes fill up quickly.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)"><span class="faq-q-text">What are your class prices?</span><div class="faq-icon">+</div></div>
+        <div class="faq-a">Drop-in classes start from R140. Monthly unlimited memberships from R980. Your first class is always free, no strings attached. We also offer student and senior discounts — ask at reception.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)"><span class="faq-q-text">Where are you located?</span><div class="faq-icon">+</div></div>
+        <div class="faq-a">We're in the heart of Cape Town with easy access from Sea Point, Green Point and Gardens. Free parking is available on the street after 6pm. Full address provided on booking confirmation.</div>
+      </div>
     </div>
   </div>
 </section>
+
+<!-- CTA BANNER — real photo bg -->
 <div class="cta-banner">
-  <div class="container">
-    <div class="section-label">Limited Spots Available</div>
-    <h2>Your First Class is <em style="color:var(--accent);font-family:'Cormorant Garamond',serif">Free</em></h2>
-    <p style="color:var(--muted);margin-bottom:28px;font-size:15px">Join 500+ students who've transformed their bodies, minds and lives at Zenflow.</p>
-    <button class="btn-primary" style="font-size:16px;padding:16px 40px">Book My Free Trial Class →</button>
+  <div class="cta-img"></div>
+  <div class="cta-overlay"></div>
+  <div class="cta-content">
+    <div style="display:inline-block;background:rgba(168,224,99,.1);border:1px solid rgba(168,224,99,.2);color:var(--accent);font-size:10px;font-weight:600;letter-spacing:2px;text-transform:uppercase;padding:5px 14px;border-radius:100px;margin-bottom:20px">✦ First Class Free</div>
+    <h2>Your First Class<br/>is on Us</h2>
+    <p>No commitment. No pressure. Just show up, breathe, and see what yoga can do for you.</p>
+    <a href="#contact" class="btn btn-primary" style="font-size:14px;padding:15px 40px;letter-spacing:.5px">Book Your Free Class →</a>
   </div>
 </div>
-<footer>
+
+<!-- FOOTER -->
+<footer id="contact">
   <div class="footer-grid">
-    <div><div class="footer-brand">Zenflow</div><div class="footer-tagline">Expert yoga classes for every level. Find your flow in the heart of Cape Town.</div></div>
-    <div><div class="footer-heading">Classes</div><div class="footer-links"><a href="#">Hot Yoga</a><a href="#">Vinyasa Flow</a><a href="#">Yin & Restore</a><a href="#">Meditation</a></div></div>
-    <div><div class="footer-heading">Studio</div><div class="footer-links"><a href="#">About Us</a><a href="#">Our Teachers</a><a href="#">Pricing</a><a href="#">Contact</a></div></div>
-    <div><div class="footer-heading">Connect</div><div class="footer-links"><a href="#">Instagram</a><a href="#">Facebook</a><a href="#">hello@zenflow.com</a><a href="#">+1 (555) 234-5678</a></div></div>
+    <div>
+      <div class="footer-brand">ZENFLOW</div>
+      <div class="footer-tagline">Transforming bodies and minds through the ancient practice of yoga. Cape Town's home for authentic yoga since 2016.</div>
+    </div>
+    <div>
+      <div class="footer-col-title">Classes</div>
+      <div class="footer-links">
+        <a href="#classes">Hot Yoga</a><a href="#classes">Vinyasa Flow</a>
+        <a href="#classes">Yin & Restore</a><a href="#classes">View Schedule</a>
+      </div>
+    </div>
+    <div>
+      <div class="footer-col-title">Studio</div>
+      <div class="footer-links">
+        <a href="#about">About Us</a><a href="#gallery">Gallery</a>
+        <a href="#testimonials">Reviews</a><a href="#faq">FAQ</a>
+      </div>
+    </div>
+    <div>
+      <div class="footer-col-title">Contact</div>
+      <div class="footer-links">
+        <a href="#">Cape Town</a><a href="#">Mon–Sat: 6am–8pm</a>
+        <a href="#">Instagram</a><a href="#">WhatsApp</a>
+      </div>
+    </div>
   </div>
-  <div class="footer-bottom"><span>© 2026 Zenflow Yoga Studio. All rights reserved.</span><span>Built with Sitefliq</span></div>
+  <div class="footer-bottom">
+    <span>© 2026 Zenflow Yoga Studio. All rights reserved.</span>
+    <span>Built with <a href="https://sitefliq.com" style="color:var(--accent)">Sitefliq</a></span>
+  </div>
 </footer>
+
+<script>
+function toggleFaq(el) {
+  const item = el.closest('.faq-item');
+  const answer = item.querySelector('.faq-a');
+  const isOpen = answer.classList.contains('open');
+  document.querySelectorAll('.faq-a.open').forEach(a => a.classList.remove('open'));
+  document.querySelectorAll('.faq-item.active').forEach(i => i.classList.remove('active'));
+  if (!isOpen) { answer.classList.add('open'); item.classList.add('active'); }
+}
+</script>
 </body>
 </html>`;
 
@@ -1249,7 +1466,7 @@ function HelpPage({onHome}) {
 
               <div style={{marginBottom:14}}>
                 <label style={{fontSize:12,fontWeight:600,color:"#374151",display:"block",marginBottom:6}}>Category</label>
-                <select style={{...inp,appearance:"none",backgroundImage:`url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%236b7280' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E")`,backgroundRepeat:"no-repeat",backgroundPosition:"right 14px center",paddingRight:36}} value={category||""} onChange={e=>setCategory(e.target.value)}>
+                <select style={{...inp,appearance:"none",backgroundImage:"url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%236b7280' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E\")",backgroundRepeat:"no-repeat",backgroundPosition:"right 14px center",paddingRight:36}} value={category||""} onChange={e=>setCategory(e.target.value)}>
                   <option value="">Select a category</option>
                   {categories.map(c=><option key={c.id} value={c.id}>{c.icon} {c.label}</option>)}
                 </select>
