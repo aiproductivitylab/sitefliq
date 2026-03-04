@@ -162,6 +162,24 @@ function buildPrompt(f, images=[]) {
   const hasImages = images.length > 0;
   // Fallbacks so every slot has something
   const img = (i) => images[i] || images[0] || null;
+
+  // Build maps HTML as a plain string to avoid nested backtick issues
+  const mapsHtml = f.location ? [
+    'Address: "' + f.location + '" â you MUST include ALL THREE of these in the contact section:',
+    '',
+    '1. CLICKABLE MAP IMAGE â a static map image wrapped in a link. Use this exact code:',
+    '<a href="https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(f.location) + '" target="_blank" rel="noopener" style="display:block;border-radius:12px;overflow:hidden;margin-bottom:12px;position:relative;text-decoration:none">',
+    '  <img src="https://maps.googleapis.com/maps/api/staticmap?center=' + encodeURIComponent(f.location) + '&zoom=15&size=800x300&scale=2&maptype=roadmap&markers=color:red%7C' + encodeURIComponent(f.location) + '&key=' + (import.meta.env.VITE_GOOGLE_KEY||"") + '" alt="Map of ' + f.location + '" style="width:100%;height:200px;object-fit:cover;display:block;border-radius:12px"/>',
+    '  <div style="position:absolute;bottom:10px;right:10px;background:white;border-radius:6px;padding:5px 10px;font-size:12px;font-weight:600;color:#374151;box-shadow:0 2px 8px rgba(0,0,0,.15)">View on Google Maps â</div>',
+    '</a>',
+    '',
+    '2. STREET VIEW LINK:',
+    '<a href="https://www.google.com/maps/@?api=1&map_action=pano&query=' + encodeURIComponent(f.location) + '" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:7px;padding:9px 16px;border-radius:8px;background:#f8fafc;border:1px solid #e2e8f0;font-size:13px;font-weight:600;color:#374151;text-decoration:none;margin-bottom:16px">View Street View</a>',
+    '',
+    '3. PLAIN TEXT ADDRESS:',
+    '<a href="https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(f.location) + '" target="_blank" rel="noopener" style="display:flex;align-items:center;gap:8px;color:inherit;text-decoration:none;font-size:14px">ð ' + f.location + '</a>'
+  ].join("\n") : "No address â omit map entirely.";
+
   return `You are a senior CRO expert and world-class web designer. Build a complete, production-ready, single-file HTML landing page.
 
 BUSINESS:
@@ -212,37 +230,18 @@ ${secs.map((s,i)=>{
     benefits:`${i+5}. BENEFITS: 6-item grid, icon+title+desc, niche-specific`,
     testimonials:`${i+5}. TESTIMONIALS: 3 realistic reviews, name+location+stars+quote`,
     pricing:`${i+5}. PRICING: 3 tiers, feature lists, Most Popular badge`,
-    gallery:`${i+5}. GALLERY: ${hasImages?`6-item CSS grid using these real images: ${[galleryImg1,galleryImg2,galleryImg3,galleryImg4,heroImg,aboutImg].filter(Boolean).join(", ")} â each as object-fit cover, caption overlay on hover`:"6-item CSS grid, gradient placeholders, caption hover"}`,
+    gallery:`${i+5}. GALLERY: ${hasImages?"6-item CSS grid using these real images: "+[galleryImg1,galleryImg2,galleryImg3,galleryImg4,heroImg,aboutImg].filter(Boolean).join(", ")+" â each as object-fit cover, caption overlay on hover":"6-item CSS grid, gradient placeholders, caption hover"}`,
     faq:`${i+5}. FAQ: 5 accordion items with JS click-to-expand`,
     booking:`${i+5}. BOOKING: full form with name/email/phone/service/date/message`,
     contact:`${i+5}. CONTACT: split layout, info left, form right`,
-    cta:`${i+5}. CTA BANNER: full-width urgent headline + big button${heroImg?` â background image with dark overlay`:""}`,
+    cta:`${i+5}. CTA BANNER: full-width urgent headline + big button${heroImg?" â background image with dark overlay":""}`,
   };
   return m[s]||`${i+5}. ${s.toUpperCase()}`;
 }).join("\n")}
 - Footer: logo, tagline, 3 link columns, social icons, copyright 2026
 
 GOOGLE MAPS:
-${f.location ? `Address: "${f.location}" â you MUST include ALL THREE of these in the contact section:
-
-1. CLICKABLE MAP IMAGE â a static map image wrapped in a link. Use this exact code:
-<a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(f.location)}" target="_blank" rel="noopener" style="display:block;border-radius:12px;overflow:hidden;margin-bottom:12px;position:relative;text-decoration:none">
-  <img src="https://maps.googleapis.com/maps/api/staticmap?center=${encodeURIComponent(f.location)}&zoom=15&size=800x300&scale=2&maptype=roadmap&markers=color:red%7C${encodeURIComponent(f.location)}&style=feature:all|element:labels.text.fill|color:0x444444&style=feature:landscape|element:all|color:0xf2f2f2&style=feature:road|element:all|saturation:-100|lightness:45&style=feature:water|element:all|color:0xc9d6de&key=AIzaSyD-9tSrke72PouQMnMX-a7eZSW0jkFMBWY" alt="Map showing ${f.location}" style="width:100%;height:200px;object-fit:cover;display:block;border-radius:12px"/>
-  <div style="position:absolute;bottom:10px;right:10px;background:white;border-radius:6px;padding:5px 10px;font-size:12px;font-weight:600;color:#374151;box-shadow:0 2px 8px rgba(0,0,0,.15);display:flex;align-items:center;gap:5px">
-    <svg width="12" height="12" viewBox="0 0 24 24" fill="#ea4335"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
-    View on Google Maps â
-  </div>
-</a>
-
-2. STREET VIEW LINK â a separate clickable button below the map:
-<a href="https://www.google.com/maps/@?api=1&map_action=pano&viewpoint=&query=${encodeURIComponent(f.location)}" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:7px;padding:9px 16px;border-radius:8px;background:#f8fafc;border:1px solid #e2e8f0;font-size:13px;font-weight:600;color:#374151;text-decoration:none;margin-bottom:16px">
-  ð¶ View Street View
-</a>
-
-3. PLAIN TEXT ADDRESS with map link:
-<a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(f.location)}" target="_blank" rel="noopener" style="display:flex;align-items:center;gap:8px;color:inherit;text-decoration:none;font-size:14px">
-  ð ${f.location}
-</a>` : 'No address â omit map entirely.'}
+${mapsHtml}
 
 RULES:
 1. CSS in <style>, JS in <script> at bottom. One Google Fonts @import only.
