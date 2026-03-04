@@ -1091,6 +1091,208 @@ function AuthModal({mode="signin", onSuccess, onClose}) {
 /* ─────────────────────────────────────────────────────────────────────────────
    HOME PAGE
 ───────────────────────────────────────────────────────────────────────────── */
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   LEGAL PAGES
+───────────────────────────────────────────────────────────────────────────── */
+function LegalPage({title, onHome, children}) {
+  return (
+    <div style={{minHeight:"100vh",background:"#fafaf9",fontFamily:"'Geist',sans-serif"}}>
+      <GS/>
+      <nav style={{position:"fixed",top:0,left:0,right:0,zIndex:100,height:56,display:"flex",alignItems:"center",justifyContent:"space-between",padding:"0 48px",background:"rgba(250,250,249,.95)",backdropFilter:"blur(20px)",borderBottom:"1px solid #e5e7eb"}}>
+        <div onClick={onHome} style={{display:"flex",alignItems:"center",gap:8,cursor:"pointer"}}>
+          <div style={{width:28,height:28,background:"#f97316",borderRadius:7,display:"flex",alignItems:"center",justifyContent:"center",fontSize:13,color:"white",fontWeight:800}}>S</div>
+          <span style={{fontSize:18,fontWeight:800,color:"#111827"}}>Sitefliq</span>
+        </div>
+        <button onClick={onHome} style={{padding:"7px 16px",background:"transparent",border:"1px solid #e5e7eb",borderRadius:8,fontSize:13,cursor:"pointer",color:"#374151",fontFamily:"inherit"}}>← Back to Home</button>
+      </nav>
+      <div style={{maxWidth:780,margin:"0 auto",padding:"100px 40px 80px"}}>
+        <h1 style={{fontSize:36,fontWeight:800,color:"#111827",marginBottom:8}}>{title}</h1>
+        <p style={{fontSize:13,color:"#9ca3af",marginBottom:48}}>Last updated: March 2026</p>
+        <div style={{fontSize:15,color:"#374151",lineHeight:1.9}}>
+          {children}
+        </div>
+      </div>
+      <footer style={{borderTop:"1px solid #e5e7eb",padding:"24px 48px",display:"flex",justifyContent:"space-between",alignItems:"center",background:"white"}}>
+        <span style={{fontSize:12,color:"#9ca3af"}}>© 2026 Sitefliq. All rights reserved.</span>
+        <div style={{display:"flex",gap:20}}>
+          <span onClick={onHome} style={{fontSize:12,color:"#9ca3af",cursor:"pointer",textDecoration:"underline"}}>Home</span>
+        </div>
+      </footer>
+    </div>
+  );
+}
+
+function Section({title, children}) {
+  return (
+    <div style={{marginBottom:36}}>
+      <h2 style={{fontSize:20,fontWeight:700,color:"#111827",marginBottom:12,marginTop:0}}>{title}</h2>
+      {children}
+    </div>
+  );
+}
+
+function TermsPage({onHome}) {
+  return (
+    <LegalPage title="Terms of Service" onHome={onHome}>
+      <Section title="1. Acceptance of Terms">
+        <p>By accessing or using Sitefliq ("Service", "we", "us", or "our") at sitefliq.com, you agree to be bound by these Terms of Service. If you do not agree to these terms, please do not use our Service. These terms apply to all visitors, users, and others who access or use the Service.</p>
+      </Section>
+      <Section title="2. Description of Service">
+        <p>Sitefliq is an AI-powered landing page generation tool. Users purchase credits which can be used to generate HTML landing pages. Each credit entitles the user to one (1) landing page generation. Generated pages are delivered as downloadable HTML files for use on any web hosting platform.</p>
+      </Section>
+      <Section title="3. User Accounts">
+        <p>You must create an account to use the Service. You are responsible for maintaining the confidentiality of your account credentials and for all activities that occur under your account. You agree to provide accurate and complete information when creating your account and to update it as necessary. You must be at least 18 years old to use this Service.</p>
+      </Section>
+      <Section title="4. Credits and Payments">
+        <p style={{marginBottom:10}}>Credits are purchased on a one-time, non-subscription basis. The following terms apply to all purchases:</p>
+        <ul style={{paddingLeft:20,margin:0}}>
+          <li style={{marginBottom:8}}>Credits are non-refundable once used to generate a landing page.</li>
+          <li style={{marginBottom:8}}>Unused credits do not expire and remain in your account indefinitely.</li>
+          <li style={{marginBottom:8}}>Credits are non-transferable and may not be sold or gifted to other users.</li>
+          <li style={{marginBottom:8}}>All prices are in USD and inclusive of applicable taxes where required by law.</li>
+          <li style={{marginBottom:8}}>Payments are processed securely by Paddle.com, our authorised reseller and Merchant of Record.</li>
+        </ul>
+      </Section>
+      <Section title="5. Refund Policy">
+        <p>We offer a 7-day money-back guarantee on unused credit packages. If you have not used any credits from a purchase, you may request a full refund within 7 days of purchase by contacting us at ai.productivitylab95@gmail.com. Partial refunds are not available for partially-used credit packages. Refunds are processed within 5-10 business days.</p>
+      </Section>
+      <Section title="6. AI-Generated Content">
+        <p style={{marginBottom:10}}>Our Service uses artificial intelligence to generate landing page content. You acknowledge and agree that:</p>
+        <ul style={{paddingLeft:20,margin:0}}>
+          <li style={{marginBottom:8}}>AI-generated content may not always be accurate, complete, or suitable for your specific needs.</li>
+          <li style={{marginBottom:8}}>You are solely responsible for reviewing, editing, and verifying all generated content before publishing.</li>
+          <li style={{marginBottom:8}}>Sitefliq does not guarantee that generated content will be free from errors, plagiarism, or legal issues.</li>
+          <li style={{marginBottom:8}}>You own the generated HTML output and may use it for any lawful commercial purpose.</li>
+          <li style={{marginBottom:8}}>We reserve the right to use anonymised, aggregated usage data to improve our AI models.</li>
+        </ul>
+      </Section>
+      <Section title="7. Intellectual Property">
+        <p>The Sitefliq platform, including its design, code, branding, and underlying technology, is owned by Sitefliq and protected by intellectual property laws. You retain ownership of the content you provide as input and the HTML pages generated from your inputs. You grant Sitefliq a limited licence to process your inputs solely for the purpose of generating your requested output.</p>
+      </Section>
+      <Section title="8. Prohibited Uses">
+        <p style={{marginBottom:10}}>You agree not to use the Service to generate content that:</p>
+        <ul style={{paddingLeft:20,margin:0}}>
+          <li style={{marginBottom:8}}>Is fraudulent, misleading, or deceptive</li>
+          <li style={{marginBottom:8}}>Violates any applicable laws or regulations</li>
+          <li style={{marginBottom:8}}>Infringes any third-party intellectual property rights</li>
+          <li style={{marginBottom:8}}>Contains spam, malware, or malicious code</li>
+          <li style={{marginBottom:8}}>Promotes illegal products, services, or activities</li>
+        </ul>
+      </Section>
+      <Section title="9. Disclaimer of Warranties">
+        <p>THE SERVICE IS PROVIDED "AS IS" AND "AS AVAILABLE" WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED. SITEFLIQ DOES NOT WARRANT THAT THE SERVICE WILL BE UNINTERRUPTED, ERROR-FREE, OR FREE OF VIRUSES. YOUR USE OF THE SERVICE IS AT YOUR SOLE RISK.</p>
+      </Section>
+      <Section title="10. Limitation of Liability">
+        <p>TO THE MAXIMUM EXTENT PERMITTED BY LAW, SITEFLIQ SHALL NOT BE LIABLE FOR ANY INDIRECT, INCIDENTAL, SPECIAL, CONSEQUENTIAL, OR PUNITIVE DAMAGES ARISING FROM YOUR USE OF THE SERVICE. OUR TOTAL LIABILITY TO YOU FOR ANY CLAIM ARISING FROM THESE TERMS SHALL NOT EXCEED THE AMOUNT YOU PAID US IN THE 30 DAYS PRECEDING THE CLAIM.</p>
+      </Section>
+      <Section title="11. Governing Law">
+        <p>These Terms are governed by the laws of the Republic of South Africa. Any disputes arising from these Terms or your use of the Service shall be subject to the exclusive jurisdiction of the courts of South Africa.</p>
+      </Section>
+      <Section title="12. Changes to Terms">
+        <p>We reserve the right to modify these Terms at any time. We will notify users of significant changes via email or a prominent notice on our website. Continued use of the Service after changes constitutes acceptance of the new Terms.</p>
+      </Section>
+      <Section title="13. Contact">
+        <p>For any questions regarding these Terms, please contact us at: <strong>ai.productivitylab95@gmail.com</strong></p>
+      </Section>
+    </LegalPage>
+  );
+}
+
+function PrivacyPage({onHome}) {
+  return (
+    <LegalPage title="Privacy Policy" onHome={onHome}>
+      <Section title="1. Introduction">
+        <p>Sitefliq ("we", "us", or "our") is committed to protecting your privacy. This Privacy Policy explains how we collect, use, and safeguard your personal information when you use our Service at sitefliq.com. By using Sitefliq, you consent to the practices described in this policy.</p>
+      </Section>
+      <Section title="2. Information We Collect">
+        <p style={{marginBottom:10}}>We collect the following types of information:</p>
+        <ul style={{paddingLeft:20,margin:0}}>
+          <li style={{marginBottom:8}}><strong>Account information:</strong> email address and password (stored securely via Supabase)</li>
+          <li style={{marginBottom:8}}><strong>Payment information:</strong> billing details processed by Paddle (we never store card details)</li>
+          <li style={{marginBottom:8}}><strong>Usage data:</strong> pages generated, credits used, and feature interactions</li>
+          <li style={{marginBottom:8}}><strong>Input data:</strong> business name, description, and other information you provide to generate pages</li>
+          <li style={{marginBottom:8}}><strong>Technical data:</strong> IP address, browser type, and device information via standard web logs</li>
+        </ul>
+      </Section>
+      <Section title="3. How We Use Your Information">
+        <p style={{marginBottom:10}}>We use your information to:</p>
+        <ul style={{paddingLeft:20,margin:0}}>
+          <li style={{marginBottom:8}}>Provide and improve the Service</li>
+          <li style={{marginBottom:8}}>Process payments and manage your credit balance</li>
+          <li style={{marginBottom:8}}>Send transactional emails (receipts, account confirmations)</li>
+          <li style={{marginBottom:8}}>Respond to support requests</li>
+          <li style={{marginBottom:8}}>Detect and prevent fraud or abuse</li>
+          <li style={{marginBottom:8}}>Comply with legal obligations</li>
+        </ul>
+      </Section>
+      <Section title="4. Data Sharing">
+        <p style={{marginBottom:10}}>We do not sell your personal data. We share data only with:</p>
+        <ul style={{paddingLeft:20,margin:0}}>
+          <li style={{marginBottom:8}}><strong>Supabase:</strong> for authentication and database storage</li>
+          <li style={{marginBottom:8}}><strong>Paddle:</strong> for payment processing (subject to their privacy policy)</li>
+          <li style={{marginBottom:8}}><strong>Anthropic:</strong> input data is sent to Claude AI for page generation (subject to their privacy policy)</li>
+          <li style={{marginBottom:8}}><strong>Vercel:</strong> for website hosting and serverless functions</li>
+          <li style={{marginBottom:8}}><strong>Legal authorities:</strong> where required by law</li>
+        </ul>
+      </Section>
+      <Section title="5. Data Retention">
+        <p>We retain your account data for as long as your account is active. You may request deletion of your account and associated data at any time by contacting us. Payment records are retained for 7 years as required by financial regulations.</p>
+      </Section>
+      <Section title="6. Security">
+        <p>We implement industry-standard security measures including encrypted data storage, secure HTTPS connections, and row-level security on our database. However, no method of transmission over the internet is 100% secure and we cannot guarantee absolute security.</p>
+      </Section>
+      <Section title="7. Your Rights">
+        <p style={{marginBottom:10}}>Under applicable data protection laws, you have the right to:</p>
+        <ul style={{paddingLeft:20,margin:0}}>
+          <li style={{marginBottom:8}}>Access the personal data we hold about you</li>
+          <li style={{marginBottom:8}}>Request correction of inaccurate data</li>
+          <li style={{marginBottom:8}}>Request deletion of your data</li>
+          <li style={{marginBottom:8}}>Object to processing of your data</li>
+          <li style={{marginBottom:8}}>Request a copy of your data in a portable format</li>
+        </ul>
+        <p style={{marginTop:10}}>To exercise any of these rights, contact us at ai.productivitylab95@gmail.com.</p>
+      </Section>
+      <Section title="8. Cookies">
+        <p>We use minimal cookies necessary for authentication (session tokens stored in localStorage). We do not use advertising or tracking cookies. You can clear these at any time through your browser settings.</p>
+      </Section>
+      <Section title="9. Contact">
+        <p>For privacy-related enquiries, contact us at: <strong>ai.productivitylab95@gmail.com</strong></p>
+      </Section>
+    </LegalPage>
+  );
+}
+
+function RefundPage({onHome}) {
+  return (
+    <LegalPage title="Refund Policy" onHome={onHome}>
+      <Section title="Our Commitment">
+        <p>We want you to be completely satisfied with Sitefliq. If for any reason you are not happy with your purchase, we offer a straightforward refund policy.</p>
+      </Section>
+      <Section title="7-Day Money-Back Guarantee">
+        <p>We offer a full refund on any credit package within <strong>7 days of purchase</strong>, provided that <strong>none of the credits have been used</strong>. If you purchased a package and have not generated any landing pages, simply contact us and we will issue a full refund, no questions asked.</p>
+      </Section>
+      <Section title="Partial Refunds">
+        <p>If you have used some but not all of your credits, we do not offer partial refunds. However, your remaining unused credits will stay in your account and never expire, so you can use them whenever you need to.</p>
+      </Section>
+      <Section title="Non-Refundable Circumstances">
+        <p style={{marginBottom:10}}>Refunds will not be issued in the following circumstances:</p>
+        <ul style={{paddingLeft:20,margin:0}}>
+          <li style={{marginBottom:8}}>More than 7 days have passed since the original purchase</li>
+          <li style={{marginBottom:8}}>One or more credits from the package have been used</li>
+          <li style={{marginBottom:8}}>The account has been suspended for violating our Terms of Service</li>
+        </ul>
+      </Section>
+      <Section title="How to Request a Refund">
+        <p>To request a refund, email us at <strong>ai.productivitylab95@gmail.com</strong> with the subject line "Refund Request" and include your account email address and the date of purchase. We will process your refund within 5-10 business days. Refunds will be returned to the original payment method.</p>
+      </Section>
+      <Section title="Contact">
+        <p>For any questions about our refund policy, contact us at: <strong>ai.productivitylab95@gmail.com</strong></p>
+      </Section>
+    </LegalPage>
+  );
+}
+
 function HomePage({onBuild,onPricing,onExample,onHelp,user,credits,onSignIn,onSignOut}) {
   return (
     <div style={{minHeight:"100vh",background:"#fafaf9",color:"#111827"}}>
@@ -1217,8 +1419,11 @@ function HomePage({onBuild,onPricing,onExample,onHelp,user,credits,onSignIn,onSi
         <div style={{marginTop:12,fontSize:12,color:"#9ca3af"}}>See your page before you pay</div>
       </div>
 
-      <div style={{textAlign:"center",padding:"16px 40px",borderTop:"1px solid #f3f4f6",fontSize:11,color:"#9ca3af",background:"white"}}>
-        © 2026 Sitefliq · AI Landing Page Builder · sitefliq.com
+      <div style={{textAlign:"center",padding:"16px 40px",borderTop:"1px solid #f3f4f6",fontSize:11,color:"#9ca3af",background:"white",display:"flex",alignItems:"center",justifyContent:"center",gap:20,flexWrap:"wrap"}}>
+        <span>© 2026 Sitefliq · AI Landing Page Builder</span>
+        <span onClick={()=>window.dispatchEvent(new CustomEvent("sitefliq-legal",{detail:"terms"}))} style={{cursor:"pointer",textDecoration:"underline"}}>Terms of Service</span>
+        <span onClick={()=>window.dispatchEvent(new CustomEvent("sitefliq-legal",{detail:"privacy"}))} style={{cursor:"pointer",textDecoration:"underline"}}>Privacy Policy</span>
+        <span onClick={()=>window.dispatchEvent(new CustomEvent("sitefliq-legal",{detail:"refund"}))} style={{cursor:"pointer",textDecoration:"underline"}}>Refund Policy</span>
       </div>
     </div>
   );
@@ -1953,6 +2158,13 @@ export default function Sitefliq() {
   const [credits,setCredits]=useState(0);
   const [showAuth,setShowAuth]=useState(false);
   const [authMode,setAuthMode]=useState("signin");
+  const [legalScreen,setLegalScreen]=useState(null); // terms | privacy | refund
+
+  useEffect(()=>{
+    const handler = (e) => setLegalScreen(e.detail);
+    window.addEventListener("sitefliq-legal", handler);
+    return () => window.removeEventListener("sitefliq-legal", handler);
+  },[]);
 
   // Restore session on mount
   useEffect(()=>{
@@ -2028,6 +2240,9 @@ export default function Sitefliq() {
     setScreen("waiting_payment");
   };
 
+  if(legalScreen==="terms") return <TermsPage onHome={()=>setLegalScreen(null)}/>;
+  if(legalScreen==="privacy") return <PrivacyPage onHome={()=>setLegalScreen(null)}/>;
+  if(legalScreen==="refund") return <RefundPage onHome={()=>setLegalScreen(null)}/>;
   if(screen==="home") return <><HomePage onBuild={()=>setScreen("builder")} onPricing={()=>setScreen("pricing_standalone")} onExample={()=>setScreen("example")} onHelp={()=>setScreen("help")} user={user} credits={credits} onSignIn={()=>{setAuthMode("signin");setShowAuth(true);}} onSignOut={handleSignOut}/>{showAuth&&<AuthModal mode={authMode} onSuccess={()=>{setUser(sb._user);sb.getCredits().then(setCredits);setShowAuth(false);}} onClose={()=>setShowAuth(false)}/>}</>;
   if(screen==="help") return <HelpPage onHome={()=>setScreen("home")}/>;
   if(screen==="example") return <ExamplePage onBack={()=>setScreen("home")} onBuild={()=>setScreen("builder")}/>;
