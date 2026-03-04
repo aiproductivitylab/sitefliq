@@ -756,7 +756,7 @@ function ResultScreen({html,form,onReset}) {
 /* ─────────────────────────────────────────────────────────────────────────────
    HOME PAGE
 ───────────────────────────────────────────────────────────────────────────── */
-function HomePage({onBuild,onPricing,onExample}) {
+function HomePage({onBuild,onPricing,onExample,onHelp}) {
   return (
     <div style={{minHeight:"100vh",background:"#fafaf9",color:"#111827"}}>
       <GS/>
@@ -768,6 +768,7 @@ function HomePage({onBuild,onPricing,onExample}) {
         <div style={{display:"flex",gap:8}}>
           <button onClick={onPricing} style={{padding:"7px 16px",background:"transparent",border:"1px solid #e5e7eb",borderRadius:8,fontSize:13,cursor:"pointer",color:"#374151",fontFamily:"inherit",fontWeight:500}}>Pricing</button>
           <button onClick={onExample} style={{padding:"7px 16px",background:"transparent",border:"1px solid #e5e7eb",borderRadius:8,fontSize:13,cursor:"pointer",color:"#374151",fontFamily:"inherit",fontWeight:500}}>See Example</button>
+          <button onClick={onHelp} style={{padding:"7px 16px",background:"transparent",border:"1px solid #e5e7eb",borderRadius:8,fontSize:13,cursor:"pointer",color:"#6b7280",fontFamily:"inherit",fontWeight:500}}>🛟 Help</button>
           <button onClick={onBuild} style={{padding:"8px 20px",background:"#f97316",border:"none",borderRadius:8,fontSize:13,cursor:"pointer",color:"white",fontFamily:"inherit",fontWeight:700}}>Start Building →</button>
         </div>
       </nav>
@@ -1141,6 +1142,175 @@ footer{background:var(--surface);border-top:1px solid rgba(168,224,99,.08);paddi
 </body>
 </html>`;
 
+/* ─────────────────────────────────────────────────────────────────────────────
+   HELP PAGE
+───────────────────────────────────────────────────────────────────────────── */
+function HelpPage({onHome}) {
+  const [category, setCategory] = React.useState(null);
+  const [form, setForm] = React.useState({name:"",email:"",subject:"",message:""});
+  const [charCount, setCharCount] = React.useState(0);
+  const [submitted, setSubmitted] = React.useState(false);
+  const [openFaq, setOpenFaq] = React.useState(null);
+
+  const categories = [
+    {id:"feature", icon:"💡", label:"Feature Request"},
+    {id:"bug",     icon:"🐛", label:"Bug / Issue"},
+    {id:"question",icon:"❓", label:"General Question"},
+    {id:"other",   icon:"💬", label:"Other"},
+  ];
+
+  const faqs = [
+    {q:"My page didn't generate — what happened?", a:"Usually a network timeout or very short description. Try again with a longer business description (3–5 sentences). If you see 'API 401' contact us immediately."},
+    {q:"I paid but nothing happened", a:"After paying, return to Sitefliq and click 'I've Paid — Generate My Page'. If credits aren't showing, email us your payment receipt and we'll sort it within the hour."},
+    {q:"The images don't match my business", a:"Make sure you select the correct industry from the dropdown — this controls which photos are sourced. If matches are still poor for your industry, let us know and we'll improve the search terms."},
+    {q:"How do I host my downloaded HTML file?", a:"Go to netlify.com, create a free account, and drag-and-drop your HTML file onto the dashboard. Your site goes live instantly at a free URL. You can connect a custom domain anytime."},
+    {q:"Do my credits expire?", a:"Never. Credits are yours to use whenever you're ready — no time pressure, no subscription."},
+    {q:"Can I edit the page after downloading?", a:"Yes — open the file in any text editor (VS Code, Notepad) and edit the text between HTML tags directly. For major redesigns, it's faster to regenerate with new settings."},
+    {q:"What does 'No Sitefliq branding' mean?", a:"Starter pages include a small 'Built with Sitefliq' link in the footer. Pro and Agency plans remove this completely so your clients see a clean, unbranded page."},
+  ];
+
+  const handleSubmit = () => {
+    if(!form.name||!form.email||!form.message||!category) return;
+    const subject = encodeURIComponent(`[Sitefliq ${categories.find(c=>c.id===category)?.label}] ${form.subject||"Support Request"}`);
+    const body = encodeURIComponent(`Name: ${form.name}\nEmail: ${form.email}\nCategory: ${categories.find(c=>c.id===category)?.label}\nSubject: ${form.subject}\n\nMessage:\n${form.message}`);
+    window.open(`mailto:ai.productivitylab95@gmail.com?subject=${subject}&body=${body}`,"_blank");
+    setSubmitted(true);
+  };
+
+  const inp = {width:"100%",padding:"11px 14px",border:"1px solid #e5e7eb",borderRadius:8,fontSize:13,fontFamily:"'Geist',sans-serif",outline:"none",color:"#111827",background:"white",transition:"border-color .2s"};
+
+  return (
+    <div style={{minHeight:"100vh",background:"#fafaf9",fontFamily:"'Geist',sans-serif"}}>
+      <GS/>
+
+      {/* Top bar */}
+      <div style={{height:52,background:"white",borderBottom:"1px solid #f3f4f6",display:"flex",alignItems:"center",justifyContent:"space-between",padding:"0 28px",position:"sticky",top:0,zIndex:10}}>
+        <button onClick={onHome} style={{display:"flex",alignItems:"center",gap:6,background:"transparent",border:"none",cursor:"pointer",fontSize:13,color:"#6b7280",fontFamily:"inherit",fontWeight:500}}>
+          ← Back
+        </button>
+        <div style={{display:"flex",alignItems:"center",gap:7}}>
+          <div style={{width:24,height:24,background:"#f97316",borderRadius:6,display:"flex",alignItems:"center",justifyContent:"center",fontSize:11,color:"white",fontWeight:800}}>S</div>
+          <span style={{fontSize:14,fontWeight:800,color:"#111827"}}>Sitefliq</span>
+          <span style={{fontSize:13,color:"#9ca3af",marginLeft:4}}>Help</span>
+        </div>
+        <div style={{width:80}}/>
+      </div>
+
+      <div style={{maxWidth:680,margin:"0 auto",padding:"44px 24px 80px"}}>
+
+        {/* Hero */}
+        <div style={{textAlign:"center",marginBottom:40}}>
+          <h1 style={{fontSize:28,fontWeight:800,color:"#111827",marginBottom:10,fontFamily:"'Instrument Serif',serif",letterSpacing:"-.5px"}}>Help Center</h1>
+          <p style={{fontSize:14,color:"#6b7280",lineHeight:1.6}}>Have a question, found a bug, or want a new feature? Let us know!</p>
+        </div>
+
+        {/* Category picker */}
+        <div style={{display:"grid",gridTemplateColumns:"repeat(4,1fr)",gap:10,marginBottom:28}}>
+          {categories.map(c=>(
+            <div
+              key={c.id}
+              onClick={()=>setCategory(c.id)}
+              style={{
+                background:"white",border:`1.5px solid ${category===c.id?"#f97316":"#e5e7eb"}`,
+                borderRadius:12,padding:"18px 12px",textAlign:"center",cursor:"pointer",
+                transition:"all .15s",boxShadow:category===c.id?"0 0 0 3px rgba(249,115,22,.1)":"none"
+              }}
+            >
+              <div style={{fontSize:22,marginBottom:8}}>{c.icon}</div>
+              <div style={{fontSize:12,fontWeight:600,color:category===c.id?"#f97316":"#374151"}}>{c.label}</div>
+            </div>
+          ))}
+        </div>
+
+        {/* Submit form */}
+        <div style={{background:"white",border:"1px solid #e5e7eb",borderRadius:14,padding:"28px 28px 24px",marginBottom:40,boxShadow:"0 1px 4px rgba(0,0,0,.04)"}}>
+          {submitted ? (
+            <div style={{textAlign:"center",padding:"32px 0"}}>
+              <div style={{fontSize:44,marginBottom:16}}>✅</div>
+              <div style={{fontSize:18,fontWeight:800,color:"#111827",marginBottom:8}}>Query Submitted!</div>
+              <p style={{fontSize:13,color:"#6b7280",lineHeight:1.7}}>Your email client opened with your message pre-filled. We'll respond to <strong>{form.email}</strong> within 24 hours.</p>
+              <button onClick={()=>setSubmitted(false)} style={{marginTop:20,padding:"10px 22px",background:"#f97316",border:"none",borderRadius:8,fontSize:13,fontWeight:700,color:"white",cursor:"pointer",fontFamily:"inherit"}}>Submit Another</button>
+            </div>
+          ) : (
+            <>
+              <h2 style={{fontSize:17,fontWeight:800,color:"#111827",marginBottom:4}}>Submit a Query</h2>
+              <p style={{fontSize:12,color:"#9ca3af",marginBottom:22}}>Fill out the form below and we'll respond via email.</p>
+
+              <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:14,marginBottom:14}}>
+                <div>
+                  <label style={{fontSize:12,fontWeight:600,color:"#374151",display:"block",marginBottom:6}}>Your Name</label>
+                  <input style={inp} placeholder="John Doe" value={form.name} onChange={e=>setForm(f=>({...f,name:e.target.value}))}/>
+                </div>
+                <div>
+                  <label style={{fontSize:12,fontWeight:600,color:"#374151",display:"block",marginBottom:6}}>Email Address</label>
+                  <input style={inp} placeholder="john@email.com" type="email" value={form.email} onChange={e=>setForm(f=>({...f,email:e.target.value}))}/>
+                </div>
+              </div>
+
+              <div style={{marginBottom:14}}>
+                <label style={{fontSize:12,fontWeight:600,color:"#374151",display:"block",marginBottom:6}}>Category</label>
+                <select style={{...inp,appearance:"none",backgroundImage:`url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%236b7280' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E")`,backgroundRepeat:"no-repeat",backgroundPosition:"right 14px center",paddingRight:36}} value={category||""} onChange={e=>setCategory(e.target.value)}>
+                  <option value="">Select a category</option>
+                  {categories.map(c=><option key={c.id} value={c.id}>{c.icon} {c.label}</option>)}
+                </select>
+              </div>
+
+              <div style={{marginBottom:14}}>
+                <label style={{fontSize:12,fontWeight:600,color:"#374151",display:"block",marginBottom:6}}>Subject</label>
+                <input style={inp} placeholder="Brief summary of your query" value={form.subject} onChange={e=>setForm(f=>({...f,subject:e.target.value}))}/>
+              </div>
+
+              <div style={{marginBottom:8}}>
+                <label style={{fontSize:12,fontWeight:600,color:"#374151",display:"block",marginBottom:6}}>Message</label>
+                <textarea
+                  style={{...inp,resize:"vertical",minHeight:130,lineHeight:1.6}}
+                  placeholder="Describe your query in detail..."
+                  maxLength={500}
+                  value={form.message}
+                  onChange={e=>{setForm(f=>({...f,message:e.target.value}));setCharCount(e.target.value.length);}}
+                />
+              </div>
+
+              <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:18,fontSize:11,color:"#9ca3af"}}>
+                <span>{new Date().toLocaleDateString("en-US",{month:"numeric",day:"numeric",year:"numeric"})+", "+new Date().toLocaleTimeString()}</span>
+                <span>{charCount}/500</span>
+              </div>
+
+              <button
+                onClick={handleSubmit}
+                disabled={!form.name||!form.email||!form.message||!category}
+                style={{width:"100%",padding:"13px",background:(!form.name||!form.email||!form.message||!category)?"#fde8d8":"#f97316",border:"none",borderRadius:10,fontSize:14,fontWeight:700,color:"white",cursor:(!form.name||!form.email||!form.message||!category)?"not-allowed":"pointer",fontFamily:"inherit",display:"flex",alignItems:"center",justifyContent:"center",gap:8,transition:"background .2s"}}
+              >
+                ✈️ Submit Query
+              </button>
+            </>
+          )}
+        </div>
+
+        {/* FAQ */}
+        <div>
+          <h2 style={{fontSize:17,fontWeight:800,color:"#111827",marginBottom:16}}>Frequently Asked Questions</h2>
+          <div style={{borderRadius:12,overflow:"hidden",border:"1px solid #e5e7eb",background:"white"}}>
+            {faqs.map((faq,i)=>(
+              <div key={i} style={{borderBottom:i<faqs.length-1?"1px solid #f3f4f6":"none"}}>
+                <div onClick={()=>setOpenFaq(openFaq===i?null:i)} style={{padding:"16px 20px",display:"flex",justifyContent:"space-between",alignItems:"center",cursor:"pointer",gap:12}}>
+                  <span style={{fontSize:13,fontWeight:600,color:"#111827",lineHeight:1.4}}>{faq.q}</span>
+                  <span style={{color:"#f97316",fontSize:18,fontWeight:300,flexShrink:0,transition:"transform .25s",display:"inline-block",transform:openFaq===i?"rotate(45deg)":"rotate(0)"}}>+</span>
+                </div>
+                {openFaq===i&&(
+                  <div style={{padding:"0 20px 16px",fontSize:13,color:"#6b7280",lineHeight:1.75}}>{faq.a}</div>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+
+      </div>
+    </div>
+  );
+}
+
+
 function ExamplePage({onBack,onBuild}) {
   const [blobUrl,setBlobUrl]=useState(null);
   useEffect(()=>{
@@ -1243,7 +1413,8 @@ export default function Sitefliq() {
     setScreen("waiting_payment");
   };
 
-  if(screen==="home") return <HomePage onBuild={()=>setScreen("builder")} onPricing={()=>setScreen("pricing_standalone")} onExample={()=>setScreen("example")}/>;
+  if(screen==="home") return <HomePage onBuild={()=>setScreen("builder")} onPricing={()=>setScreen("pricing_standalone")} onExample={()=>setScreen("example")} onHelp={()=>setScreen("help")}/>;
+  if(screen==="help") return <HelpPage onHome={()=>setScreen("home")}/>;
   if(screen==="example") return <ExamplePage onBack={()=>setScreen("home")} onBuild={()=>setScreen("builder")}/>;
   if(screen==="pricing_standalone") return <PricingPage onBuild={()=>setScreen("builder")} onHome={()=>setScreen("home")}/>;
   if(screen==="pricing_wall") return <PricingWall form={form} onBack={()=>setScreen("builder")} onPurchase={handlePurchase}/>;
