@@ -43,41 +43,48 @@ const INDUSTRIES = [
 ];
 
 // 🔑 REPLACE THESE WITH YOUR REAL LEMON SQUEEZY CHECKOUT LINKS
+// ── CREDIT PACKS ─────────────────────────────────────────────────────────────
+// Your cost per generation: ~$0.25 (Claude API)
+// Your profit per credit:   $7–9 after costs
+// ─────────────────────────────────────────────────────────────────────────────
 const PLANS = [
   {
     id:"starter",
     name:"Starter",
-    price:"$29",
-    
-    period:"one-time",
+    price:"$19",
+    credits:3,
+    perPage:"$6.33",
+    period:"3 credits · one-time",
     color:"#22c55e",
     badge:null,
-    desc:"Perfect for one business",
-    features:["1 landing page","All styles & palettes","Download HTML file","SEO + conversion optimised","Email support"],
+    desc:"Try it out, no commitment",
+    features:["3 page generations","All styles & colour palettes","Full SEO + conversion copy","Download HTML instantly","Email support","Credits never expire"],
     checkoutUrl:"https://sitefliq.lemonsqueezy.com/checkout/buy/YOUR_STARTER_LINK",
   },
   {
     id:"pro",
     name:"Pro",
-    price:"$59",
-    
-    period:"one-time",
+    price:"$49",
+    credits:10,
+    perPage:"$4.90",
+    period:"10 credits · one-time",
     color:"#f97316",
-    badge:"MOST POPULAR",
-    desc:"Best value for businesses",
-    features:["3 landing pages","All styles & palettes","Download HTML files","SEO + conversion optimised","Priority generation","No Sitefliq branding","Priority support"],
+    badge:"BEST VALUE",
+    desc:"For freelancers & small agencies",
+    features:["10 page generations","All styles & colour palettes","Full SEO + conversion copy","Download HTML instantly","No Sitefliq branding","Priority generation speed","Priority support","Credits never expire"],
     checkoutUrl:"https://sitefliq.lemonsqueezy.com/checkout/buy/YOUR_PRO_LINK",
   },
   {
     id:"agency",
     name:"Agency",
-    price:"$139",
-    
-    period:"one-time",
+    price:"$99",
+    credits:25,
+    perPage:"$3.96",
+    period:"25 credits · one-time",
     color:"#8b5cf6",
     badge:null,
-    desc:"For agencies & freelancers",
-    features:["Unlimited pages (30 days)","All styles & palettes","Download HTML files","SEO + conversion optimised","White-label (no branding)","Client preview links","Priority support"],
+    desc:"Built for agencies & resellers",
+    features:["25 page generations","All styles & colour palettes","Full SEO + conversion copy","Download HTML instantly","White-label (no branding)","Priority generation speed","Dedicated support","Credits never expire","Best per-page rate"],
     checkoutUrl:"https://sitefliq.lemonsqueezy.com/checkout/buy/YOUR_AGENCY_LINK",
   },
 ];
@@ -439,23 +446,36 @@ function PricingWall({form, onBack, onPurchase}) {
               onMouseLeave={e=>{e.currentTarget.style.transform="translateY(0)";e.currentTarget.style.boxShadow=plan.badge?`0 4px 30px ${plan.color}18`:"0 1px 3px rgba(0,0,0,.04)";}}>
               {plan.badge&&<div style={{position:"absolute",top:-12,left:"50%",transform:"translateX(-50%)",background:plan.color,color:"white",padding:"3px 14px",borderRadius:100,fontSize:9,fontWeight:800,letterSpacing:1.5,whiteSpace:"nowrap"}}>{plan.badge}</div>}
 
-              <div style={{fontSize:10,fontWeight:700,color:plan.color,letterSpacing:2,textTransform:"uppercase",marginBottom:6}}>{plan.name}</div>
-              <div style={{marginBottom:4}}>
-                <span style={{fontSize:40,fontWeight:800,color:"#111827",fontFamily:"'Instrument Serif',serif"}}>{plan.price}</span>
-                <span style={{fontSize:12,color:"#9ca3af",marginLeft:4}}>{plan.period}</span>
-              </div>
-              <div style={{fontSize:11,color:"#6b7280",marginBottom:18}}>{plan.desc}</div>
+              <div style={{fontSize:10,fontWeight:700,color:plan.color,letterSpacing:2,textTransform:"uppercase",marginBottom:10}}>{plan.name}</div>
 
-              <div style={{display:"flex",flexDirection:"column",gap:8,marginBottom:24}}>
+              {/* Credit counter — big and prominent */}
+              <div style={{background:`${plan.color}10`,border:`1px solid ${plan.color}30`,borderRadius:10,padding:"14px 16px",marginBottom:14,display:"flex",alignItems:"center",justifyContent:"space-between"}}>
+                <div>
+                  <div style={{fontSize:11,color:plan.color,fontWeight:700,letterSpacing:1,textTransform:"uppercase",marginBottom:2}}>Credits included</div>
+                  <div style={{fontSize:36,fontWeight:800,color:"#111827",lineHeight:1,fontFamily:"'Instrument Serif',serif"}}>{plan.credits}</div>
+                </div>
+                <div style={{textAlign:"right"}}>
+                  <div style={{fontSize:11,color:"#9ca3af",marginBottom:2}}>per page</div>
+                  <div style={{fontSize:16,fontWeight:700,color:plan.color}}>{plan.perPage}</div>
+                </div>
+              </div>
+
+              <div style={{marginBottom:4,display:"flex",alignItems:"baseline",gap:6}}>
+                <span style={{fontSize:38,fontWeight:800,color:"#111827",fontFamily:"'Instrument Serif',serif"}}>{plan.price}</span>
+                <span style={{fontSize:12,color:"#9ca3af"}}>one-time · no subscription</span>
+              </div>
+              <div style={{fontSize:11,color:"#6b7280",marginBottom:16}}>{plan.desc}</div>
+
+              <div style={{display:"flex",flexDirection:"column",gap:7,marginBottom:20}}>
                 {plan.features.map(f=>(
                   <div key={f} style={{display:"flex",gap:8,fontSize:12,color:"#374151",alignItems:"flex-start"}}>
-                    <span style={{color:plan.color,flexShrink:0,marginTop:1,fontWeight:700}}>✓</span>{f}
+                    <span style={{color:plan.color,flexShrink:0,fontWeight:700}}>✓</span>{f}
                   </div>
                 ))}
               </div>
 
               <button onClick={()=>onPurchase(plan)} style={{width:"100%",padding:"12px",borderRadius:10,fontFamily:"'Geist',sans-serif",fontSize:13,fontWeight:700,cursor:"pointer",background:plan.badge?plan.color:"transparent",border:plan.badge?"none":`2px solid ${plan.color}`,color:plan.badge?"white":plan.color,transition:"all .2s"}}>
-                {plan.badge?"Get Started →":"Choose "+plan.name+" →"}
+                {plan.badge?"Get "+plan.credits+" Credits →":"Get "+plan.credits+" Credits →"}
               </button>
             </div>
           ))}
@@ -463,7 +483,7 @@ function PricingWall({form, onBack, onPurchase}) {
 
         {/* Trust signals */}
         <div style={{display:"flex",justifyContent:"center",gap:32,fontSize:12,color:"#9ca3af",flexWrap:"wrap"}}>
-          {["🔒 Secure checkout via Lemon Squeezy","⚡ Page generates instantly after payment","💾 Download HTML file immediately","↩ 7-day money back guarantee"].map(t=>(
+          {["🔒 Secure checkout via Lemon Squeezy","⚡ 1 credit = 1 full landing page","💾 Credits never expire","↩ 7-day money back guarantee"].map(t=>(
             <span key={t}>{t}</span>
           ))}
         </div>
@@ -733,22 +753,47 @@ function PricingPage({onBuild,onHome}) {
       </nav>
       <div style={{maxWidth:860,margin:"0 auto",padding:"70px 40px"}}>
         <h1 style={{fontSize:46,fontWeight:800,textAlign:"center",color:"#111827",marginBottom:8,fontFamily:"'Instrument Serif',serif",fontStyle:"italic"}}>Simple pricing</h1>
-        <p style={{textAlign:"center",color:"#6b7280",marginBottom:48,fontSize:14}}>Pay once. No subscriptions. Download your HTML and host anywhere for free.</p>
+        <p style={{textAlign:"center",color:"#6b7280",marginBottom:32,fontSize:14}}>Buy credits once. Use them whenever. 1 credit = 1 complete landing page. No subscriptions, ever.</p>
+        {/* Credit explainer */}
+        <div style={{display:"flex",justifyContent:"center",gap:32,marginBottom:40,flexWrap:"wrap"}}>
+          {[["⚡","1 credit = 1 full page","Complete SEO-optimised HTML"],["💾","Credits never expire","Use them whenever you need"],["🔒","One-time payment","No subscriptions, ever"]].map(([ic,t,d])=>(
+            <div key={t} style={{display:"flex",alignItems:"center",gap:10,padding:"12px 18px",background:"white",border:"1px solid #f3f4f6",borderRadius:10,boxShadow:"0 1px 3px rgba(0,0,0,.04)"}}>
+              <span style={{fontSize:20}}>{ic}</span>
+              <div><div style={{fontSize:12,fontWeight:700,color:"#111827"}}>{t}</div><div style={{fontSize:11,color:"#9ca3af"}}>{d}</div></div>
+            </div>
+          ))}
+        </div>
         <div style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:18}}>
           {PLANS.map(p=>(
             <div key={p.id} style={{padding:30,borderRadius:16,position:"relative",background:"white",border:p.badge?`2px solid ${p.color}`:"1px solid #e5e7eb",boxShadow:p.badge?`0 4px 30px ${p.color}18`:"0 1px 3px rgba(0,0,0,.04)"}}>
               {p.badge&&<div style={{position:"absolute",top:-11,left:"50%",transform:"translateX(-50%)",background:p.color,color:"white",padding:"3px 13px",borderRadius:100,fontSize:9,fontWeight:800,letterSpacing:1.5,whiteSpace:"nowrap"}}>{p.badge}</div>}
-              <div style={{fontSize:10,fontWeight:700,color:p.color,letterSpacing:2,textTransform:"uppercase",marginBottom:5}}>{p.name}</div>
-              <div style={{fontSize:38,fontWeight:800,color:"#111827",marginBottom:2,fontFamily:"'Instrument Serif',serif"}}>{p.price}</div>
-              <div style={{fontSize:11,color:"#9ca3af",marginBottom:18}}>{p.period}</div>
-              <div style={{display:"flex",flexDirection:"column",gap:9,marginBottom:22}}>
+              <div style={{fontSize:10,fontWeight:700,color:p.color,letterSpacing:2,textTransform:"uppercase",marginBottom:10}}>{p.name}</div>
+              {/* Big credit number */}
+              <div style={{background:`${p.color}10`,border:`1px solid ${p.color}25`,borderRadius:10,padding:"14px 16px",marginBottom:14,display:"flex",alignItems:"center",justifyContent:"space-between"}}>
+                <div>
+                  <div style={{fontSize:10,color:p.color,fontWeight:700,letterSpacing:1,textTransform:"uppercase",marginBottom:2}}>Credits</div>
+                  <div style={{fontSize:40,fontWeight:800,color:"#111827",lineHeight:1,fontFamily:"'Instrument Serif',serif"}}>{p.credits}</div>
+                </div>
+                <div style={{textAlign:"right"}}>
+                  <div style={{fontSize:10,color:"#9ca3af",marginBottom:2}}>per page</div>
+                  <div style={{fontSize:15,fontWeight:700,color:p.color}}>{p.perPage}</div>
+                </div>
+              </div>
+              <div style={{display:"flex",alignItems:"baseline",gap:6,marginBottom:2}}>
+                <span style={{fontSize:36,fontWeight:800,color:"#111827",fontFamily:"'Instrument Serif',serif"}}>{p.price}</span>
+              </div>
+              <div style={{fontSize:11,color:"#9ca3af",marginBottom:16}}>one-time · no subscription</div>
+              <div style={{display:"flex",flexDirection:"column",gap:8,marginBottom:22}}>
                 {p.features.map(f=><div key={f} style={{display:"flex",gap:8,fontSize:12,color:"#374151"}}><span style={{color:p.color,flexShrink:0,fontWeight:700}}>✓</span>{f}</div>)}
               </div>
               <button onClick={onBuild} style={{width:"100%",padding:11,borderRadius:9,fontFamily:"'Geist',sans-serif",fontSize:13,fontWeight:700,cursor:"pointer",background:p.badge?p.color:"transparent",border:p.badge?"none":`2px solid ${p.color}`,color:p.badge?"white":p.color,transition:"all .2s"}}>
-                Get Started →
+                Get {p.credits} Credits →
               </button>
             </div>
           ))}
+        </div>
+        <div style={{marginTop:24,textAlign:"center",fontSize:12,color:"#9ca3af"}}>
+          🔒 Secure checkout · Credits never expire · 7-day money back guarantee
         </div>
       </div>
     </div>
