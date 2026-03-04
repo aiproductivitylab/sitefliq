@@ -1091,7 +1091,7 @@ function AuthModal({mode="signin", onSuccess, onClose}) {
 /* ─────────────────────────────────────────────────────────────────────────────
    HOME PAGE
 ───────────────────────────────────────────────────────────────────────────── */
-function HomePage({onBuild,onPricing,onExample,onHelp}) {
+function HomePage({onBuild,onPricing,onExample,onHelp,user,credits,onSignIn,onSignOut}) {
   return (
     <div style={{minHeight:"100vh",background:"#fafaf9",color:"#111827"}}>
       <GS/>
@@ -1104,6 +1104,14 @@ function HomePage({onBuild,onPricing,onExample,onHelp}) {
           <button onClick={onPricing} style={{padding:"7px 16px",background:"transparent",border:"1px solid #e5e7eb",borderRadius:8,fontSize:13,cursor:"pointer",color:"#374151",fontFamily:"inherit",fontWeight:500}}>Pricing</button>
           <button onClick={onExample} style={{padding:"7px 16px",background:"transparent",border:"1px solid #e5e7eb",borderRadius:8,fontSize:13,cursor:"pointer",color:"#374151",fontFamily:"inherit",fontWeight:500}}>See Example</button>
           <button onClick={onHelp} style={{padding:"7px 16px",background:"transparent",border:"1px solid #e5e7eb",borderRadius:8,fontSize:13,cursor:"pointer",color:"#6b7280",fontFamily:"inherit",fontWeight:500}}>🛟 Help</button>
+          {user ? (
+            <>
+              <span style={{padding:"7px 14px",background:"#fff7ed",color:"#f97316",border:"1px solid #fed7aa",borderRadius:8,fontSize:13,fontWeight:700}}>⚡ {credits} credits</span>
+              <button onClick={onSignOut} style={{padding:"7px 16px",background:"transparent",border:"1px solid #e5e7eb",borderRadius:8,fontSize:13,cursor:"pointer",color:"#6b7280",fontFamily:"inherit"}}>Sign out</button>
+            </>
+          ) : (
+            <button onClick={onSignIn} style={{padding:"7px 16px",background:"transparent",border:"1px solid #e5e7eb",borderRadius:8,fontSize:13,cursor:"pointer",color:"#374151",fontFamily:"inherit",fontWeight:500}}>Sign In</button>
+          )}
           <button onClick={onBuild} style={{padding:"8px 20px",background:"#f97316",border:"none",borderRadius:8,fontSize:13,cursor:"pointer",color:"white",fontFamily:"inherit",fontWeight:700}}>Start Building →</button>
         </div>
       </nav>
@@ -2020,7 +2028,7 @@ export default function Sitefliq() {
     setScreen("waiting_payment");
   };
 
-  if(screen==="home") return <><HomePage onBuild={()=>setScreen("builder")} onPricing={()=>setScreen("pricing_standalone")} onExample={()=>setScreen("example")} onHelp={()=>setScreen("help")}/>{showAuth&&<AuthModal mode={authMode} onSuccess={()=>{setUser(sb._user);sb.getCredits().then(setCredits);setShowAuth(false);}} onClose={()=>setShowAuth(false)}/>}</>;
+  if(screen==="home") return <><HomePage onBuild={()=>setScreen("builder")} onPricing={()=>setScreen("pricing_standalone")} onExample={()=>setScreen("example")} onHelp={()=>setScreen("help")} user={user} credits={credits} onSignIn={()=>{setAuthMode("signin");setShowAuth(true);}} onSignOut={handleSignOut}/>{showAuth&&<AuthModal mode={authMode} onSuccess={()=>{setUser(sb._user);sb.getCredits().then(setCredits);setShowAuth(false);}} onClose={()=>setShowAuth(false)}/>}</>;
   if(screen==="help") return <HelpPage onHome={()=>setScreen("home")}/>;
   if(screen==="example") return <ExamplePage onBack={()=>setScreen("home")} onBuild={()=>setScreen("builder")}/>;
   if(screen==="pricing_standalone") return <><PricingPage onBuild={()=>setScreen("builder")} onHome={()=>setScreen("home")} user={user} credits={credits} onSignIn={()=>{setAuthMode("signin");setShowAuth(true);}} onSignOut={handleSignOut}/>{showAuth&&<AuthModal mode={authMode} onSuccess={()=>{setUser(sb._user);sb.getCredits().then(setCredits);setShowAuth(false);}} onClose={()=>setShowAuth(false)}/>}</>;
