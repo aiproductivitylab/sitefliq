@@ -1363,11 +1363,11 @@ function toggleFaq(el) {
    HELP PAGE
 ───────────────────────────────────────────────────────────────────────────── */
 function HelpPage({onHome}) {
-  const [category, setCategory] = React.useState(null);
-  const [form, setForm] = React.useState({name:"",email:"",subject:"",message:""});
-  const [charCount, setCharCount] = React.useState(0);
-  const [submitted, setSubmitted] = React.useState(false);
-  const [openFaq, setOpenFaq] = React.useState(null);
+  const [category, setCategory] = useState(null);
+  const [form, setForm] = useState({name:"",email:"",subject:"",message:""});
+  const [charCount, setCharCount] = useState(0);
+  const [submitted, setSubmitted] = useState(false);
+  const [openFaq, setOpenFaq] = useState(null);
 
   const categories = [
     {id:"feature", icon:"💡", label:"Feature Request"},
