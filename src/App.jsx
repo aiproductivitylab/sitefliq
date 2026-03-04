@@ -183,81 +183,93 @@ function buildPrompt(f, images=[]) {
     '<a href="https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(f.location) + '" target="_blank" rel="noopener" style="display:flex;align-items:center;gap:8px;color:inherit;text-decoration:none;font-size:14px">ð ' + f.location + '</a>'
   ].join("\n") : "No address â omit map entirely.";
 
-  return `You are a senior CRO expert and world-class web designer. Build a complete, production-ready, single-file HTML landing page.
+  // Build prompt as array to avoid nested backtick build errors
+  const photosSection = hasImages ? [
+    "REAL PHOTOS PROVIDED - each was specifically searched for its section. Use EXACTLY as specified:",
+    "",
+    "HERO: background-image: url(" + img(0) + ") - full viewport, cover, with dark gradient overlay (rgba 0,0,0,0.6) so text is readable",
+    "ABOUT SECTION: <img src=" + img(1) + " style=width:100%;height:100%;object-fit:cover> - full height left column, professional/team photo",
+    "GALLERY: Use all of these as <img> tags with object-fit:cover:",
+    "  - " + img(0) + " (hero/wide shot)",
+    "  - " + img(1) + " (team/people)",
+    "  - " + img(2) + " (detail/close up)",
+    "  - " + img(3) + " (lifestyle/action)",
+    "  - " + img(4) + " (service specific)",
+    "  - " + (img(5)||img(0)) + " (service specific 2)",
+    "SERVICE CARDS: Each card is a full-bleed image card. Cycle through ALL provided images as background-image per card, with a dark gradient overlay. Use object-fit:cover.",
+    "CTA BANNER: background-image: url(" + (img(2)||img(0)) + ") - with dark overlay",
+    "",
+    "CRITICAL RULES FOR IMAGES:",
+    "1. Use the EXACT URLs provided - do NOT modify, shorten or fake them",
+    "2. Every image tag must have object-fit:cover and a defined height",
+    "3. Hero and CTA must always have a dark overlay so text is readable",
+    "4. Do NOT use placeholder.com, picsum, or any other image service",
+    "5. Gallery items must use <img> tags not background-image"
+  ].join("\n") : "IMAGES: Use CSS gradients and geometric patterns. No external images.";
 
-BUSINESS:
-Name: ${f.name}
-Industry: ${f.industry}
-Tagline: ${f.tagline||"Quality you can trust"}
-Description: ${f.description}
-Location: ${f.location||""}
-Phone: ${f.phone||""}
-Email: ${f.email||""}
-CTA: ${f.cta||"Get Started Today"}
+  const heroNote = heroImg ? " - use hero background image with dark overlay" : " - stunning CSS gradient/geometric pattern";
 
-DESIGN:
-Palette bg:${pal.bg} surface:${pal.surface} accent:${pal.accent} text:${pal.text}
-Vibe: ${vib.label} â ${vib.desc}
-Font: ONE distinctive Google Font pair (NOT Inter/Roboto â something memorable for this vibe)
+  const secsPrompt = secs.map((s,i) => {
+    const n = i+5;
+    const secMap = {
+      services: n+". SERVICES: 6 cards in a 3-col grid, each with icon, name, description, price, hover glow effect"+(hasImages?" - subtle image texture in card background":""),
+      about: n+". ABOUT: 2-col layout"+(aboutImg?", left col = full image ("+aboutImg+") with rounded corners, right col = story text + 4 stats":", story left, 4 stats right"),
+      benefits: n+". BENEFITS: 6-item grid, icon+title+desc, niche-specific",
+      testimonials: n+". TESTIMONIALS: 3 realistic reviews, name+location+stars+quote",
+      pricing: n+". PRICING: 3 tiers, feature lists, Most Popular badge",
+      gallery: n+". GALLERY: "+(hasImages?"6-item CSS grid using these real images: "+[galleryImg1,galleryImg2,galleryImg3,galleryImg4,heroImg,aboutImg].filter(Boolean).join(", ")+" - each as object-fit cover, caption overlay on hover":"6-item CSS grid, gradient placeholders, caption hover"),
+      faq: n+". FAQ: 5 accordion items with JS click-to-expand",
+      booking: n+". BOOKING: full form with name/email/phone/service/date/message",
+      contact: n+". CONTACT: split layout, info left, form right",
+      cta: n+". CTA BANNER: full-width urgent headline + big button"+(heroImg?" - background image with dark overlay":""),
+    };
+    return secMap[s] || (n+". "+s.toUpperCase());
+  }).join("\n");
 
-${hasImages ? `REAL PHOTOS PROVIDED â each was specifically searched for its section. Use EXACTLY as specified:
-
-HERO: background-image: url('${img(0)}') â full viewport, cover, with dark gradient overlay (rgba 0,0,0,0.6) so text is readable
-ABOUT SECTION: <img src="${img(1)}" style="width:100%;height:100%;object-fit:cover"> â full height left column, professional/team photo
-GALLERY: Use all of these as <img> tags with object-fit:cover:
-  - ${img(0)} (hero/wide shot)
-  - ${img(1)} (team/people)
-  - ${img(2)} (detail/close up)
-  - ${img(3)} (lifestyle/action)
-  - ${img(4)} (service specific)
-  - ${img(5)||img(0)} (service specific 2)
-SERVICE CARDS: Each card is a full-bleed image card. Cycle through ALL provided images as background-image per card, with a dark gradient overlay. Use object-fit:cover.
-CTA BANNER: background-image: url('${img(2)||img(0)}') â with dark overlay
-
-CRITICAL RULES FOR IMAGES:
-1. Use the EXACT URLs provided â do NOT modify, shorten or fake them
-2. Every image tag must have object-fit:cover and a defined height
-3. Hero and CTA must always have a dark overlay so text is readable
-4. Do NOT use placeholder.com, picsum, or any other image service
-5. Gallery items must use <img> tags not background-image` : `IMAGES: Use CSS gradients and geometric patterns. No external images.`}
-
-SECTIONS:
-1. Full SEO <head>: title, meta description, keywords, OG tags, Twitter card, canonical, schema.org LocalBusiness JSON-LD
-2. Sticky header: name left, nav right, mobile hamburger
-3. Hero: 100vh, H1 with keyword, subheadline, 2 CTAs, star rating trust line${heroImg ? ` â use hero background image with dark overlay` : ` â stunning CSS gradient/geometric pattern`}
-4. Social proof bar: 4 stats
-${secs.map((s,i)=>{
-  const m={
-    services:`${i+5}. SERVICES: 6 cards in a 3-col grid, each with icon, name, description, price, hover glow effect${hasImages?" â subtle image texture in card background":""}`,
-    about:`${i+5}. ABOUT: 2-col layout${aboutImg?`, left col = full image (${aboutImg}) with rounded corners, right col = story text + 4 stats`:", story left, 4 stats right"}`,
-    benefits:`${i+5}. BENEFITS: 6-item grid, icon+title+desc, niche-specific`,
-    testimonials:`${i+5}. TESTIMONIALS: 3 realistic reviews, name+location+stars+quote`,
-    pricing:`${i+5}. PRICING: 3 tiers, feature lists, Most Popular badge`,
-    gallery:`${i+5}. GALLERY: ${hasImages?"6-item CSS grid using these real images: "+[galleryImg1,galleryImg2,galleryImg3,galleryImg4,heroImg,aboutImg].filter(Boolean).join(", ")+" â each as object-fit cover, caption overlay on hover":"6-item CSS grid, gradient placeholders, caption hover"}`,
-    faq:`${i+5}. FAQ: 5 accordion items with JS click-to-expand`,
-    booking:`${i+5}. BOOKING: full form with name/email/phone/service/date/message`,
-    contact:`${i+5}. CONTACT: split layout, info left, form right`,
-    cta:`${i+5}. CTA BANNER: full-width urgent headline + big button${heroImg?" â background image with dark overlay":""}`,
-  };
-  return m[s]||`${i+5}. ${s.toUpperCase()}`;
-}).join("\n")}
-- Footer: logo, tagline, 3 link columns, social icons, copyright 2026
-
-GOOGLE MAPS:
-${mapsHtml}
-
-RULES:
-1. CSS in <style>, JS in <script> at bottom. One Google Fonts @import only.
-2. NEVER use IntersectionObserver. ALL content visible on load. CSS keyframe animations that auto-play are fine.
-3. Real niche-specific copy. Zero lorem ipsum.
-4. Conversion: urgency, social proof, 5+ CTAs, trust signals throughout.
-5. One H1 with keyword, descriptive H2s, semantic HTML.
-6. Working JS accordion for FAQ. Working hamburger menu. Mobile-first responsive.
-7. All images must use object-fit:cover with appropriate container heights.
-8. Hero image overlay: always add a dark semi-transparent overlay so text is readable.
-9. If address provided, ALWAYS include the static map image (clickable), street view link, and plain text address exactly as specified above.
-
-OUTPUT: Raw HTML only. Start with <!DOCTYPE html>. End with </html>. Nothing else.\`;
+  return [
+    "You are a senior CRO expert and world-class web designer. Build a complete, production-ready, single-file HTML landing page.",
+    "",
+    "BUSINESS:",
+    "Name: "+f.name,
+    "Industry: "+f.industry,
+    "Tagline: "+(f.tagline||"Quality you can trust"),
+    "Description: "+f.description,
+    "Location: "+(f.location||""),
+    "Phone: "+(f.phone||""),
+    "Email: "+(f.email||""),
+    "CTA: "+(f.cta||"Get Started Today"),
+    "",
+    "DESIGN:",
+    "Palette bg:"+pal.bg+" surface:"+pal.surface+" accent:"+pal.accent+" text:"+pal.text,
+    "Vibe: "+vib.label+" - "+vib.desc,
+    "Font: ONE distinctive Google Font pair (NOT Inter/Roboto - something memorable for this vibe)",
+    "",
+    photosSection,
+    "",
+    "SECTIONS:",
+    "1. Full SEO <head>: title, meta description, keywords, OG tags, Twitter card, canonical, schema.org LocalBusiness JSON-LD",
+    "2. Sticky header: name left, nav right, mobile hamburger",
+    "3. Hero: 100vh, H1 with keyword, subheadline, 2 CTAs, star rating trust line"+heroNote,
+    "4. Social proof bar: 4 stats",
+    secsPrompt,
+    "- Footer: logo, tagline, 3 link columns, social icons, copyright 2026",
+    "",
+    "GOOGLE MAPS:",
+    mapsHtml,
+    "",
+    "RULES:",
+    "1. CSS in <style>, JS in <script> at bottom. One Google Fonts @import only.",
+    "2. NEVER use IntersectionObserver. ALL content visible on load. CSS keyframe animations are fine.",
+    "3. Real niche-specific copy. Zero lorem ipsum.",
+    "4. Conversion: urgency, social proof, 5+ CTAs, trust signals throughout.",
+    "5. One H1 with keyword, descriptive H2s, semantic HTML.",
+    "6. Working JS accordion for FAQ. Working hamburger menu. Mobile-first responsive.",
+    "7. All images must use object-fit:cover with appropriate container heights.",
+    "8. Hero image overlay: always add a dark semi-transparent overlay so text is readable.",
+    "9. If address provided, ALWAYS include the static map image (clickable), street view link, and plain text address.",
+    "",
+    "OUTPUT: Raw HTML only. Start with <!DOCTYPE html>. End with </html>. Nothing else."
+  ].join("\n");
 }
 
 /* âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
@@ -1897,4 +1909,3 @@ export default function Sitefliq() {
     </div>
   );
 }
-
