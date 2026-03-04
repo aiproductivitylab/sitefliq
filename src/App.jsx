@@ -1096,15 +1096,16 @@ function AuthModal({mode="signin", onSuccess, onClose}) {
    LEGAL PAGES
 ───────────────────────────────────────────────────────────────────────────── */
 function LegalPage({title, onHome, children}) {
+  const goHome = () => { window.location.hash = ""; onHome(); };
   return (
     <div style={{minHeight:"100vh",background:"#fafaf9",fontFamily:"'Geist',sans-serif"}}>
       <GS/>
       <nav style={{position:"fixed",top:0,left:0,right:0,zIndex:100,height:56,display:"flex",alignItems:"center",justifyContent:"space-between",padding:"0 48px",background:"rgba(250,250,249,.95)",backdropFilter:"blur(20px)",borderBottom:"1px solid #e5e7eb"}}>
-        <div onClick={onHome} style={{display:"flex",alignItems:"center",gap:8,cursor:"pointer"}}>
+        <div onClick={goHome} style={{display:"flex",alignItems:"center",gap:8,cursor:"pointer"}}>
           <div style={{width:28,height:28,background:"#f97316",borderRadius:7,display:"flex",alignItems:"center",justifyContent:"center",fontSize:13,color:"white",fontWeight:800}}>S</div>
           <span style={{fontSize:18,fontWeight:800,color:"#111827"}}>Sitefliq</span>
         </div>
-        <button onClick={onHome} style={{padding:"7px 16px",background:"transparent",border:"1px solid #e5e7eb",borderRadius:8,fontSize:13,cursor:"pointer",color:"#374151",fontFamily:"inherit"}}>← Back to Home</button>
+        <button onClick={goHome} style={{padding:"7px 16px",background:"transparent",border:"1px solid #e5e7eb",borderRadius:8,fontSize:13,cursor:"pointer",color:"#374151",fontFamily:"inherit"}}>← Back to Home</button>
       </nav>
       <div style={{maxWidth:780,margin:"0 auto",padding:"100px 40px 80px"}}>
         <h1 style={{fontSize:36,fontWeight:800,color:"#111827",marginBottom:8}}>{title}</h1>
@@ -1421,9 +1422,9 @@ function HomePage({onBuild,onPricing,onExample,onHelp,user,credits,onSignIn,onSi
 
       <div style={{textAlign:"center",padding:"16px 40px",borderTop:"1px solid #f3f4f6",fontSize:11,color:"#9ca3af",background:"white",display:"flex",alignItems:"center",justifyContent:"center",gap:20,flexWrap:"wrap"}}>
         <span>© 2026 Sitefliq · AI Landing Page Builder</span>
-        <span onClick={()=>window.dispatchEvent(new CustomEvent("sitefliq-legal",{detail:"terms"}))} style={{cursor:"pointer",textDecoration:"underline"}}>Terms of Service</span>
-        <span onClick={()=>window.dispatchEvent(new CustomEvent("sitefliq-legal",{detail:"privacy"}))} style={{cursor:"pointer",textDecoration:"underline"}}>Privacy Policy</span>
-        <span onClick={()=>window.dispatchEvent(new CustomEvent("sitefliq-legal",{detail:"refund"}))} style={{cursor:"pointer",textDecoration:"underline"}}>Refund Policy</span>
+        <a href="#terms" style={{cursor:"pointer",textDecoration:"underline",color:"#9ca3af"}}>Terms of Service</a>
+        <a href="#privacy" style={{cursor:"pointer",textDecoration:"underline",color:"#9ca3af"}}>Privacy Policy</a>
+        <a href="#refund" style={{cursor:"pointer",textDecoration:"underline",color:"#9ca3af"}}>Refund Policy</a>
       </div>
     </div>
   );
@@ -2163,7 +2164,19 @@ export default function Sitefliq() {
   useEffect(()=>{
     const handler = (e) => setLegalScreen(e.detail);
     window.addEventListener("sitefliq-legal", handler);
-    return () => window.removeEventListener("sitefliq-legal", handler);
+    // Handle hash-based routing for legal pages
+    const hash = window.location.hash.replace("#","");
+    if(["terms","privacy","refund"].includes(hash)) setLegalScreen(hash);
+    const hashHandler = () => {
+      const h = window.location.hash.replace("#","");
+      if(["terms","privacy","refund"].includes(h)) setLegalScreen(h);
+      else setLegalScreen(null);
+    };
+    window.addEventListener("hashchange", hashHandler);
+    return () => {
+      window.removeEventListener("sitefliq-legal", handler);
+      window.removeEventListener("hashchange", hashHandler);
+    };
   },[]);
 
   // Restore session on mount
