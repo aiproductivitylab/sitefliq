@@ -222,6 +222,28 @@ ${secs.map((s,i)=>{
 }).join("\n")}
 - Footer: logo, tagline, 3 link columns, social icons, copyright 2026
 
+GOOGLE MAPS:
+${f.location ? `Address: "${f.location}" — you MUST include ALL THREE of these in the contact section:
+
+1. CLICKABLE MAP IMAGE — a static map image wrapped in a link. Use this exact code:
+<a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(f.location)}" target="_blank" rel="noopener" style="display:block;border-radius:12px;overflow:hidden;margin-bottom:12px;position:relative;text-decoration:none">
+  <img src="https://maps.googleapis.com/maps/api/staticmap?center=${encodeURIComponent(f.location)}&zoom=15&size=800x300&scale=2&maptype=roadmap&markers=color:red%7C${encodeURIComponent(f.location)}&style=feature:all|element:labels.text.fill|color:0x444444&style=feature:landscape|element:all|color:0xf2f2f2&style=feature:road|element:all|saturation:-100|lightness:45&style=feature:water|element:all|color:0xc9d6de&key=AIzaSyD-9tSrke72PouQMnMX-a7eZSW0jkFMBWY" alt="Map showing ${f.location}" style="width:100%;height:200px;object-fit:cover;display:block;border-radius:12px"/>
+  <div style="position:absolute;bottom:10px;right:10px;background:white;border-radius:6px;padding:5px 10px;font-size:12px;font-weight:600;color:#374151;box-shadow:0 2px 8px rgba(0,0,0,.15);display:flex;align-items:center;gap:5px">
+    <svg width="12" height="12" viewBox="0 0 24 24" fill="#ea4335"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
+    View on Google Maps →
+  </div>
+</a>
+
+2. STREET VIEW LINK — a separate clickable button below the map:
+<a href="https://www.google.com/maps/@?api=1&map_action=pano&viewpoint=&query=${encodeURIComponent(f.location)}" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:7px;padding:9px 16px;border-radius:8px;background:#f8fafc;border:1px solid #e2e8f0;font-size:13px;font-weight:600;color:#374151;text-decoration:none;margin-bottom:16px">
+  🚶 View Street View
+</a>
+
+3. PLAIN TEXT ADDRESS with map link:
+<a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(f.location)}" target="_blank" rel="noopener" style="display:flex;align-items:center;gap:8px;color:inherit;text-decoration:none;font-size:14px">
+  📍 ${f.location}
+</a>` : 'No address — omit map entirely.'}
+
 RULES:
 1. CSS in <style>, JS in <script> at bottom. One Google Fonts @import only.
 2. NEVER use IntersectionObserver. ALL content visible on load. CSS keyframe animations that auto-play are fine.
@@ -231,8 +253,9 @@ RULES:
 6. Working JS accordion for FAQ. Working hamburger menu. Mobile-first responsive.
 7. All images must use object-fit:cover with appropriate container heights.
 8. Hero image overlay: always add a dark semi-transparent overlay so text is readable.
+9. If address provided, ALWAYS include the static map image (clickable), street view link, and plain text address exactly as specified above.
 
-OUTPUT: Raw HTML only. Start with <!DOCTYPE html>. End with </html>. Nothing else.`;
+OUTPUT: Raw HTML only. Start with <!DOCTYPE html>. End with </html>. Nothing else.\`;
 }
 
 /* ─────────────────────────────────────────────────────────────────────────────
@@ -394,7 +417,7 @@ function BuilderPanel({form,up,togSec,onNext,ready}) {
               />
             </div>
             <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:10}}>
-              <Field label="Location" value={form.location} onChange={v=>up("location",v)} placeholder="Cape Town, SA"/>
+              <Field label="Address (adds map + Street View to your page)" value={form.location} onChange={v=>up("location",v)} placeholder="58 Main Rd, Cape Town, SA"/>
               <Field label="CTA Button" value={form.cta} onChange={v=>up("cta",v)} placeholder="Get Started Today"/>
             </div>
             <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:10}}>
