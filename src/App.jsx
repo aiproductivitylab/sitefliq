@@ -1,5 +1,8 @@
 import { useState, useEffect, useRef } from "react";
 
+const GOOGLE_KEY = import.meta.env.VITE_GOOGLE_KEY || "";
+const PEXELS_KEY_ENV = import.meta.env.VITE_PEXELS_KEY || "";
+
 /* âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
    CONSTANTS
 âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ */
@@ -169,7 +172,7 @@ function buildPrompt(f, images=[]) {
     '',
     '1. CLICKABLE MAP IMAGE â a static map image wrapped in a link. Use this exact code:',
     '<a href="https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(f.location) + '" target="_blank" rel="noopener" style="display:block;border-radius:12px;overflow:hidden;margin-bottom:12px;position:relative;text-decoration:none">',
-    '  <img src="https://maps.googleapis.com/maps/api/staticmap?center=' + encodeURIComponent(f.location) + '&zoom=15&size=800x300&scale=2&maptype=roadmap&markers=color:red%7C' + encodeURIComponent(f.location) + '&key=' + (import.meta.env.VITE_GOOGLE_KEY||"") + '" alt="Map of ' + f.location + '" style="width:100%;height:200px;object-fit:cover;display:block;border-radius:12px"/>',
+    '  <img src="https://maps.googleapis.com/maps/api/staticmap?center=' + encodeURIComponent(f.location) + '&zoom=15&size=800x300&scale=2&maptype=roadmap&markers=color:red%7C' + encodeURIComponent(f.location) + '&key=' + GOOGLE_KEY + '" alt="Map of ' + f.location + '" style="width:100%;height:200px;object-fit:cover;display:block;border-radius:12px"/>',
     '  <div style="position:absolute;bottom:10px;right:10px;background:white;border-radius:6px;padding:5px 10px;font-size:12px;font-weight:600;color:#374151;box-shadow:0 2px 8px rgba(0,0,0,.15)">View on Google Maps â</div>',
     '</a>',
     '',
@@ -342,7 +345,7 @@ function AddressField({value, onChange}) {
     const script = document.createElement("script");
     script.id = "google-places-script";
     script.src = "https://maps.googleapis.com/maps/api/js?key=" +
-      (import.meta.env.VITE_GOOGLE_KEY || "AIzaSyD-9tSrke72PouQMnMX-a7eZSW0jkFMBWY") +
+      GOOGLE_KEY +
       "&libraries=places&language=en";
     script.async = true;
     document.head.appendChild(script);
@@ -1894,3 +1897,4 @@ export default function Sitefliq() {
     </div>
   );
 }
+
