@@ -457,10 +457,10 @@ function AddressField({value, onChange}) {
               >
                 <div style={{width:30,height:30,background:"#fff7ed",border:"1px solid #fed7aa",borderRadius:7,display:"flex",alignItems:"center",justifyContent:"center",fontSize:14,flexShrink:0}}>📍</div>
                 <div style={{flex:1,minWidth:0}}>
-                  <div style={{fontSize:13,color:"#6b7280",whiteSpace:"nowrap",overflow:"hidden",textOverflow:"ellipsis"}}>
+                  <div style={{fontSize:13,color:"#6b7280",whiteSpace:"normal",lineHeight:1.3}}>
                     {highlightText(main, mainMatches)}
                   </div>
-                  {secondary && <div style={{fontSize:11,color:"#9ca3af",marginTop:2,whiteSpace:"nowrap",overflow:"hidden",textOverflow:"ellipsis"}}>{secondary}</div>}
+                  {secondary && <div style={{fontSize:11,color:"#9ca3af",marginTop:2,whiteSpace:"normal",lineHeight:1.3}}>{secondary}</div>}
                 </div>
                 <div style={{fontSize:11,color:"#d1d5db",flexShrink:0}}>select</div>
               </div>
