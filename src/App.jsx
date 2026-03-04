@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 
 /* ─────────────────────────────────────────────────────────────────────────────
    CONSTANTS
@@ -314,6 +314,153 @@ function Field({label,value,onChange,placeholder,required}) {
   );
 }
 
+
+/* ───────────────────────────────────────────────────────────────────────────────
+   ADDRESS FIELD WITH GOOGLE PLACES AUTOCOMPLETE
+─────────────────────────────────────────────────────────────────────────────── */
+function AddressField({value, onChange}) {
+  const [query, setQuery] = useState(value||"");
+  const [suggestions, setSuggestions] = useState([]);
+  const [open, setOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const debounceRef = useRef(null);
+  const wrapRef = useRef(null);
+  const sessionToken = useRef(Math.random().toString(36).substr(2,9));
+
+  useEffect(() => {
+    const handler = (e) => { if(wrapRef.current && !wrapRef.current.contains(e.target)) setOpen(false); };
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, []);
+
+  useEffect(() => { setQuery(value||""); }, [value]);
+
+  // Load Google Places SDK once
+  useEffect(() => {
+    if(window.google && window.google.maps && window.google.maps.places) return;
+    const existing = document.getElementById("google-places-script");
+    if(existing) return;
+    const script = document.createElement("script");
+    script.id = "google-places-script";
+    script.src = "https://maps.googleapis.com/maps/api/js?key=" +
+      (import.meta.env.VITE_GOOGLE_KEY || "AIzaSyD-9tSrke72PouQMnMX-a7eZSW0jkFMBWY") +
+      "&libraries=places&language=en";
+    script.async = true;
+    document.head.appendChild(script);
+  }, []);
+
+  const fetchSuggestions = (input) => {
+    if(!input || input.length < 3) { setSuggestions([]); setOpen(false); return; }
+    setLoading(true);
+    const tryFetch = (attempts=0) => {
+      if(window.google && window.google.maps && window.google.maps.places) {
+        const svc = new window.google.maps.places.AutocompleteService();
+        svc.getPlacePredictions(
+          { input, sessionToken: new window.google.maps.places.AutocompleteSessionToken() },
+          (preds, status) => {
+            setLoading(false);
+            if(status === "OK" && preds) {
+              setSuggestions(preds.slice(0,5));
+              setOpen(true);
+            } else {
+              setSuggestions([]);
+              setOpen(false);
+            }
+          }
+        );
+      } else if(attempts < 20) {
+        setTimeout(() => tryFetch(attempts+1), 200);
+      } else {
+        setLoading(false);
+      }
+    };
+    tryFetch();
+  };
+
+  const handleInput = (e) => {
+    const val = e.target.value;
+    setQuery(val);
+    onChange(val);
+    clearTimeout(debounceRef.current);
+    debounceRef.current = setTimeout(() => fetchSuggestions(val), 350);
+  };
+
+  const handleSelect = (pred) => {
+    const address = pred.description;
+    setQuery(address);
+    onChange(address);
+    setSuggestions([]);
+    setOpen(false);
+    sessionToken.current = Math.random().toString(36).substr(2,9);
+  };
+
+  const highlightText = (text, matches) => {
+    if(!matches || matches.length === 0) return text;
+    const parts = [];
+    let i = 0;
+    for(const m of matches) {
+      if(m.offset > i) parts.push(text.slice(i, m.offset));
+      parts.push(<strong key={"m"+m.offset} style={{color:"#111827",fontWeight:700}}>{text.slice(m.offset, m.offset+m.length)}</strong>);
+      i = m.offset + m.length;
+    }
+    if(i < text.length) parts.push(text.slice(i));
+    return parts;
+  };
+
+  return (
+    <div ref={wrapRef} style={{position:"relative"}}>
+      <label style={{fontSize:11,fontWeight:700,color:"#374151",letterSpacing:.5,display:"block",marginBottom:6,textTransform:"uppercase"}}>
+        Address{"  "}<span style={{color:"#9ca3af",fontWeight:400,textTransform:"none",fontSize:10,letterSpacing:0}}>adds map + Street View to page</span>
+      </label>
+      <div style={{position:"relative"}}>
+        <input
+          value={query}
+          onChange={handleInput}
+          onFocus={e=>{e.target.style.borderColor="#f97316"; if(suggestions.length>0) setOpen(true);}}
+          onBlur={e=>e.target.style.borderColor="#e5e7eb"}
+          placeholder="58 Main Rd, Cape Town, SA"
+          autoComplete="off"
+          style={{width:"100%",padding:"10px 36px 10px 13px",border:"1.5px solid #e5e7eb",borderRadius:9,fontSize:13,color:"#111827",background:"white",transition:"border-color .15s",fontFamily:"inherit",outline:"none"}}
+        />
+        <div style={{position:"absolute",right:11,top:"50%",transform:"translateY(-50%)",pointerEvents:"none",fontSize:13,lineHeight:1}}>
+          {loading ? <span style={{display:"inline-block",animation:"spin .7s linear infinite",color:"#9ca3af"}}>◌</span> : "📍"}
+        </div>
+      </div>
+
+      {open && suggestions.length > 0 && (
+        <div style={{position:"absolute",top:"calc(100% + 4px)",left:0,right:0,background:"white",border:"1.5px solid #e5e7eb",borderRadius:10,boxShadow:"0 8px 28px rgba(0,0,0,.13)",zIndex:9999,overflow:"hidden"}}>
+          {suggestions.map((pred, i) => {
+            const main = pred.structured_formatting ? pred.structured_formatting.main_text : pred.description;
+            const secondary = pred.structured_formatting ? pred.structured_formatting.secondary_text : "";
+            const mainMatches = pred.structured_formatting ? (pred.structured_formatting.main_text_matched_substrings || []) : [];
+            return (
+              <div
+                key={pred.place_id}
+                onMouseDown={()=>handleSelect(pred)}
+                style={{padding:"10px 14px",cursor:"pointer",borderBottom:i<suggestions.length-1?"1px solid #f9fafb":"none",display:"flex",alignItems:"center",gap:10,background:"white"}}
+                onMouseEnter={e=>e.currentTarget.style.background="#fff7ed"}
+                onMouseLeave={e=>e.currentTarget.style.background="white"}
+              >
+                <div style={{width:30,height:30,background:"#fff7ed",border:"1px solid #fed7aa",borderRadius:7,display:"flex",alignItems:"center",justifyContent:"center",fontSize:14,flexShrink:0}}>📍</div>
+                <div style={{flex:1,minWidth:0}}>
+                  <div style={{fontSize:13,color:"#6b7280",whiteSpace:"nowrap",overflow:"hidden",textOverflow:"ellipsis"}}>
+                    {highlightText(main, mainMatches)}
+                  </div>
+                  {secondary && <div style={{fontSize:11,color:"#9ca3af",marginTop:2,whiteSpace:"nowrap",overflow:"hidden",textOverflow:"ellipsis"}}>{secondary}</div>}
+                </div>
+                <div style={{fontSize:11,color:"#d1d5db",flexShrink:0}}>select</div>
+              </div>
+            );
+          })}
+          <div style={{padding:"6px 14px",background:"#f9fafb",borderTop:"1px solid #f3f4f6",display:"flex",justifyContent:"flex-end"}}>
+            <img src="https://maps.gstatic.com/mapfiles/api-3/images/powered-by-google-on-white3.png" alt="Powered by Google" style={{height:13,opacity:.65}}/>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
 /* ─────────────────────────────────────────────────────────────────────────────
    LIVE MINI PREVIEW
 ───────────────────────────────────────────────────────────────────────────── */
@@ -417,7 +564,7 @@ function BuilderPanel({form,up,togSec,onNext,ready}) {
               />
             </div>
             <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:10}}>
-              <Field label="Address (adds map + Street View to your page)" value={form.location} onChange={v=>up("location",v)} placeholder="58 Main Rd, Cape Town, SA"/>
+              <AddressField value={form.location} onChange={v=>up("location",v)}/>
               <Field label="CTA Button" value={form.cta} onChange={v=>up("cta",v)} placeholder="Get Started Today"/>
             </div>
             <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:10}}>
