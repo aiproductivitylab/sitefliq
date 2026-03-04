@@ -92,10 +92,79 @@ const PLANS = [
 /* ─────────────────────────────────────────────────────────────────────────────
    PROMPT
 ───────────────────────────────────────────────────────────────────────────── */
-function buildPrompt(f) {
+// Unsplash keyword map — niche → best search terms
+function getUnsplashKeyword(industry) {
+  const map = {
+    "Yoga & Fitness":"yoga studio peaceful",
+    "Pilates & Barre":"pilates studio workout",
+    "Gym & CrossFit":"modern gym workout",
+    "Personal Training":"personal trainer gym",
+    "Beauty & Hair Salon":"luxury hair salon",
+    "Nail Studio & Spa":"nail spa luxury",
+    "Barbershop":"barbershop interior",
+    "Restaurant & Café":"restaurant elegant dining",
+    "Coffee Shop & Bakery":"coffee shop cozy",
+    "Photography":"photography studio camera",
+    "Videography":"video production studio",
+    "Real Estate Agency":"modern luxury home interior",
+    "Life Coaching":"coaching professional office",
+    "Business Consulting":"modern office professional",
+    "Healthcare & Wellness":"modern clinic wellness",
+    "Dental Practice":"dental clinic modern",
+    "Clothing Boutique":"fashion boutique clothing",
+    "Online Store":"ecommerce product flat lay",
+    "Education & Tutoring":"classroom education learning",
+    "Tech Startup":"modern tech office startup",
+    "Law Firm":"law office professional",
+    "Accounting":"professional office finance",
+    "Event Planning":"elegant event decoration",
+    "Catering":"catering food elegant",
+    "Interior Design":"interior design modern home",
+    "Cleaning Services":"clean modern home spotless",
+    "Landscaping":"beautiful garden landscaping",
+    "Automotive":"car garage automotive",
+    "Construction":"construction site professional",
+    "Other":"professional business office",
+  };
+  return map[industry] || "professional business";
+}
+
+// Fetch images from Pexels (free, allows automation, no attribution needed)
+async function fetchPexelsImages(industry, apiKey) {
+  const keyword = getUnsplashKeyword(industry); // reuse same keyword map
+  const queries = [
+    keyword,
+    keyword + " wide",
+    keyword + " team",
+    keyword + " detail",
+    keyword + " exterior",
+    keyword + " lifestyle",
+  ];
+  const results = await Promise.all(
+    queries.map(q =>
+      fetch(`https://api.pexels.com/v1/search?query=${encodeURIComponent(q)}&per_page=3&orientation=landscape`, {
+        headers: { Authorization: apiKey }
+      })
+        .then(r => r.json())
+        .then(d => {
+          if(d.photos && d.photos.length > 0) {
+            const pick = d.photos[Math.floor(Math.random() * Math.min(3, d.photos.length))];
+            return pick.src.large2x || pick.src.large;
+          }
+          return null;
+        })
+        .catch(() => null)
+    )
+  );
+  return results.filter(Boolean);
+}
+
+function buildPrompt(f, images=[]) {
   const pal = PALETTES.find(p=>p.id===f.palette)||PALETTES[0];
   const vib = VIBES.find(v=>v.id===f.vibe)||VIBES[0];
   const secs = f.sections.filter(s=>s!=="hero"&&s!=="social_proof");
+  const [heroImg, aboutImg, galleryImg1, galleryImg2, galleryImg3, galleryImg4] = images;
+  const hasImages = images.length > 0;
   return `You are a senior CRO expert and world-class web designer. Build a complete, production-ready, single-file HTML landing page.
 
 BUSINESS:
@@ -113,23 +182,33 @@ Palette bg:${pal.bg} surface:${pal.surface} accent:${pal.accent} text:${pal.text
 Vibe: ${vib.label} — ${vib.desc}
 Font: ONE distinctive Google Font pair (NOT Inter/Roboto — something memorable for this vibe)
 
+${hasImages ? `REAL IMAGES PROVIDED — use these actual URLs directly in the HTML (no placeholders):
+- Hero background: ${heroImg||"none"} — use as hero section background-image with dark overlay (rgba 0,0,0,0.55)
+- About section image: ${aboutImg||heroImg||"none"} — use as full-height image on one side of about section
+- Gallery image 1: ${galleryImg1||"none"}
+- Gallery image 2: ${galleryImg2||heroImg||"none"}
+- Gallery image 3: ${galleryImg3||aboutImg||"none"}
+- Gallery image 4: ${galleryImg4||heroImg||"none"}
+- Service cards: use a subtle background-image on each card with these images cycling through, very low opacity (0.08) as a texture
+IMPORTANT: Every img tag or background-image must use the exact URLs above. Do NOT use placeholder.com or any fake URLs.` : `IMAGES: Use CSS gradients and geometric patterns for all backgrounds. No external images.`}
+
 SECTIONS:
 1. Full SEO <head>: title, meta description, keywords, OG tags, Twitter card, canonical, schema.org LocalBusiness JSON-LD
 2. Sticky header: name left, nav right, mobile hamburger
-3. Hero: 100vh, H1 with keyword, subheadline, 2 CTAs, star rating trust line
+3. Hero: 100vh, H1 with keyword, subheadline, 2 CTAs, star rating trust line${heroImg ? ` — use hero background image with dark overlay` : ` — stunning CSS gradient/geometric pattern`}
 4. Social proof bar: 4 stats
 ${secs.map((s,i)=>{
   const m={
-    services:`${i+5}. SERVICES: 3 cards with icon, name, description, price, hover effect`,
-    about:`${i+5}. ABOUT: 2-col layout, story left, 4 stats right`,
+    services:`${i+5}. SERVICES: 6 cards in a 3-col grid, each with icon, name, description, price, hover glow effect${hasImages?" — subtle image texture in card background":""}`,
+    about:`${i+5}. ABOUT: 2-col layout${aboutImg?`, left col = full image (${aboutImg}) with rounded corners, right col = story text + 4 stats`:", story left, 4 stats right"}`,
     benefits:`${i+5}. BENEFITS: 6-item grid, icon+title+desc, niche-specific`,
     testimonials:`${i+5}. TESTIMONIALS: 3 realistic reviews, name+location+stars+quote`,
     pricing:`${i+5}. PRICING: 3 tiers, feature lists, Most Popular badge`,
-    gallery:`${i+5}. GALLERY: 6-item CSS grid, gradient placeholders, caption hover`,
+    gallery:`${i+5}. GALLERY: ${hasImages?`6-item CSS grid using these real images: ${[galleryImg1,galleryImg2,galleryImg3,galleryImg4,heroImg,aboutImg].filter(Boolean).join(", ")} — each as object-fit cover, caption overlay on hover`:"6-item CSS grid, gradient placeholders, caption hover"}`,
     faq:`${i+5}. FAQ: 5 accordion items with JS click-to-expand`,
     booking:`${i+5}. BOOKING: full form with name/email/phone/service/date/message`,
     contact:`${i+5}. CONTACT: split layout, info left, form right`,
-    cta:`${i+5}. CTA BANNER: full-width urgent headline + big button`,
+    cta:`${i+5}. CTA BANNER: full-width urgent headline + big button${heroImg?` — background image with dark overlay`:""}`,
   };
   return m[s]||`${i+5}. ${s.toUpperCase()}`;
 }).join("\n")}
@@ -139,10 +218,11 @@ RULES:
 1. CSS in <style>, JS in <script> at bottom. One Google Fonts @import only.
 2. NEVER use IntersectionObserver. ALL content visible on load. CSS keyframe animations that auto-play are fine.
 3. Real niche-specific copy. Zero lorem ipsum.
-4. Hero: stunning CSS gradient/geometric pattern, no external images.
-5. Conversion: urgency, social proof, 5+ CTAs, trust signals throughout.
-6. One H1 with keyword, descriptive H2s, semantic HTML.
-7. Working JS accordion for FAQ. Working hamburger menu. Mobile-first responsive.
+4. Conversion: urgency, social proof, 5+ CTAs, trust signals throughout.
+5. One H1 with keyword, descriptive H2s, semantic HTML.
+6. Working JS accordion for FAQ. Working hamburger menu. Mobile-first responsive.
+7. All images must use object-fit:cover with appropriate container heights.
+8. Hero image overlay: always add a dark semi-transparent overlay so text is readable.
 
 OUTPUT: Raw HTML only. Start with <!DOCTYPE html>. End with </html>. Nothing else.`;
 }
@@ -380,7 +460,7 @@ function BuilderPanel({form,up,togSec,onNext,ready}) {
           Missing: {[!form.name&&"Name",!form.industry&&"Industry",!form.description&&"Description"].filter(Boolean).join(", ")}
         </div>}
         <div style={{marginTop:9,display:"flex",justifyContent:"center",gap:14,fontSize:10,color:"#9ca3af"}}>
-          <span>✓ SEO optimised</span><span>✓ Mobile ready</span><span>✓ Download HTML</span>
+          <span>✓ Real photos included</span><span>✓ SEO optimised</span><span>✓ Mobile ready</span>
         </div>
       </div>
     </div>
@@ -498,30 +578,93 @@ function PricingWall({form, onBack, onPurchase}) {
 function GeneratingScreen({form,onDone,onError}) {
   const [pct,setPct]=useState(0);
   const [si,setSi]=useState(0);
-  const stages=["Reading your business…","Researching your niche…","Planning SEO strategy…","Writing headlines & copy…","Designing hero section…","Building all sections…","Adding conversion elements…","Finalising your page…"];
+  const [imgStatus,setImgStatus]=useState("Sourcing photos for your industry…");
+  const stages=[
+    "Sourcing photos for your industry…",
+    "Reading your business details…",
+    "Researching your niche…",
+    "Planning SEO strategy…",
+    "Writing headlines & copy…",
+    "Designing hero with your images…",
+    "Building all sections…",
+    "Adding conversion elements…",
+    "Finalising your page…",
+  ];
 
   useEffect(()=>{
     let p=0;
-    const iv=setInterval(()=>{p=Math.min(p+Math.random()*3+.7,91);setPct(Math.floor(p));setSi(Math.floor(p/100*(stages.length-1)));},800);
-    fetch("https://api.anthropic.com/v1/messages",{
-      method:"POST",
-      headers:{"Content-Type":"application/json","x-api-key":import.meta.env.VITE_ANTHROPIC_KEY,"anthropic-version":"2023-06-01","anthropic-dangerous-direct-browser-access":"true"},
-      body:JSON.stringify({model:"claude-sonnet-4-20250514",max_tokens:8000,messages:[{role:"user",content:buildPrompt(form)}]})
-    })
-    .then(r=>{if(!r.ok)throw new Error(`API ${r.status}`);return r.json();})
-    .then(data=>{
-      clearInterval(iv);setPct(100);
-      let raw=(data.content||[]).filter(b=>b.type==="text").map(b=>b.text).join("");
-      let html=raw.trim();
-      const idx=html.search(/<(!DOCTYPE|html)/i);
-      if(idx>0)html=html.slice(idx);
-      const end=html.lastIndexOf("</html>");
-      if(end!==-1)html=html.slice(0,end+7);
-      if(!html.toLowerCase().includes("<!doctype"))throw new Error("Invalid HTML. Please try again.");
-      setTimeout(()=>onDone(html),400);
-    })
-    .catch(e=>{clearInterval(iv);onError(e.message);});
-    return()=>clearInterval(iv);
+    let cancelled=false;
+    const iv=setInterval(()=>{
+      p=Math.min(p+Math.random()*2.5+.5,91);
+      setPct(Math.floor(p));
+      setSi(Math.floor(p/100*(stages.length-1)));
+    },800);
+
+    const PEXELS_KEY = import.meta.env.VITE_PEXELS_KEY;
+    const keyword = getUnsplashKeyword(form.industry);
+
+    // Fetch 6 images in parallel from Pexels
+    const queries = [
+      keyword,
+      keyword+" wide",
+      keyword+" team people",
+      keyword+" detail close",
+      keyword+" exterior outside",
+      keyword+" lifestyle",
+    ];
+
+    const fetchImg = (q) =>
+      fetch(`https://api.pexels.com/v1/search?query=${encodeURIComponent(q)}&per_page=3&orientation=landscape`, {
+        headers: { Authorization: PEXELS_KEY }
+      })
+        .then(r=>r.json())
+        .then(d=>{
+          if(d.photos&&d.photos.length>0){
+            const pick = d.photos[Math.floor(Math.random()*Math.min(3,d.photos.length))];
+            return pick.src.large2x||pick.src.large;
+          }
+          return null;
+        })
+        .catch(()=>null);
+
+    setImgStatus("Sourcing photos for your industry…");
+
+    Promise.all(queries.map(q=>fetchImg(q)))
+      .then(images=>{
+        const validImages = images.filter(Boolean);
+        if(!cancelled) setImgStatus(validImages.length>0 ? `Found ${validImages.length} photos ✓`:"Using styled design…");
+        // Now generate the page with the images
+        return fetch("https://api.anthropic.com/v1/messages",{
+          method:"POST",
+          headers:{
+            "Content-Type":"application/json",
+            "x-api-key":import.meta.env.VITE_ANTHROPIC_KEY,
+            "anthropic-version":"2023-06-01",
+            "anthropic-dangerous-direct-browser-access":"true"
+          },
+          body:JSON.stringify({
+            model:"claude-sonnet-4-20250514",
+            max_tokens:8000,
+            messages:[{role:"user",content:buildPrompt(form,validImages)}]
+          })
+        });
+      })
+      .then(r=>{if(!r.ok)throw new Error(`API ${r.status}`);return r.json();})
+      .then(data=>{
+        if(cancelled)return;
+        clearInterval(iv);setPct(100);
+        let raw=(data.content||[]).filter(b=>b.type==="text").map(b=>b.text).join("");
+        let html=raw.trim();
+        const idx=html.search(/<(!DOCTYPE|html)/i);
+        if(idx>0)html=html.slice(idx);
+        const end=html.lastIndexOf("</html>");
+        if(end!==-1)html=html.slice(0,end+7);
+        if(!html.toLowerCase().includes("<!doctype"))throw new Error("Invalid HTML. Please try again.");
+        setTimeout(()=>onDone(html),400);
+      })
+      .catch(e=>{if(!cancelled){clearInterval(iv);onError(e.message);}});
+
+    return()=>{cancelled=true;clearInterval(iv);};
   },[]);
 
   return (
@@ -533,6 +676,7 @@ function GeneratingScreen({form,onDone,onError}) {
         <div style={{position:"absolute",inset:0,display:"flex",alignItems:"center",justifyContent:"center",fontSize:26}}>✦</div>
       </div>
       <div style={{fontSize:18,fontWeight:700,color:"#111827",marginBottom:6,minHeight:28}}>{stages[si]}</div>
+      {si===0&&<div style={{fontSize:12,color:"#f97316",marginBottom:8,fontWeight:600}}>{imgStatus}</div>}
       <div style={{fontSize:13,color:"#6b7280",marginBottom:28,maxWidth:300,lineHeight:1.6}}>
         Building your SEO-optimised landing page for <strong style={{color:"#f97316"}}>{form.name}</strong>
       </div>
@@ -541,7 +685,7 @@ function GeneratingScreen({form,onDone,onError}) {
           <div style={{height:"100%",background:"linear-gradient(90deg,#f97316,#fb923c)",borderRadius:2,width:`${pct}%`,transition:"width .8s ease"}}/>
         </div>
         <div style={{display:"flex",justifyContent:"space-between",marginTop:6,fontSize:11,color:"#9ca3af"}}>
-          <span>Writing niche-specific copy…</span><span>{pct}%</span>
+          <span>{si===0?"Fetching industry photos…":"Writing niche-specific copy…"}</span><span>{pct}%</span>
         </div>
       </div>
       <div style={{padding:"14px 20px",background:"#fff7ed",border:"1px solid #fed7aa",borderRadius:12}}>
@@ -593,7 +737,7 @@ function ResultScreen({html,form,onReset}) {
       </div>
       <div style={{flex:1,overflowY:"auto",padding:"16px 22px"}}>
         <div style={{display:"flex",flexDirection:"column",gap:7,marginBottom:18}}>
-          {[["🔍","SEO + Schema Markup"],["🎯","5+ Conversion CTAs"],["📱","Mobile Responsive"],["✍️","Niche-specific copy for "+form.industry]].map(([ic,t])=>(
+          {[["🔍","SEO + Schema Markup"],["🎯","5+ Conversion CTAs"],["📱","Mobile Responsive"],["🖼️","Real photos for "+form.industry],["✍️","Niche-specific copy"]].map(([ic,t])=>(
             <div key={t} style={{display:"flex",gap:9,padding:"8px 11px",background:"#f9fafb",borderRadius:7,fontSize:12,color:"#374151",alignItems:"center"}}>
               <span>{ic}</span><span>{t}</span>
             </div>
