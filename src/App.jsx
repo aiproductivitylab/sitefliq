@@ -2,6 +2,89 @@ import { useState, useEffect, useRef } from "react";
 
 const GOOGLE_KEY = import.meta.env.VITE_GOOGLE_KEY || "";
 const PEXELS_KEY_ENV = import.meta.env.VITE_PEXELS_KEY || "";
+const SUPABASE_URL = "https://fcajlfdykudsunczdrex.supabase.co";
+const SUPABASE_ANON = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZjYWpsZmR5a3Vkc3VuY3pkcmV4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI2NTcwMjYsImV4cCI6MjA4ODIzMzAyNn0.ez9ue4RXqAUzFjG9pBk4sra9zDKC-CCBFC4pbelwGg8";
+
+// Supabase helper
+const sb = {
+  url: SUPABASE_URL,
+  key: SUPABASE_ANON,
+  async req(path, opts={}) {
+    const r = await fetch(SUPABASE_URL + path, {
+      ...opts,
+      headers: {
+        "apikey": SUPABASE_ANON,
+        "Authorization": "Bearer " + (sb._token || SUPABASE_ANON),
+        "Content-Type": "application/json",
+        "Prefer": opts.prefer || "",
+        ...(opts.headers||{})
+      }
+    });
+    const text = await r.text();
+    try { return {ok: r.ok, status: r.status, data: JSON.parse(text)}; }
+    catch { return {ok: r.ok, status: r.status, data: text}; }
+  },
+  _token: null,
+  _user: null,
+  async signUp(email, password) {
+    const r = await this.req("/auth/v1/signup", {
+      method: "POST",
+      body: JSON.stringify({email, password})
+    });
+    if(r.ok && r.data.access_token) {
+      this._token = r.data.access_token;
+      this._user = r.data.user;
+    }
+    return r;
+  },
+  async signIn(email, password) {
+    const r = await this.req("/auth/v1/token?grant_type=password", {
+      method: "POST",
+      body: JSON.stringify({email, password})
+    });
+    if(r.ok && r.data.access_token) {
+      this._token = r.data.access_token;
+      this._user = r.data.user;
+      localStorage.setItem("sb_token", r.data.access_token);
+      localStorage.setItem("sb_user", JSON.stringify(r.data.user));
+    }
+    return r;
+  },
+  async signOut() {
+    await this.req("/auth/v1/logout", {method: "POST"});
+    this._token = null;
+    this._user = null;
+    localStorage.removeItem("sb_token");
+    localStorage.removeItem("sb_user");
+  },
+  async getCredits() {
+    if(!this._token) return 0;
+    const r = await this.req("/rest/v1/credits?select=balance&limit=1");
+    if(r.ok && r.data && r.data[0]) return r.data[0].balance;
+    return 0;
+  },
+  async deductCredit() {
+    if(!this._token) return false;
+    const r = await this.req("/rest/v1/rpc/deduct_credit", {
+      method: "POST",
+      body: JSON.stringify({}),
+      prefer: "return=representation"
+    });
+    return r.ok;
+  },
+  restoreSession() {
+    try {
+      const token = localStorage.getItem("sb_token");
+      const user = localStorage.getItem("sb_user");
+      if(token && user) {
+        this._token = token;
+        this._user = JSON.parse(user);
+        return true;
+      }
+    } catch {}
+    return false;
+  }
+};
 
 /* ─────────────────────────────────────────────────────────────────────────────
    CONSTANTS
@@ -938,6 +1021,74 @@ function ResultScreen({html,form,onReset}) {
 }
 
 /* ─────────────────────────────────────────────────────────────────────────────
+   AUTH COMPONENTS
+───────────────────────────────────────────────────────────────────────────── */
+function AuthModal({mode="signin", onSuccess, onClose}) {
+  const [tab, setTab] = useState(mode);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [err, setErr] = useState("");
+  const [msg, setMsg] = useState("");
+
+  const handle = async () => {
+    setErr(""); setMsg(""); setLoading(true);
+    try {
+      if(tab === "signup") {
+        const r = await sb.signUp(email, password);
+        if(!r.ok) { setErr(r.data?.msg || r.data?.error_description || "Sign up failed"); }
+        else { setMsg("Check your email to confirm your account, then sign in!"); setTab("signin"); }
+      } else {
+        const r = await sb.signIn(email, password);
+        if(!r.ok) { setErr(r.data?.error_description || "Invalid email or password"); }
+        else { onSuccess && onSuccess(); }
+      }
+    } catch(e) { setErr("Network error. Please try again."); }
+    setLoading(false);
+  };
+
+  return (
+    <div style={{position:"fixed",inset:0,background:"rgba(0,0,0,0.5)",display:"flex",alignItems:"center",justifyContent:"center",zIndex:9999,fontFamily:"'Geist',sans-serif"}}>
+      <div style={{background:"white",borderRadius:16,padding:36,width:"100%",maxWidth:400,position:"relative"}}>
+        <button onClick={onClose} style={{position:"absolute",top:16,right:16,background:"none",border:"none",fontSize:20,cursor:"pointer",color:"#9ca3af"}}>×</button>
+        <div style={{textAlign:"center",marginBottom:24}}>
+          <div style={{fontSize:28,fontWeight:800,color:"#111827",marginBottom:4}}>
+            {tab==="signin" ? "Welcome back" : "Create account"}
+          </div>
+          <p style={{fontSize:13,color:"#6b7280"}}>{tab==="signin" ? "Sign in to access your credits" : "Start building landing pages with AI"}</p>
+        </div>
+        <div style={{display:"flex",gap:0,marginBottom:24,background:"#f3f4f6",borderRadius:8,padding:3}}>
+          {["signin","signup"].map(t=>(
+            <button key={t} onClick={()=>{setTab(t);setErr("");setMsg("");}} style={{flex:1,padding:"8px 0",border:"none",borderRadius:6,fontSize:13,fontWeight:600,cursor:"pointer",background:tab===t?"white":"transparent",color:tab===t?"#111827":"#6b7280",boxShadow:tab===t?"0 1px 3px rgba(0,0,0,.1)":"none",transition:"all .15s"}}>
+              {t==="signin"?"Sign In":"Sign Up"}
+            </button>
+          ))}
+        </div>
+        {err && <div style={{background:"#fef2f2",border:"1px solid #fecaca",borderRadius:8,padding:"10px 14px",fontSize:13,color:"#dc2626",marginBottom:16}}>{err}</div>}
+        {msg && <div style={{background:"#f0fdf4",border:"1px solid #bbf7d0",borderRadius:8,padding:"10px 14px",fontSize:13,color:"#16a34a",marginBottom:16}}>{msg}</div>}
+        <div style={{marginBottom:14}}>
+          <label style={{fontSize:12,fontWeight:600,color:"#374151",display:"block",marginBottom:5}}>EMAIL</label>
+          <input value={email} onChange={e=>setEmail(e.target.value)} type="email" placeholder="you@example.com"
+            style={{width:"100%",padding:"10px 12px",border:"1px solid #e5e7eb",borderRadius:8,fontSize:14,outline:"none",boxSizing:"border-box"}}
+            onKeyDown={e=>e.key==="Enter"&&handle()}/>
+        </div>
+        <div style={{marginBottom:20}}>
+          <label style={{fontSize:12,fontWeight:600,color:"#374151",display:"block",marginBottom:5}}>PASSWORD</label>
+          <input value={password} onChange={e=>setPassword(e.target.value)} type="password" placeholder="••••••••"
+            style={{width:"100%",padding:"10px 12px",border:"1px solid #e5e7eb",borderRadius:8,fontSize:14,outline:"none",boxSizing:"border-box"}}
+            onKeyDown={e=>e.key==="Enter"&&handle()}/>
+        </div>
+        <button onClick={handle} disabled={loading||!email||!password}
+          style={{width:"100%",padding:"13px",background: loading||!email||!password?"#e5e7eb":"#f97316",color:loading||!email||!password?"#9ca3af":"white",border:"none",borderRadius:10,fontSize:15,fontWeight:700,cursor:loading||!email||!password?"not-allowed":"pointer",transition:"background .15s"}}>
+          {loading ? "Please wait…" : tab==="signin" ? "Sign In →" : "Create Account →"}
+        </button>
+        <p style={{textAlign:"center",marginTop:16,fontSize:12,color:"#9ca3af"}}>🔒 Secure · Your data is never shared</p>
+      </div>
+    </div>
+  );
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
    HOME PAGE
 ───────────────────────────────────────────────────────────────────────────── */
 function HomePage({onBuild,onPricing,onExample,onHelp}) {
@@ -1790,6 +1941,41 @@ export default function Sitefliq() {
   const [screen,setScreen]=useState("home");
   const [resHtml,setResHtml]=useState("");
   const [genErr,setGenErr]=useState(null);
+  const [user,setUser]=useState(null);
+  const [credits,setCredits]=useState(0);
+  const [showAuth,setShowAuth]=useState(false);
+  const [authMode,setAuthMode]=useState("signin");
+
+  // Restore session on mount
+  useEffect(()=>{
+    if(sb.restoreSession()){
+      setUser(sb._user);
+      sb.getCredits().then(setCredits);
+    }
+    // Check for paddle payment success
+    const params = new URLSearchParams(window.location.search);
+    if(params.get("payment")==="success"){
+      setTimeout(()=>{
+        sb.getCredits().then(c=>{
+          setCredits(c);
+          window.history.replaceState({},document.title,window.location.pathname);
+        });
+      }, 2000);
+    }
+  },[]);
+
+  const handleSignOut = async () => {
+    await sb.signOut();
+    setUser(null);
+    setCredits(0);
+    setScreen("home");
+  };
+
+  const refreshCredits = async () => {
+    const c = await sb.getCredits();
+    setCredits(c);
+    return c;
+  };
   const [form,setForm]=useState({
     name:"",industry:"",tagline:"",description:"",
     location:"",phone:"",email:"",cta:"Get Started Today",
@@ -1814,25 +2000,31 @@ export default function Sitefliq() {
     document.head.appendChild(s);
   },[]);
 
-  // When user clicks a plan — open Paddle overlay checkout
+  // When user clicks a plan — require login then open Paddle
   const handlePurchase=(plan)=>{
+    if(!user){
+      setAuthMode("signup");
+      setShowAuth(true);
+      return;
+    }
     sessionStorage.setItem("sitefliq_form",JSON.stringify(form));
     sessionStorage.setItem("sitefliq_plan",plan.id);
     if(window.Paddle){
       window.Paddle.Checkout.open({
         items:[{priceId:plan.priceId, quantity:1}],
         successUrl: window.location.origin + "?payment=success",
-        customData:{plan:plan.id},
+        customData:{plan:plan.id, user_id: user.id},
+        customer: {email: user.email},
       });
     }
     setScreen("waiting_payment");
   };
 
-  if(screen==="home") return <HomePage onBuild={()=>setScreen("builder")} onPricing={()=>setScreen("pricing_standalone")} onExample={()=>setScreen("example")} onHelp={()=>setScreen("help")}/>;
+  if(screen==="home") return <><HomePage onBuild={()=>setScreen("builder")} onPricing={()=>setScreen("pricing_standalone")} onExample={()=>setScreen("example")} onHelp={()=>setScreen("help")}/>{showAuth&&<AuthModal mode={authMode} onSuccess={()=>{setUser(sb._user);sb.getCredits().then(setCredits);setShowAuth(false);}} onClose={()=>setShowAuth(false)}/>}</>;
   if(screen==="help") return <HelpPage onHome={()=>setScreen("home")}/>;
   if(screen==="example") return <ExamplePage onBack={()=>setScreen("home")} onBuild={()=>setScreen("builder")}/>;
-  if(screen==="pricing_standalone") return <PricingPage onBuild={()=>setScreen("builder")} onHome={()=>setScreen("home")}/>;
-  if(screen==="pricing_wall") return <PricingWall form={form} onBack={()=>setScreen("builder")} onPurchase={handlePurchase}/>;
+  if(screen==="pricing_standalone") return <><PricingPage onBuild={()=>setScreen("builder")} onHome={()=>setScreen("home")} user={user} credits={credits} onSignIn={()=>{setAuthMode("signin");setShowAuth(true);}} onSignOut={handleSignOut}/>{showAuth&&<AuthModal mode={authMode} onSuccess={()=>{setUser(sb._user);sb.getCredits().then(setCredits);setShowAuth(false);}} onClose={()=>setShowAuth(false)}/>}</>;
+  if(screen==="pricing_wall") return <><PricingWall form={form} onBack={()=>setScreen("builder")} onPurchase={handlePurchase} user={user} credits={credits} onSignIn={()=>{setAuthMode("signin");setShowAuth(true);}}/>{showAuth&&<AuthModal mode={authMode} onSuccess={()=>{setUser(sb._user);sb.getCredits().then(setCredits);setShowAuth(false);}} onClose={()=>setShowAuth(false)}/>}</>;
 
   // Waiting for payment confirmation
   if(screen==="waiting_payment") return (
@@ -1842,10 +2034,10 @@ export default function Sitefliq() {
         <div style={{fontSize:48,marginBottom:20}}>💳</div>
         <h2 style={{fontSize:26,fontWeight:800,color:"#111827",marginBottom:12}}>Complete your payment</h2>
         <p style={{fontSize:14,color:"#6b7280",marginBottom:28,lineHeight:1.7}}>
-          A A Paddle checkout window has opened. Complete your payment there, then come back here and click the button below.
+          A Complete your payment in the Paddle window. Once paid your credits will be added automatically and you can start building!
         </p>
-        <button onClick={()=>setScreen("generating")} style={{width:"100%",padding:"14px",background:"#f97316",color:"white",border:"none",borderRadius:10,fontSize:15,fontWeight:700,cursor:"pointer",fontFamily:"inherit",marginBottom:12}}>
-          ✓ I've Paid — Generate My Page →
+        <button onClick={async()=>{await refreshCredits();setScreen("pricing_wall");}} style={{width:"100%",padding:"14px",background:"#f97316",color:"white",border:"none",borderRadius:10,fontSize:15,fontWeight:700,cursor:"pointer",fontFamily:"inherit",marginBottom:12}}>
+          ✓ I've Paid — Check Credits & Continue →
         </button>
         <button onClick={()=>setScreen("pricing_wall")} style={{width:"100%",padding:"12px",background:"white",color:"#6b7280",border:"1px solid #e5e7eb",borderRadius:10,fontSize:13,cursor:"pointer",fontFamily:"inherit"}}>
           ← Go back
@@ -1863,6 +2055,7 @@ export default function Sitefliq() {
       <GS/>
       {/* Top bar */}
       <div style={{height:50,background:"white",borderBottom:"1px solid #f3f4f6",display:"flex",alignItems:"center",justifyContent:"space-between",padding:"0 20px",flexShrink:0}}>
+        {showAuth&&<AuthModal mode={authMode} onSuccess={()=>{setUser(sb._user);sb.getCredits().then(setCredits);setShowAuth(false);}} onClose={()=>setShowAuth(false)}/>}
         <div onClick={()=>setScreen("home")} style={{display:"flex",alignItems:"center",gap:7,cursor:"pointer"}}>
           <span style={{fontSize:15,color:"#9ca3af"}}>←</span>
           <div style={{width:23,height:23,background:"#f97316",borderRadius:5,display:"flex",alignItems:"center",justifyContent:"center",fontSize:11,color:"white",fontWeight:800}}>S</div>
@@ -1872,6 +2065,16 @@ export default function Sitefliq() {
           {screen==="builder"&&"⚡ Powered by Claude AI"}
           {screen==="result"&&<span style={{color:"#16a34a",fontWeight:600}}>✓ Page Ready — {form.name}</span>}
           {screen==="generating"&&<span style={{color:"#f97316"}}>⚡ Generating…</span>}
+          <div style={{display:"flex",alignItems:"center",gap:10,marginLeft:"auto"}}>
+            {user ? (
+              <>
+                <span style={{fontSize:12,background:"#fff7ed",color:"#f97316",border:"1px solid #fed7aa",borderRadius:20,padding:"3px 10px",fontWeight:700}}>⚡ {credits} credits</span>
+                <button onClick={handleSignOut} style={{fontSize:12,background:"none",border:"1px solid #e5e7eb",borderRadius:6,padding:"4px 10px",cursor:"pointer",color:"#6b7280"}}>Sign out</button>
+              </>
+            ) : (
+              <button onClick={()=>{setAuthMode("signin");setShowAuth(true);}} style={{fontSize:12,background:"#f97316",color:"white",border:"none",borderRadius:6,padding:"5px 12px",cursor:"pointer",fontWeight:600}}>Sign In</button>
+            )}
+          </div>
         </div>
         <div style={{width:80}}/>
       </div>
@@ -1897,7 +2100,7 @@ export default function Sitefliq() {
         {/* Right */}
         <div style={{overflow:"hidden",display:"flex",flexDirection:"column"}}>
           {screen==="builder"&&<LivePreview form={form}/>}
-          {screen==="generating"&&<GeneratingScreen form={form} onDone={h=>{setResHtml(h);setScreen("result");}} onError={e=>{setGenErr(e);setScreen("builder");}}/>}
+          {screen==="generating"&&<GeneratingScreen form={form} onDone={async h=>{await sb.deductCredit();await refreshCredits();setResHtml(h);setScreen("result");}} onError={e=>{setGenErr(e);setScreen("builder");}}/>}
           {screen==="result"&&(
             <div style={{height:"100%",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",padding:40,background:"#f1f5f9",gap:18,textAlign:"center"}}>
               <div style={{fontSize:44}}>🎉</div>
