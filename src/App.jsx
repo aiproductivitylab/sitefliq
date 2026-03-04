@@ -93,69 +93,63 @@ const PLANS = [
    PROMPT
 ───────────────────────────────────────────────────────────────────────────── */
 // Unsplash keyword map — niche → best search terms
-function getUnsplashKeyword(industry) {
+// Per-section targeted keyword map — each industry has 6 specific searches
+// hero, about, gallery1, gallery2, service1, service2
+function getSectionKeywords(industry) {
   const map = {
-    "Yoga & Fitness":"yoga studio peaceful",
-    "Pilates & Barre":"pilates studio workout",
-    "Gym & CrossFit":"modern gym workout",
-    "Personal Training":"personal trainer gym",
-    "Beauty & Hair Salon":"luxury hair salon",
-    "Nail Studio & Spa":"nail spa luxury",
-    "Barbershop":"barbershop interior",
-    "Restaurant & Café":"restaurant elegant dining",
-    "Coffee Shop & Bakery":"coffee shop cozy",
-    "Photography":"photography studio camera",
-    "Videography":"video production studio",
-    "Real Estate Agency":"modern luxury home interior",
-    "Life Coaching":"coaching professional office",
-    "Business Consulting":"modern office professional",
-    "Healthcare & Wellness":"modern clinic wellness",
-    "Dental Practice":"dental clinic modern",
-    "Clothing Boutique":"fashion boutique clothing",
-    "Online Store":"ecommerce product flat lay",
-    "Education & Tutoring":"classroom education learning",
-    "Tech Startup":"modern tech office startup",
-    "Law Firm":"law office professional",
-    "Accounting":"professional office finance",
-    "Event Planning":"elegant event decoration",
-    "Catering":"catering food elegant",
-    "Interior Design":"interior design modern home",
-    "Cleaning Services":"clean modern home spotless",
-    "Landscaping":"beautiful garden landscaping",
-    "Automotive":"car garage automotive",
-    "Construction":"construction site professional",
-    "Other":"professional business office",
+    "Yoga & Fitness":       ["yoga class studio sunlight","yoga instructor teaching","yoga studio interior","woman meditating yoga","yoga pose flexibility","group yoga class"],
+    "Pilates & Barre":      ["pilates reformer studio","pilates instructor class","barre workout studio","pilates exercise woman","pilates equipment studio","group pilates class"],
+    "Gym & CrossFit":       ["modern gym interior wide","personal trainer coaching","crossfit gym workout","weight lifting gym","gym equipment modern","athletes gym training"],
+    "Personal Training":    ["personal trainer client outdoor","fitness trainer coaching","outdoor workout training","personal training session","athlete training park","fitness coaching session"],
+    "Beauty & Hair Salon":  ["luxury hair salon interior","hairstylist cutting hair","hair salon modern interior","hair styling professional","salon chair mirror","hair color treatment"],
+    "Nail Studio & Spa":    ["nail salon luxury interior","nail technician manicure","spa treatment hands","nail art close up","nail salon modern","manicure pedicure spa"],
+    "Barbershop":           ["barber shop interior vintage","barber cutting hair","barbershop chair mirror","barber shave razor","barbershop modern","barber tools scissors"],
+    "Restaurant & Café":    ["restaurant interior elegant lighting","chef cooking kitchen","restaurant table setting","fine dining food presentation","restaurant atmosphere candles","waiter serving food"],
+    "Coffee Shop & Bakery": ["coffee shop cozy interior","barista making coffee","bakery fresh bread pastries","coffee latte art close up","coffee shop morning light","bakery interior warm"],
+    "Photography":          ["photography studio professional lighting","photographer camera shoot","photography studio setup","camera lens close up","photo shoot behind scenes","photographer portrait session"],
+    "Videography":          ["video production studio","videographer filming camera","video camera professional","film production set","videography outdoor shoot","video editing studio"],
+    "Real Estate Agency":   ["modern luxury home exterior","bright living room interior","luxury kitchen modern","real estate home interior","house architecture modern","luxury property exterior"],
+    "Life Coaching":        ["life coaching professional office","coach client meeting","coaching conversation office","professional woman coaching","business coaching session","motivational coaching"],
+    "Business Consulting":  ["modern office professional interior","business meeting boardroom","business consulting team","professional office desk","corporate team meeting","business strategy planning"],
+    "Healthcare & Wellness":["modern medical clinic interior","doctor patient consultation","healthcare professional clinic","medical office bright","wellness clinic modern","health professional smiling"],
+    "Dental Practice":      ["modern dental clinic interior","dentist patient chair","dental office professional","dental equipment modern","dentist smiling professional","dental clinic bright"],
+    "Clothing Boutique":    ["fashion boutique interior modern","clothing rack boutique","fashion store interior","clothes shopping boutique","retail fashion store","boutique window display"],
+    "Online Store":         ["ecommerce product photography flat lay","product packaging modern","online shopping products","product display minimal","ecommerce flat lay lifestyle","product photography studio"],
+    "Education & Tutoring": ["classroom modern bright students","teacher student tutoring","education learning classroom","student studying desk","tutoring session table","school classroom light"],
+    "Tech Startup":         ["modern tech office startup","developers coding computers","tech startup office team","open plan office modern","coding laptop coffee","tech team collaboration"],
+    "Law Firm":             ["law office professional interior","lawyer desk books","law firm conference room","legal professional office","attorney meeting client","law library books"],
+    "Accounting":           ["professional office finance desk","accountant working laptop","business finance office","professional meeting finance","accounting desk documents","financial planning office"],
+    "Event Planning":       ["elegant event venue decoration","event planning flowers decor","wedding reception elegant","event styling flowers","gala dinner table setting","event decoration luxury"],
+    "Catering":             ["catering food elegant display","chef catering event","catering buffet spread","food catering professional","catering kitchen team","gourmet catering food"],
+    "Interior Design":      ["interior design modern living room","interior designer space","luxury home interior design","modern interior architecture","interior design bedroom luxury","designer home open plan"],
+    "Cleaning Services":    ["clean modern home interior","professional cleaner working","spotless kitchen clean","cleaning service professional","clean bright home","professional cleaning team"],
+    "Landscaping":          ["lush green lawn garden","professional gardener working","beautiful flower garden path","garden landscaping design","garden hedge trimming","manicured lawn outdoor"],
+    "Automotive":           ["modern car garage interior","mechanic working on car","car detailing professional","auto repair shop","car service garage","automotive workshop professional"],
+    "Construction":         ["construction site professional workers","modern building architecture","construction workers building","architect blueprint planning","new building construction","professional builder site"],
+    "Other":                ["professional business office interior","business team meeting","professional workspace modern","business people working","modern office collaboration","professional team workspace"],
   };
-  return map[industry] || "professional business";
+  return map[industry] || map["Other"];
 }
 
-// Fetch images from Pexels (free, allows automation, no attribution needed)
+// Fetch 6 targeted images from Pexels — one per section
 async function fetchPexelsImages(industry, apiKey) {
-  const keyword = getUnsplashKeyword(industry); // reuse same keyword map
-  const queries = [
-    keyword,
-    keyword + " wide",
-    keyword + " team",
-    keyword + " detail",
-    keyword + " exterior",
-    keyword + " lifestyle",
-  ];
-  const results = await Promise.all(
-    queries.map(q =>
-      fetch(`https://api.pexels.com/v1/search?query=${encodeURIComponent(q)}&per_page=3&orientation=landscape`, {
-        headers: { Authorization: apiKey }
-      })
-        .then(r => r.json())
-        .then(d => {
-          if(d.photos && d.photos.length > 0) {
-            const pick = d.photos[Math.floor(Math.random() * Math.min(3, d.photos.length))];
-            return pick.src.large2x || pick.src.large;
-          }
-          return null;
-        })
-        .catch(() => null)
-    )
-  );
+  const queries = getSectionKeywords(industry);
+  const fetchOne = (q) =>
+    fetch(`https://api.pexels.com/v1/search?query=${encodeURIComponent(q)}&per_page=5&orientation=landscape`, {
+      headers: { Authorization: apiKey }
+    })
+    .then(r => r.json())
+    .then(d => {
+      if(d.photos && d.photos.length > 0) {
+        // Pick randomly from top 5 for variety across generations
+        const pick = d.photos[Math.floor(Math.random() * Math.min(5, d.photos.length))];
+        return pick.src.large2x || pick.src.large;
+      }
+      return null;
+    })
+    .catch(() => null);
+
+  const results = await Promise.all(queries.map(q => fetchOne(q)));
   return results.filter(Boolean);
 }
 
@@ -163,8 +157,11 @@ function buildPrompt(f, images=[]) {
   const pal = PALETTES.find(p=>p.id===f.palette)||PALETTES[0];
   const vib = VIBES.find(v=>v.id===f.vibe)||VIBES[0];
   const secs = f.sections.filter(s=>s!=="hero"&&s!=="social_proof");
-  const [heroImg, aboutImg, galleryImg1, galleryImg2, galleryImg3, galleryImg4] = images;
+  // Images are section-targeted: [hero, about, gallery1, gallery2, service1, service2]
+  const [heroImg, aboutImg, galleryImg1, galleryImg2, svcImg1, svcImg2] = images;
   const hasImages = images.length > 0;
+  // Fallbacks so every slot has something
+  const img = (i) => images[i] || images[0] || null;
   return `You are a senior CRO expert and world-class web designer. Build a complete, production-ready, single-file HTML landing page.
 
 BUSINESS:
@@ -182,15 +179,26 @@ Palette bg:${pal.bg} surface:${pal.surface} accent:${pal.accent} text:${pal.text
 Vibe: ${vib.label} — ${vib.desc}
 Font: ONE distinctive Google Font pair (NOT Inter/Roboto — something memorable for this vibe)
 
-${hasImages ? `REAL IMAGES PROVIDED — use these actual URLs directly in the HTML (no placeholders):
-- Hero background: ${heroImg||"none"} — use as hero section background-image with dark overlay (rgba 0,0,0,0.55)
-- About section image: ${aboutImg||heroImg||"none"} — use as full-height image on one side of about section
-- Gallery image 1: ${galleryImg1||"none"}
-- Gallery image 2: ${galleryImg2||heroImg||"none"}
-- Gallery image 3: ${galleryImg3||aboutImg||"none"}
-- Gallery image 4: ${galleryImg4||heroImg||"none"}
-- Service cards: use a subtle background-image on each card with these images cycling through, very low opacity (0.08) as a texture
-IMPORTANT: Every img tag or background-image must use the exact URLs above. Do NOT use placeholder.com or any fake URLs.` : `IMAGES: Use CSS gradients and geometric patterns for all backgrounds. No external images.`}
+${hasImages ? `REAL PHOTOS PROVIDED — each was specifically searched for its section. Use EXACTLY as specified:
+
+HERO: background-image: url('${img(0)}') — full viewport, cover, with dark gradient overlay (rgba 0,0,0,0.6) so text is readable
+ABOUT SECTION: <img src="${img(1)}" style="width:100%;height:100%;object-fit:cover"> — full height left column, professional/team photo
+GALLERY: Use all of these as <img> tags with object-fit:cover:
+  - ${img(0)} (hero/wide shot)
+  - ${img(1)} (team/people)
+  - ${img(2)} (detail/close up)
+  - ${img(3)} (lifestyle/action)
+  - ${img(4)} (service specific)
+  - ${img(5)||img(0)} (service specific 2)
+SERVICE CARDS: Each card is a full-bleed image card. Cycle through ALL provided images as background-image per card, with a dark gradient overlay. Use object-fit:cover.
+CTA BANNER: background-image: url('${img(2)||img(0)}') — with dark overlay
+
+CRITICAL RULES FOR IMAGES:
+1. Use the EXACT URLs provided — do NOT modify, shorten or fake them
+2. Every image tag must have object-fit:cover and a defined height
+3. Hero and CTA must always have a dark overlay so text is readable
+4. Do NOT use placeholder.com, picsum, or any other image service
+5. Gallery items must use <img> tags not background-image` : `IMAGES: Use CSS gradients and geometric patterns. No external images.`}
 
 SECTIONS:
 1. Full SEO <head>: title, meta description, keywords, OG tags, Twitter card, canonical, schema.org LocalBusiness JSON-LD
@@ -601,26 +609,17 @@ function GeneratingScreen({form,onDone,onError}) {
     },800);
 
     const PEXELS_KEY = import.meta.env.VITE_PEXELS_KEY;
-    const keyword = getUnsplashKeyword(form.industry);
-
-    // Fetch 6 images in parallel from Pexels
-    const queries = [
-      keyword,
-      keyword+" wide",
-      keyword+" team people",
-      keyword+" detail close",
-      keyword+" exterior outside",
-      keyword+" lifestyle",
-    ];
+    // Get section-specific targeted queries for this industry
+    const queries = getSectionKeywords(form.industry);
 
     const fetchImg = (q) =>
-      fetch(`https://api.pexels.com/v1/search?query=${encodeURIComponent(q)}&per_page=3&orientation=landscape`, {
+      fetch(`https://api.pexels.com/v1/search?query=${encodeURIComponent(q)}&per_page=5&orientation=landscape`, {
         headers: { Authorization: PEXELS_KEY }
       })
         .then(r=>r.json())
         .then(d=>{
           if(d.photos&&d.photos.length>0){
-            const pick = d.photos[Math.floor(Math.random()*Math.min(3,d.photos.length))];
+            const pick = d.photos[Math.floor(Math.random()*Math.min(5,d.photos.length))];
             return pick.src.large2x||pick.src.large;
           }
           return null;
