@@ -1485,7 +1485,7 @@ function HomePage({onBuild,onPricing,onExample,onHelp,user,credits,onSignIn,onSi
 /* ─────────────────────────────────────────────────────────────────────────────
    PRICING PAGE (standalone)
 ───────────────────────────────────────────────────────────────────────────── */
-function PricingPage({onBuild,onHome}) {
+function PricingPage({onBuild,onHome,user,credits,onSignIn,onSignOut,onPurchase}) {
   return (
     <div style={{minHeight:"100vh",background:"#fafaf9"}}>
       <GS/>
@@ -1494,12 +1494,24 @@ function PricingPage({onBuild,onHome}) {
           <div style={{width:27,height:27,background:"#f97316",borderRadius:6,display:"flex",alignItems:"center",justifyContent:"center",fontSize:12,color:"white",fontWeight:800}}>S</div>
           <span style={{fontSize:17,fontWeight:800,color:"#111827"}}>Sitefliq</span>
         </div>
-        <button onClick={onBuild} style={{padding:"8px 18px",background:"#f97316",border:"none",borderRadius:8,fontSize:13,cursor:"pointer",color:"white",fontFamily:"inherit",fontWeight:700}}>Start Free →</button>
+        <div style={{display:"flex",alignItems:"center",gap:10}}>
+          {user ? (
+            <>
+              <span style={{fontSize:12,background:"#fff7ed",color:"#f97316",border:"1px solid #fed7aa",borderRadius:20,padding:"3px 10px",fontWeight:700}}>⚡ {credits} credits</span>
+              <button onClick={onSignOut} style={{padding:"7px 14px",background:"transparent",border:"1px solid #e5e7eb",borderRadius:8,fontSize:13,cursor:"pointer",color:"#6b7280",fontFamily:"inherit"}}>Sign out</button>
+              <button onClick={onBuild} style={{padding:"8px 18px",background:"#f97316",border:"none",borderRadius:8,fontSize:13,cursor:"pointer",color:"white",fontFamily:"inherit",fontWeight:700}}>Build Page →</button>
+            </>
+          ) : (
+            <>
+              <button onClick={onSignIn} style={{padding:"8px 16px",background:"transparent",border:"1px solid #e5e7eb",borderRadius:8,fontSize:13,cursor:"pointer",color:"#374151",fontFamily:"inherit"}}>Sign In</button>
+              <button onClick={onBuild} style={{padding:"8px 18px",background:"#f97316",border:"none",borderRadius:8,fontSize:13,cursor:"pointer",color:"white",fontFamily:"inherit",fontWeight:700}}>Start Free →</button>
+            </>
+          )}
+        </div>
       </nav>
       <div style={{maxWidth:860,margin:"0 auto",padding:"70px 40px"}}>
         <h1 style={{fontSize:46,fontWeight:800,textAlign:"center",color:"#111827",marginBottom:8,fontFamily:"'Instrument Serif',serif",fontStyle:"italic"}}>Simple pricing</h1>
         <p style={{textAlign:"center",color:"#6b7280",marginBottom:32,fontSize:14}}>Buy credits once. Use them whenever. 1 credit = 1 complete landing page. No subscriptions, ever.</p>
-        {/* Credit explainer */}
         <div style={{display:"flex",justifyContent:"center",gap:32,marginBottom:40,flexWrap:"wrap"}}>
           {[["⚡","1 credit = 1 full page","Complete SEO-optimised HTML"],["💾","Credits never expire","Use them whenever you need"],["🔒","One-time payment","No subscriptions, ever"]].map(([ic,t,d])=>(
             <div key={t} style={{display:"flex",alignItems:"center",gap:10,padding:"12px 18px",background:"white",border:"1px solid #f3f4f6",borderRadius:10,boxShadow:"0 1px 3px rgba(0,0,0,.04)"}}>
@@ -1513,7 +1525,6 @@ function PricingPage({onBuild,onHome}) {
             <div key={p.id} style={{padding:30,borderRadius:16,position:"relative",background:"white",border:p.badge?`2px solid ${p.color}`:"1px solid #e5e7eb",boxShadow:p.badge?`0 4px 30px ${p.color}18`:"0 1px 3px rgba(0,0,0,.04)"}}>
               {p.badge&&<div style={{position:"absolute",top:-11,left:"50%",transform:"translateX(-50%)",background:p.color,color:"white",padding:"3px 13px",borderRadius:100,fontSize:9,fontWeight:800,letterSpacing:1.5,whiteSpace:"nowrap"}}>{p.badge}</div>}
               <div style={{fontSize:10,fontWeight:700,color:p.color,letterSpacing:2,textTransform:"uppercase",marginBottom:10}}>{p.name}</div>
-              {/* Big credit number */}
               <div style={{background:`${p.color}10`,border:`1px solid ${p.color}25`,borderRadius:10,padding:"14px 16px",marginBottom:14,display:"flex",alignItems:"center",justifyContent:"space-between"}}>
                 <div>
                   <div style={{fontSize:10,color:p.color,fontWeight:700,letterSpacing:1,textTransform:"uppercase",marginBottom:2}}>Credits</div>
@@ -1531,7 +1542,7 @@ function PricingPage({onBuild,onHome}) {
               <div style={{display:"flex",flexDirection:"column",gap:8,marginBottom:22}}>
                 {p.features.map(f=><div key={f} style={{display:"flex",gap:8,fontSize:12,color:"#374151"}}><span style={{color:p.color,flexShrink:0,fontWeight:700}}>✓</span>{f}</div>)}
               </div>
-              <button onClick={onBuild} style={{width:"100%",padding:11,borderRadius:9,fontFamily:"'Geist',sans-serif",fontSize:13,fontWeight:700,cursor:"pointer",background:p.badge?p.color:"transparent",border:p.badge?"none":`2px solid ${p.color}`,color:p.badge?"white":p.color,transition:"all .2s"}}>
+              <button onClick={()=>onPurchase(p)} style={{width:"100%",padding:11,borderRadius:9,fontFamily:"'Geist',sans-serif",fontSize:13,fontWeight:700,cursor:"pointer",background:p.badge?p.color:"transparent",border:p.badge?"none":`2px solid ${p.color}`,color:p.badge?"white":p.color,transition:"all .2s"}}>
                 Get {p.credits} Credits →
               </button>
             </div>
@@ -2311,7 +2322,7 @@ export default function Sitefliq() {
   if(screen==="home") return <><HomePage onBuild={()=>setScreen("builder")} onPricing={()=>setScreen("pricing_standalone")} onExample={()=>setScreen("example")} onHelp={()=>setScreen("help")} user={user} credits={credits} onSignIn={()=>{setAuthMode("signin");setShowAuth(true);}} onSignOut={handleSignOut}/>{showAuth&&<AuthModal mode={authMode} onSuccess={()=>{setUser(sb._user);sb.getCredits().then(setCredits);setShowAuth(false);}} onClose={()=>setShowAuth(false)}/>}</>;
   if(screen==="help") return <HelpPage onHome={()=>setScreen("home")}/>;
   if(screen==="example") return <ExamplePage onBack={()=>setScreen("home")} onBuild={()=>setScreen("builder")}/>;
-  if(screen==="pricing_standalone") return <><PricingPage onBuild={()=>setScreen("builder")} onHome={()=>setScreen("home")} user={user} credits={credits} onSignIn={()=>{setAuthMode("signin");setShowAuth(true);}} onSignOut={handleSignOut}/>{showAuth&&<AuthModal mode={authMode} onSuccess={()=>{setUser(sb._user);sb.getCredits().then(setCredits);setShowAuth(false);}} onClose={()=>setShowAuth(false)}/>}</>;
+  if(screen==="pricing_standalone") return <><PricingPage onBuild={()=>setScreen("builder")} onHome={()=>setScreen("home")} user={user} credits={credits} onSignIn={()=>{setAuthMode("signin");setShowAuth(true);}} onSignOut={handleSignOut} onPurchase={handlePurchase}/>{showAuth&&<AuthModal mode={authMode} onSuccess={()=>{setUser(sb._user);sb.getCredits().then(setCredits);setShowAuth(false);}} onClose={()=>setShowAuth(false)}/>}</>;
   if(screen==="pricing_wall") return <><PricingWall form={form} onBack={()=>setScreen("builder")} onPurchase={handlePurchase} user={user} credits={credits} onSignIn={()=>{setAuthMode("signin");setShowAuth(true);}}/>{showAuth&&<AuthModal mode={authMode} onSuccess={()=>{setUser(sb._user);sb.getCredits().then(setCredits);setShowAuth(false);}} onClose={()=>setShowAuth(false)}/>}</>;
 
   // Waiting for payment confirmation
