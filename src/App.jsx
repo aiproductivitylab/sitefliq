@@ -620,7 +620,7 @@ function AddressField({value, onChange}) {
           onChange={handleInput}
           onFocus={e=>{e.target.style.borderColor="#f97316"; if(suggestions.length>0) setOpen(true);}}
           onBlur={e=>e.target.style.borderColor="#e5e7eb"}
-          placeholder="58 Main Rd, Cape Town, SA"
+          placeholder="123 Main St, New York, NY"
           autoComplete="off"
           style={{width:"100%",padding:"10px 36px 10px 13px",border:"1.5px solid #e5e7eb",borderRadius:9,fontSize:13,color:"#111827",background:"white",transition:"border-color .15s",fontFamily:"inherit",outline:"none"}}
         />
@@ -1508,9 +1508,9 @@ function HomePage({onBuild,onPricing,onExample,onHelp,user,credits,onSignIn,onSi
           <h2 style={{fontSize:32,fontWeight:800,color:"#111827",textAlign:"center",marginBottom:36}}>Loved by business owners</h2>
           <div style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:16}}>
             {[
-              {q:"My yoga studio page was live in 4 minutes. The AI wrote better copy than any agency I've used. Worth every cent.",n:"Thandi M.",r:"Yoga Studio · Cape Town"},
-              {q:"Was quoted $2,500 by a web designer. Sitefliq did it better for $59. The SEO is already bringing traffic.",n:"Sipho K.",r:"Personal Trainer · Johannesburg"},
-              {q:"I described my pilates studio and it built me an entire professional website. Downloaded it, uploaded to Netlify — live same day.",n:"Jessica R.",r:"Pilates Studio · Sandton"},
+              {q:"My yoga studio page was live in 4 minutes. The AI wrote better copy than any agency I've used. Worth every cent.",n:"Ashley M.",r:"Yoga Studio · Austin, TX"},
+              {q:"Was quoted $2,500 by a web designer. Sitefliq did it better for $59. The SEO is already bringing traffic.",n:"James T.",r:"Personal Trainer · Chicago, IL"},
+              {q:"I described my pilates studio and it built me an entire professional website. Downloaded it, uploaded to Netlify — live same day.",n:"Jessica R.",r:"Pilates Studio · Brooklyn, NY"},
             ].map((t,i)=>(
               <div key={i} style={{padding:22,borderRadius:14,background:"#fafaf9",border:"1px solid #f3f4f6"}}>
                 <div style={{color:"#f97316",fontSize:12,marginBottom:10,letterSpacing:2}}>★★★★★</div>
@@ -1627,30 +1627,27 @@ const EXAMPLE_HTML = `<!DOCTYPE html>
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>Zenflow Yoga Studio | Yoga Classes Cape Town | Transform Your Practice</title>
-<meta name="description" content="Zenflow Yoga Studio offers expert yoga classes in Cape Town. Hot yoga, vinyasa, yin & meditation. Beginner to advanced. Book your free trial class today."/>
-<meta property="og:title" content="Zenflow Yoga Studio | Cape Town"/>
-<meta property="og:description" content="Transform your body and mind with expert yoga in Cape Town. First class free."/>
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"LocalBusiness","name":"Zenflow Yoga Studio","description":"Expert yoga classes in Cape Town","address":{"@type":"PostalAddress","addressLocality":"Cape Town"},"aggregateRating":{"@type":"AggregateRating","ratingValue":"4.9","reviewCount":"312"}}</script>
+<title>IronForge Gym | Personal Training NYC | Transform Your Body in 90 Days</title>
+<meta name="description" content="IronForge Gym in Manhattan offers elite personal training, group classes, and nutrition coaching. Results guaranteed or your money back. Book a free session today."/>
+<meta property="og:title" content="IronForge Gym | NYC's #1 Personal Training Studio"/>
+<meta property="og:description" content="Transform your body in 90 days with NYC's most results-driven personal training studio. First session free."/>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"LocalBusiness","name":"IronForge Gym","description":"Elite personal training and fitness studio in Manhattan, NYC","address":{"@type":"PostalAddress","streetAddress":"247 W 35th Street","addressLocality":"New York","addressRegion":"NY","postalCode":"10001"},"telephone":"+12125550182","aggregateRating":{"@type":"AggregateRating","ratingValue":"4.9","reviewCount":"428"}}</script>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-:root{--bg:#0a0e0a;--surface:#111811;--surface2:#1a231a;--accent:#a8e063;--text:#f0f5f0;--muted:#7a9a7a;--border:rgba(168,224,99,.1)}
+:root{--bg:#0d0d0d;--surface:#141414;--surface2:#1c1c1c;--accent:#e63946;--text:#f5f5f5;--muted:#888;--border:rgba(230,57,70,.12)}
 html{scroll-behavior:smooth}
 body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;overflow-x:hidden}
 
 /* ── ANIMATIONS ── */
 @keyframes fadeUp{from{opacity:0;transform:translateY(32px)}to{opacity:1;transform:translateY(0)}}
 @keyframes fadeIn{from{opacity:0}to{opacity:1}}
-@keyframes slideRight{from{opacity:0;transform:translateX(-30px)}to{opacity:1;transform:translateX(0)}}
-@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(168,224,99,.4)}50%{box-shadow:0 0 0 12px rgba(168,224,99,0)}}
-@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
-@keyframes shimmer{0%{background-position:-200% center}100%{background-position:200% center}}
-@keyframes scaleIn{from{opacity:0;transform:scale(0.92)}to{opacity:1;transform:scale(1)}}
-@keyframes typewriter{from{width:0}to{width:100%}}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(230,57,70,.4)}50%{box-shadow:0 0 0 14px rgba(230,57,70,0)}}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+@keyframes scaleIn{from{opacity:0;transform:scale(1.05)}to{opacity:1;transform:scale(1)}}
+@keyframes slideRight{from{opacity:0;transform:translateX(-40px)}to{opacity:1;transform:translateX(0)}}
 
-/* Scroll-triggered reveal */
 .reveal{opacity:0;transform:translateY(32px);transition:opacity .7s ease,transform .7s ease}
 .reveal.visible{opacity:1;transform:translateY(0)}
 .reveal-left{opacity:0;transform:translateX(-30px);transition:opacity .7s ease,transform .7s ease}
@@ -1659,146 +1656,150 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;ove
 .reveal-scale.visible{opacity:1;transform:scale(1)}
 
 /* ── NAV ── */
-nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:20px 48px;display:flex;align-items:center;justify-content:space-between;transition:all .3s ease}
-nav.scrolled{background:rgba(10,14,10,.92);backdrop-filter:blur(20px);padding:14px 48px;border-bottom:1px solid var(--border);box-shadow:0 4px 30px rgba(0,0,0,.3)}
-.logo-text{font-family:'Cormorant Garamond',serif;font-size:24px;font-weight:700;color:var(--text);letter-spacing:1px}
-.logo-text span{color:var(--accent)}
-.nav-links{display:flex;gap:32px;align-items:center}
-.nav-links a{color:var(--muted);text-decoration:none;font-size:14px;font-weight:500;transition:color .2s}
-.nav-links a:hover{color:var(--accent)}
-.nav-cta{background:var(--accent);color:#0a0e0a;padding:10px 22px;border-radius:100px;font-size:14px;font-weight:600;text-decoration:none;transition:all .2s;animation:pulse 3s infinite}
-.nav-cta:hover{transform:scale(1.06);box-shadow:0 6px 24px rgba(168,224,99,.35)}
+nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:22px 56px;display:flex;align-items:center;justify-content:space-between;transition:all .3s}
+nav.scrolled{background:rgba(13,13,13,.95);backdrop-filter:blur(20px);padding:14px 56px;border-bottom:1px solid var(--border);box-shadow:0 4px 30px rgba(0,0,0,.5)}
+.logo{font-family:'Bebas Neue',sans-serif;font-size:28px;letter-spacing:2px;color:var(--text)}
+.logo span{color:var(--accent)}
+.nav-links{display:flex;gap:36px;align-items:center}
+.nav-links a{color:var(--muted);text-decoration:none;font-size:14px;font-weight:500;transition:color .2s;letter-spacing:.3px}
+.nav-links a:hover{color:var(--text)}
+.nav-cta{background:var(--accent);color:white;padding:11px 24px;border-radius:6px;font-size:14px;font-weight:700;text-decoration:none;transition:all .2s;animation:pulse 3s infinite;letter-spacing:.5px}
+.nav-cta:hover{transform:scale(1.05);background:#c1121f}
 .hamburger{display:none;flex-direction:column;gap:5px;cursor:pointer;background:none;border:none;padding:4px}
 .hamburger span{display:block;width:24px;height:2px;background:var(--text);transition:all .3s}
-.mobile-menu{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:var(--bg);z-index:99;padding:100px 40px 40px;flex-direction:column;gap:28px}
+.mobile-menu{display:none;position:fixed;inset:0;background:var(--bg);z-index:99;padding:100px 40px;flex-direction:column;gap:32px}
 .mobile-menu.open{display:flex;animation:fadeIn .3s ease}
-.mobile-menu a{font-size:28px;font-family:'Cormorant Garamond',serif;color:var(--text);text-decoration:none}
+.mobile-menu a{font-family:'Bebas Neue',sans-serif;font-size:36px;letter-spacing:2px;color:var(--text);text-decoration:none}
 
 /* ── HERO ── */
-.hero{min-height:100vh;display:flex;align-items:center;justify-content:center;text-align:center;padding:120px 24px 80px;position:relative;overflow:hidden}
-.hero-bg{position:absolute;inset:0;background:url('https://images.pexels.com/photos/3822583/pexels-photo-3822583.jpeg?auto=compress&cs=tinysrgb&w=1600') center/cover;filter:brightness(.35);transform:scale(1.05);animation:scaleIn 1.5s ease forwards}
-.hero-content{position:relative;z-index:2;max-width:780px;animation:fadeUp .9s ease both}
-.hero-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(168,224,99,.12);border:1px solid rgba(168,224,99,.25);border-radius:100px;padding:6px 16px;font-size:12px;color:var(--accent);font-weight:600;letter-spacing:1.5px;margin-bottom:24px;animation:fadeIn .8s .2s both}
-.hero h1{font-family:'Cormorant Garamond',serif;font-size:clamp(48px,7vw,88px);font-weight:700;line-height:1.05;margin-bottom:22px;animation:fadeUp .9s .15s both}
-.hero h1 em{color:var(--accent);font-style:italic}
-.hero p{font-size:18px;color:rgba(240,245,240,.75);max-width:520px;margin:0 auto 36px;line-height:1.8;animation:fadeUp .9s .25s both}
-.hero-btns{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;animation:fadeUp .9s .35s both}
-.btn-primary{background:var(--accent);color:#0a0e0a;padding:15px 36px;border-radius:100px;font-size:15px;font-weight:700;text-decoration:none;display:inline-flex;align-items:center;gap:8px;transition:all .25s;animation:pulse 3s 1s infinite}
-.btn-primary:hover{transform:translateY(-3px) scale(1.04);box-shadow:0 12px 36px rgba(168,224,99,.4)}
-.btn-secondary{border:1px solid rgba(240,245,240,.25);color:var(--text);padding:15px 36px;border-radius:100px;font-size:15px;font-weight:500;text-decoration:none;transition:all .25s}
+.hero{min-height:100vh;display:flex;align-items:center;padding:120px 56px 80px;position:relative;overflow:hidden}
+.hero-bg{position:absolute;inset:0;background:url('https://images.pexels.com/photos/1552242/pexels-photo-1552242.jpeg?auto=compress&cs=tinysrgb&w=1600') center/cover;filter:brightness(.25);animation:scaleIn 1.5s ease forwards}
+.hero-bg::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(13,13,13,.8) 50%,transparent)}
+.hero-content{position:relative;z-index:2;max-width:680px}
+.hero-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(230,57,70,.15);border:1px solid rgba(230,57,70,.3);border-radius:4px;padding:6px 14px;font-size:11px;color:var(--accent);font-weight:700;letter-spacing:2px;margin-bottom:24px;animation:fadeIn .8s .2s both}
+.hero h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(60px,8vw,110px);line-height:.95;margin-bottom:22px;letter-spacing:2px;animation:fadeUp .9s .1s both}
+.hero h1 span{color:var(--accent)}
+.hero p{font-size:18px;color:rgba(245,245,245,.7);max-width:480px;margin-bottom:36px;line-height:1.8;animation:fadeUp .9s .2s both}
+.hero-btns{display:flex;gap:14px;flex-wrap:wrap;animation:fadeUp .9s .3s both}
+.btn-primary{background:var(--accent);color:white;padding:16px 38px;border-radius:6px;font-size:15px;font-weight:700;text-decoration:none;display:inline-flex;align-items:center;gap:8px;transition:all .25s;animation:pulse 3s 1s infinite;letter-spacing:.5px}
+.btn-primary:hover{transform:translateY(-3px) scale(1.04);background:#c1121f;box-shadow:0 12px 36px rgba(230,57,70,.4)}
+.btn-secondary{border:1px solid rgba(245,245,245,.2);color:var(--text);padding:16px 38px;border-radius:6px;font-size:15px;font-weight:500;text-decoration:none;transition:all .25s}
 .btn-secondary:hover{border-color:var(--accent);color:var(--accent);transform:translateY(-3px)}
-.hero-trust{margin-top:32px;font-size:13px;color:var(--muted);animation:fadeIn 1s .5s both}
-.stars{color:var(--accent);font-size:16px}
+.hero-trust{margin-top:28px;font-size:13px;color:var(--muted);animation:fadeIn 1s .5s both}
+.stars{color:var(--accent)}
 
 /* ── STATS ── */
-.stats{background:var(--surface);padding:56px 48px;display:grid;grid-template-columns:repeat(4,1fr);gap:0;border-top:1px solid var(--border);border-bottom:1px solid var(--border)}
-.stat{text-align:center;padding:20px;border-right:1px solid var(--border)}
+.stats{background:var(--accent);padding:48px 56px;display:grid;grid-template-columns:repeat(4,1fr)}
+.stat{text-align:center;padding:16px;border-right:1px solid rgba(255,255,255,.2)}
 .stat:last-child{border-right:none}
-.stat-num{font-family:'Cormorant Garamond',serif;font-size:52px;font-weight:700;color:var(--accent);line-height:1;margin-bottom:6px}
-.stat-label{font-size:13px;color:var(--muted);font-weight:500;letter-spacing:.5px}
+.stat-num{font-family:'Bebas Neue',sans-serif;font-size:56px;color:white;line-height:1;margin-bottom:4px;letter-spacing:2px}
+.stat-label{font-size:12px;color:rgba(255,255,255,.8);font-weight:600;letter-spacing:1px;text-transform:uppercase}
 
-/* ── CLASSES ── */
-.section{padding:100px 48px;max-width:1200px;margin:0 auto}
-.section-label{font-size:11px;color:var(--accent);font-weight:700;letter-spacing:3px;text-transform:uppercase;margin-bottom:12px}
-.section-title{font-family:'Cormorant Garamond',serif;font-size:clamp(36px,4vw,56px);font-weight:700;line-height:1.1;margin-bottom:20px}
-.section-sub{font-size:16px;color:var(--muted);max-width:560px;line-height:1.8}
-.classes-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-top:52px}
-.class-card{background:var(--surface);border:1px solid var(--border);border-radius:20px;overflow:hidden;transition:all .3s;cursor:pointer}
-.class-card:hover{transform:translateY(-8px);box-shadow:0 20px 50px rgba(0,0,0,.4);border-color:rgba(168,224,99,.3)}
-.class-img{height:200px;overflow:hidden}
-.class-img img{width:100%;height:100%;object-fit:cover;transition:transform .5s ease}
-.class-card:hover .class-img img{transform:scale(1.08)}
-.class-body{padding:22px}
-.class-tag{font-size:10px;font-weight:700;letter-spacing:2px;color:var(--accent);text-transform:uppercase;margin-bottom:8px}
-.class-name{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:700;margin-bottom:8px}
-.class-desc{font-size:13px;color:var(--muted);line-height:1.7}
+/* ── PROGRAMS ── */
+.section{padding:100px 56px;max-width:1280px;margin:0 auto}
+.section-label{font-size:11px;color:var(--accent);font-weight:700;letter-spacing:3px;text-transform:uppercase;margin-bottom:10px}
+.section-title{font-family:'Bebas Neue',sans-serif;font-size:clamp(44px,5vw,72px);font-weight:400;line-height:1;margin-bottom:18px;letter-spacing:2px}
+.section-sub{font-size:16px;color:var(--muted);max-width:520px;line-height:1.8}
+.programs-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:2px;margin-top:52px}
+.program-card{position:relative;overflow:hidden;cursor:pointer}
+.program-card img{width:100%;height:380px;object-fit:cover;display:block;transition:transform .6s ease;filter:brightness(.6)}
+.program-card:hover img{transform:scale(1.06);filter:brightness(.4)}
+.program-overlay{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:flex-end;padding:28px;background:linear-gradient(to top,rgba(0,0,0,.85) 0%,transparent 60%)}
+.program-tag{font-size:10px;color:var(--accent);font-weight:700;letter-spacing:2px;text-transform:uppercase;margin-bottom:6px}
+.program-name{font-family:'Bebas Neue',sans-serif;font-size:28px;letter-spacing:1px;margin-bottom:8px}
+.program-desc{font-size:13px;color:rgba(245,245,245,.75);line-height:1.6;max-height:0;overflow:hidden;transition:max-height .4s ease}
+.program-card:hover .program-desc{max-height:80px}
 
 /* ── ABOUT ── */
-.about-grid{display:grid;grid-template-columns:1fr 1fr;gap:72px;align-items:center;padding:100px 48px;max-width:1200px;margin:0 auto}
+.about-grid{display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:center;padding:100px 56px;max-width:1280px;margin:0 auto}
 .about-img{position:relative}
-.about-img img{width:100%;height:550px;object-fit:cover;border-radius:24px}
-.about-accent{position:absolute;bottom:-24px;right:-24px;width:180px;height:180px;background:var(--accent);border-radius:20px;z-index:-1;animation:float 4s ease-in-out infinite}
-.about-badge{display:inline-flex;background:var(--surface2);border:1px solid var(--border);border-radius:100px;padding:8px 18px;font-size:12px;color:var(--accent);font-weight:600;letter-spacing:1px;margin-bottom:18px}
-.about h2{font-family:'Cormorant Garamond',serif;font-size:clamp(32px,3.5vw,50px);font-weight:700;line-height:1.15;margin-bottom:18px}
-.about p{font-size:15px;color:var(--muted);line-height:1.9;margin-bottom:16px}
-.about-features{display:flex;flex-direction:column;gap:12px;margin-top:24px}
-.feature-row{display:flex;align-items:center;gap:12px;font-size:14px;color:var(--text)}
-.feature-icon{width:32px;height:32px;background:rgba(168,224,99,.12);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+.about-img img{width:100%;height:580px;object-fit:cover}
+.about-accent{position:absolute;top:-20px;left:-20px;width:160px;height:160px;border:3px solid var(--accent);z-index:-1;animation:float 4s ease-in-out infinite}
+.about-year{position:absolute;bottom:28px;right:-28px;background:var(--accent);color:white;padding:20px 24px;text-align:center}
+.about-year .num{font-family:'Bebas Neue',sans-serif;font-size:48px;line-height:1;letter-spacing:2px}
+.about-year .lbl{font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase}
+.about h2{font-family:'Bebas Neue',sans-serif;font-size:clamp(44px,4vw,64px);line-height:1;margin-bottom:20px;letter-spacing:2px}
+.about p{font-size:15px;color:var(--muted);line-height:1.9;margin-bottom:14px}
+.about-features{display:flex;flex-direction:column;gap:14px;margin-top:28px}
+.feature-row{display:flex;align-items:center;gap:14px;font-size:14px;color:var(--text);font-weight:500}
+.feature-check{width:28px;height:28px;background:var(--accent);border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0}
 
 /* ── TESTIMONIALS ── */
-.testimonials{background:var(--surface);padding:100px 48px;border-top:1px solid var(--border);border-bottom:1px solid var(--border)}
-.testi-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;margin-top:52px;max-width:1200px;margin-left:auto;margin-right:auto}
-.testi-card{background:var(--surface2);border:1px solid var(--border);border-radius:20px;padding:28px;transition:all .3s}
-.testi-card:hover{transform:translateY(-6px);border-color:rgba(168,224,99,.2)}
-.testi-stars{color:var(--accent);font-size:14px;margin-bottom:14px}
-.testi-text{font-size:14px;color:var(--text);line-height:1.8;margin-bottom:18px;font-style:italic}
+.testimonials{background:var(--surface);padding:100px 56px;border-top:1px solid #1f1f1f}
+.testi-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:2px;margin-top:52px;max-width:1280px;margin-left:auto;margin-right:auto}
+.testi-card{background:var(--surface2);padding:32px;transition:all .3s;border-left:3px solid transparent}
+.testi-card:hover{border-left-color:var(--accent);transform:translateY(-4px)}
+.testi-stars{color:var(--accent);font-size:14px;margin-bottom:16px}
+.testi-text{font-size:15px;color:var(--text);line-height:1.8;margin-bottom:20px;font-style:italic}
 .testi-author{display:flex;align-items:center;gap:12px}
-.testi-avatar{width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,var(--accent),#5cb85c);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px;color:#0a0e0a}
-.testi-name{font-size:14px;font-weight:600}
+.testi-avatar{width:44px;height:44px;border-radius:4px;background:var(--accent);display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:1px;color:white}
+.testi-name{font-size:14px;font-weight:700;letter-spacing:.3px}
 .testi-role{font-size:12px;color:var(--muted)}
+.testi-result{font-size:11px;color:var(--accent);font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-top:2px}
 
 /* ── PRICING ── */
-.pricing-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-top:52px}
-.price-card{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:32px;transition:all .3s;position:relative}
-.price-card.featured{border-color:var(--accent);background:linear-gradient(135deg,rgba(168,224,99,.08),var(--surface))}
-.price-card:hover{transform:translateY(-6px);box-shadow:0 20px 50px rgba(0,0,0,.3)}
-.price-badge{position:absolute;top:-12px;left:50%;transform:translateX(-50%);background:var(--accent);color:#0a0e0a;font-size:11px;font-weight:700;padding:4px 14px;border-radius:100px;letter-spacing:1px}
-.price-name{font-size:13px;font-weight:600;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:10px}
-.price-amount{font-family:'Cormorant Garamond',serif;font-size:52px;font-weight:700;color:var(--text);line-height:1}
-.price-period{font-size:13px;color:var(--muted);margin-bottom:24px}
+.pricing-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:2px;margin-top:52px}
+.price-card{background:var(--surface);padding:36px;transition:all .3s;position:relative;border-top:3px solid transparent}
+.price-card.featured{border-top-color:var(--accent);background:var(--surface2)}
+.price-card:hover{transform:translateY(-6px)}
+.price-badge{display:inline-block;background:var(--accent);color:white;font-size:10px;font-weight:700;padding:4px 10px;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:16px}
+.price-name{font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:2px;color:var(--muted);margin-bottom:12px}
+.price-amount{font-family:'Bebas Neue',sans-serif;font-size:64px;color:var(--text);line-height:1;letter-spacing:2px}
+.price-period{font-size:13px;color:var(--muted);margin-bottom:28px}
 .price-features{list-style:none;display:flex;flex-direction:column;gap:10px;margin-bottom:28px}
-.price-features li{display:flex;align-items:center;gap:8px;font-size:14px;color:var(--muted)}
-.price-features li::before{content:"✓";color:var(--accent);font-weight:700}
-.price-btn{display:block;text-align:center;padding:13px;border-radius:100px;font-size:14px;font-weight:700;text-decoration:none;transition:all .25s}
-.price-btn.main{background:var(--accent);color:#0a0e0a}
-.price-btn.main:hover{transform:scale(1.04);box-shadow:0 8px 24px rgba(168,224,99,.3)}
-.price-btn.outline{border:1px solid var(--border);color:var(--text)}
+.price-features li{display:flex;align-items:center;gap:10px;font-size:14px;color:var(--muted)}
+.price-features li::before{content:"→";color:var(--accent);font-weight:700}
+.price-btn{display:block;text-align:center;padding:14px;font-size:14px;font-weight:700;text-decoration:none;transition:all .25s;letter-spacing:1px;text-transform:uppercase}
+.price-btn.main{background:var(--accent);color:white}
+.price-btn.main:hover{background:#c1121f;transform:scale(1.03)}
+.price-btn.outline{border:1px solid #333;color:var(--muted)}
 .price-btn.outline:hover{border-color:var(--accent);color:var(--accent)}
 
 /* ── FAQ ── */
-.faq-list{max-width:720px;margin:52px auto 0}
-.faq-item{border-bottom:1px solid var(--border)}
-.faq-q{display:flex;justify-content:space-between;align-items:center;padding:20px 0;cursor:pointer;font-size:16px;font-weight:500;transition:color .2s}
+.faq-list{max-width:760px;margin:52px auto 0}
+.faq-item{border-bottom:1px solid #1f1f1f}
+.faq-q{display:flex;justify-content:space-between;align-items:center;padding:22px 0;cursor:pointer;font-size:16px;font-weight:600;transition:color .2s;letter-spacing:.2px}
 .faq-q:hover{color:var(--accent)}
-.faq-icon{width:24px;height:24px;border-radius:50%;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;transition:all .3s}
-.faq-a{display:none;padding:0 0 18px;font-size:14px;color:var(--muted);line-height:1.8}
-.faq-item.open .faq-icon{background:var(--accent);border-color:var(--accent);color:#0a0e0a;transform:rotate(45deg)}
+.faq-icon{width:28px;height:28px;border:1px solid #333;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;transition:all .3s;color:var(--muted)}
+.faq-a{display:none;padding:0 0 20px;font-size:14px;color:var(--muted);line-height:1.9}
+.faq-item.open .faq-icon{background:var(--accent);border-color:var(--accent);color:white;transform:rotate(45deg)}
 .faq-item.open .faq-a{display:block}
 
 /* ── CTA ── */
-.cta-section{padding:120px 48px;text-align:center;background:radial-gradient(ellipse at center,rgba(168,224,99,.08) 0%,transparent 70%)}
-.cta-section h2{font-family:'Cormorant Garamond',serif;font-size:clamp(40px,5vw,68px);font-weight:700;margin-bottom:20px;line-height:1.1}
-.cta-section p{font-size:17px;color:var(--muted);margin-bottom:36px;max-width:480px;margin-left:auto;margin-right:auto;line-height:1.8}
+.cta-section{padding:120px 56px;text-align:center;position:relative;overflow:hidden}
+.cta-bg{position:absolute;inset:0;background:url('https://images.pexels.com/photos/1552249/pexels-photo-1552249.jpeg?auto=compress&cs=tinysrgb&w=1600') center/cover;filter:brightness(.15)}
+.cta-content{position:relative;z-index:2}
+.cta-section h2{font-family:'Bebas Neue',sans-serif;font-size:clamp(52px,7vw,96px);line-height:.95;margin-bottom:20px;letter-spacing:3px}
+.cta-section h2 span{color:var(--accent)}
+.cta-section p{font-size:18px;color:rgba(245,245,245,.7);margin-bottom:36px;max-width:480px;margin-left:auto;margin-right:auto;line-height:1.8}
 
 /* ── FOOTER ── */
-footer{background:var(--surface);border-top:1px solid var(--border);padding:72px 48px 32px}
-.footer-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:48px;max-width:1200px;margin:0 auto 48px}
-.footer-brand p{font-size:13px;color:var(--muted);line-height:1.8;margin-top:12px;max-width:240px}
-.footer-col h4{font-size:12px;font-weight:700;letter-spacing:2px;color:var(--accent);text-transform:uppercase;margin-bottom:16px}
+footer{background:#080808;border-top:1px solid #1a1a1a;padding:72px 56px 32px}
+.footer-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:48px;max-width:1280px;margin:0 auto 48px}
+.footer-brand p{font-size:13px;color:var(--muted);line-height:1.8;margin-top:12px;max-width:260px}
+.footer-col h4{font-size:11px;font-weight:700;letter-spacing:2px;color:var(--accent);text-transform:uppercase;margin-bottom:18px}
 .footer-col a{display:block;font-size:13px;color:var(--muted);text-decoration:none;margin-bottom:10px;transition:color .2s}
 .footer-col a:hover{color:var(--text)}
-.footer-bottom{border-top:1px solid var(--border);padding-top:28px;display:flex;justify-content:space-between;align-items:center;max-width:1200px;margin:0 auto;font-size:12px;color:var(--muted)}
+.footer-bottom{border-top:1px solid #1a1a1a;padding-top:28px;display:flex;justify-content:space-between;align-items:center;max-width:1280px;margin:0 auto;font-size:12px;color:#444}
 
 /* ── MAP ── */
-.map-section{padding:80px 48px;max-width:1200px;margin:0 auto}
-.map-img{border-radius:16px;overflow:hidden;border:1px solid var(--border)}
-.map-img img{width:100%;display:block;transition:transform .4s}
-.map-img:hover img{transform:scale(1.02)}
+.map-section{padding:80px 56px;max-width:1280px;margin:0 auto}
+.map-wrap{border-radius:4px;overflow:hidden;border:1px solid #1f1f1f}
+.map-wrap img{width:100%;display:block;transition:transform .4s;filter:grayscale(.8) contrast(1.1)}
+.map-wrap:hover img{transform:scale(1.02);filter:grayscale(.3)}
 
 /* ── RESPONSIVE ── */
 @media(max-width:768px){
-  nav{padding:16px 24px}
+  nav,nav.scrolled{padding:16px 24px}
   .nav-links{display:none}
   .hamburger{display:flex}
   .stats{grid-template-columns:repeat(2,1fr)}
-  .stat{border-right:none;border-bottom:1px solid var(--border)}
-  .classes-grid,.testi-grid,.pricing-grid{grid-template-columns:1fr}
-  .about-grid{grid-template-columns:1fr;gap:40px}
-  .section,.map-section{padding:72px 24px}
-  .about-grid{padding:72px 24px}
-  .testimonials{padding:72px 24px}
+  .stat{border-right:none;border-bottom:1px solid rgba(255,255,255,.2)}
+  .programs-grid,.testi-grid,.pricing-grid{grid-template-columns:1fr}
+  .about-grid{grid-template-columns:1fr;gap:40px;padding:72px 24px}
+  .section,.map-section,.testimonials,.cta-section{padding:72px 24px}
   .footer-grid{grid-template-columns:1fr 1fr}
-  .cta-section{padding:80px 24px}
+  .hero{padding:120px 24px 80px}
 }
 </style>
 </head>
@@ -1806,13 +1807,13 @@ footer{background:var(--surface);border-top:1px solid var(--border);padding:72px
 
 <!-- NAV -->
 <nav id="nav">
-  <div class="logo-text">Zen<span>flow</span></div>
+  <div class="logo">Iron<span>Forge</span></div>
   <div class="nav-links">
-    <a href="#classes">Classes</a>
+    <a href="#programs">Programs</a>
     <a href="#about">About</a>
     <a href="#pricing">Pricing</a>
     <a href="#faq">FAQ</a>
-    <a href="#contact" class="nav-cta">Free Trial Class</a>
+    <a href="#contact" class="nav-cta">FREE SESSION</a>
   </div>
   <button class="hamburger" id="burger" aria-label="Menu">
     <span></span><span></span><span></span>
@@ -1821,78 +1822,66 @@ footer{background:var(--surface);border-top:1px solid var(--border);padding:72px
 
 <!-- MOBILE MENU -->
 <div class="mobile-menu" id="mobileMenu">
-  <a href="#classes" onclick="closeMobile()">Classes</a>
+  <a href="#programs" onclick="closeMobile()">Programs</a>
   <a href="#about" onclick="closeMobile()">About</a>
   <a href="#pricing" onclick="closeMobile()">Pricing</a>
   <a href="#faq" onclick="closeMobile()">FAQ</a>
-  <a href="#contact" onclick="closeMobile()" style="color:var(--accent)">Free Trial Class →</a>
+  <a href="#contact" onclick="closeMobile()" style="color:var(--accent)">Free Session →</a>
 </div>
 
 <!-- HERO -->
 <section class="hero" id="home">
   <div class="hero-bg"></div>
   <div class="hero-content">
-    <div class="hero-badge">⬡ CAPE TOWN'S PREMIER YOGA STUDIO</div>
-    <h1>Find Your Flow.<br/><em>Transform Your Life.</em></h1>
-    <p>Expert-led yoga classes for every level. Hot yoga, vinyasa, yin & meditation in the heart of Cape Town.</p>
+    <div class="hero-badge">⚡ NYC'S #1 RESULTS-DRIVEN GYM</div>
+    <h1>BUILD YOUR<br/><span>STRONGEST</span><br/>BODY YET.</h1>
+    <p>Elite personal training, group classes & nutrition coaching in the heart of Manhattan. Results guaranteed in 90 days or your money back.</p>
     <div class="hero-btns">
-      <a href="#contact" class="btn-primary">Book Free Trial Class →</a>
-      <a href="#classes" class="btn-secondary">View Classes</a>
+      <a href="#contact" class="btn-primary">CLAIM FREE SESSION →</a>
+      <a href="#programs" class="btn-secondary">VIEW PROGRAMS</a>
     </div>
     <div class="hero-trust">
-      <span class="stars">★★★★★</span> &nbsp;4.9/5 from 312 reviews · Est. 2018
+      <span class="stars">★★★★★</span> &nbsp;4.9/5 from 428 reviews · Open 7 days · Est. 2015
     </div>
   </div>
 </section>
 
 <!-- STATS -->
 <div class="stats">
-  <div class="stat reveal">
-    <div class="stat-num" data-target="1200">0</div>
-    <div class="stat-label">Happy Students</div>
-  </div>
-  <div class="stat reveal">
-    <div class="stat-num" data-target="47">0</div>
-    <div class="stat-label">Weekly Classes</div>
-  </div>
-  <div class="stat reveal">
-    <div class="stat-num" data-target="6">0</div>
-    <div class="stat-label">Expert Instructors</div>
-  </div>
-  <div class="stat reveal">
-    <div class="stat-num" data-target="312">0</div>
-    <div class="stat-label">Five-Star Reviews</div>
-  </div>
+  <div class="stat reveal"><div class="stat-num" data-target="2400">0</div><div class="stat-label">Members Transformed</div></div>
+  <div class="stat reveal"><div class="stat-num" data-target="90">0</div><div class="stat-label">Day Guarantee</div></div>
+  <div class="stat reveal"><div class="stat-num" data-target="12">0</div><div class="stat-label">Expert Trainers</div></div>
+  <div class="stat reveal"><div class="stat-num" data-target="428">0</div><div class="stat-label">5-Star Reviews</div></div>
 </div>
 
-<!-- CLASSES -->
-<section class="section" id="classes">
-  <div class="section-label reveal">Our Classes</div>
-  <h2 class="section-title reveal">Find Your Perfect Practice</h2>
-  <p class="section-sub reveal">From energising hot yoga to deeply restorative yin — we have a class for where you are right now.</p>
-  <div class="classes-grid">
-    <div class="class-card reveal-scale">
-      <div class="class-img"><img src="https://images.pexels.com/photos/4056723/pexels-photo-4056723.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Hot Yoga" loading="lazy"/></div>
-      <div class="class-body">
-        <div class="class-tag">Intense · 60 min</div>
-        <div class="class-name">Hot Yoga</div>
-        <div class="class-desc">Practice in a heated room at 38°C. Detoxify, build strength, and improve flexibility. Burns up to 600 calories per session.</div>
+<!-- PROGRAMS -->
+<section class="section" id="programs">
+  <div class="section-label reveal">Our Programs</div>
+  <h2 class="section-title reveal">TRAIN WITH PURPOSE</h2>
+  <p class="section-sub reveal">Every program is built around real results — not just showing up. We track your progress every single week.</p>
+  <div class="programs-grid">
+    <div class="program-card reveal-scale">
+      <img src="https://images.pexels.com/photos/1552242/pexels-photo-1552242.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Personal Training" loading="lazy"/>
+      <div class="program-overlay">
+        <div class="program-tag">1-on-1 · 60 min</div>
+        <div class="program-name">PERSONAL TRAINING</div>
+        <div class="program-desc">Fully customized workouts built around your goals, schedule, and fitness level. Your dedicated trainer is with you every rep.</div>
       </div>
     </div>
-    <div class="class-card reveal-scale">
-      <div class="class-img"><img src="https://images.pexels.com/photos/3822583/pexels-photo-3822583.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Vinyasa Flow" loading="lazy"/></div>
-      <div class="class-body">
-        <div class="class-tag">Dynamic · 75 min</div>
-        <div class="class-name">Vinyasa Flow</div>
-        <div class="class-desc">Breath-linked movement that builds heat, strength and mindfulness. Energising and creative sequences every class.</div>
+    <div class="program-card reveal-scale">
+      <img src="https://images.pexels.com/photos/1552249/pexels-photo-1552249.jpeg?auto=compress&cs=tinysrgb&w=600" alt="HIIT Classes" loading="lazy"/>
+      <div class="program-overlay">
+        <div class="program-tag">Group · 45 min</div>
+        <div class="program-name">HIIT & STRENGTH</div>
+        <div class="program-desc">High-intensity interval training combined with strength work. Burns up to 800 calories per session. Max 12 per class.</div>
       </div>
     </div>
-    <div class="class-card reveal-scale">
-      <div class="class-img"><img src="https://images.pexels.com/photos/3823039/pexels-photo-3823039.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Yin Yoga" loading="lazy"/></div>
-      <div class="class-body">
-        <div class="class-tag">Restorative · 90 min</div>
-        <div class="class-name">Yin & Restore</div>
-        <div class="class-desc">Deep, slow stretches held for 3–5 minutes. Targets connective tissue and promotes deep relaxation and recovery.</div>
+    <div class="program-card reveal-scale">
+      <img src="https://images.pexels.com/photos/3253501/pexels-photo-3253501.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Nutrition Coaching" loading="lazy"/>
+      <div class="program-overlay">
+        <div class="program-tag">Online + In-Person</div>
+        <div class="program-name">NUTRITION COACHING</div>
+        <div class="program-desc">Custom meal plans, weekly check-ins, and macro tracking. Because abs are made in the kitchen, not just the gym.</div>
       </div>
     </div>
   </div>
@@ -1901,43 +1890,56 @@ footer{background:var(--surface);border-top:1px solid var(--border);padding:72px
 <!-- ABOUT -->
 <div class="about-grid" id="about">
   <div class="about-img reveal-left">
-    <img src="https://images.pexels.com/photos/3822864/pexels-photo-3822864.jpeg?auto=compress&cs=tinysrgb&w=800" alt="Zenflow Studio"/>
+    <img src="https://images.pexels.com/photos/1552252/pexels-photo-1552252.jpeg?auto=compress&cs=tinysrgb&w=800" alt="IronForge Gym NYC"/>
     <div class="about-accent"></div>
+    <div class="about-year">
+      <div class="num">9+</div>
+      <div class="lbl">Years Strong</div>
+    </div>
   </div>
   <div class="reveal">
-    <div class="about-badge">⬡ Our Story</div>
-    <h2 class="section-title">More Than a Studio.<br/>A Community.</h2>
-    <p>Founded in 2018 by Cape Town-born yogi Amara Singh, Zenflow was created with one mission: make world-class yoga accessible to everyone — from complete beginners to advanced practitioners.</p>
-    <p>Our studio is a sanctuary. A place to leave the noise behind, reconnect with your body, and find clarity in movement.</p>
+    <div class="section-label">Our Story</div>
+    <h2 class="section-title">WE DON'T DO AVERAGE.</h2>
+    <p>IronForge was founded in 2015 with one mission: build a gym where every single member gets real, measurable results. No fluff, no gimmicks — just elite coaching and a community that holds you accountable.</p>
+    <p>Located in the heart of Midtown Manhattan, we've helped over 2,400 New Yorkers lose weight, build muscle, and completely transform how they feel about their bodies.</p>
     <div class="about-features">
-      <div class="feature-row"><div class="feature-icon">🔥</div>State-of-the-art heated studio rooms</div>
-      <div class="feature-row"><div class="feature-icon">🎓</div>Internationally certified instructors</div>
-      <div class="feature-row"><div class="feature-icon">📱</div>Easy online booking & class management</div>
-      <div class="feature-row"><div class="feature-icon">🌿</div>Eco-conscious, sustainable studio design</div>
+      <div class="feature-row"><div class="feature-check">✓</div>90-day transformation guarantee — results or full refund</div>
+      <div class="feature-row"><div class="feature-check">✓</div>NASM & NSCA certified trainers only</div>
+      <div class="feature-row"><div class="feature-check">✓</div>State-of-the-art 8,000 sq ft facility</div>
+      <div class="feature-row"><div class="feature-check">✓</div>Open 5am–11pm, 7 days a week</div>
     </div>
   </div>
 </div>
 
 <!-- TESTIMONIALS -->
 <section class="testimonials" id="testimonials">
-  <div style="max-width:1200px;margin:0 auto">
-    <div class="section-label reveal">Testimonials</div>
-    <h2 class="section-title reveal">What Our Students Say</h2>
+  <div style="max-width:1280px;margin:0 auto">
+    <div class="section-label reveal">Results</div>
+    <h2 class="section-title reveal">REAL PEOPLE. REAL RESULTS.</h2>
     <div class="testi-grid">
       <div class="testi-card reveal-scale">
         <div class="testi-stars">★★★★★</div>
-        <div class="testi-text">"Zenflow completely changed my relationship with my body. I've lost 8kg, sleep better, and feel more confident than ever. The instructors genuinely care about your progress."</div>
-        <div class="testi-author"><div class="testi-avatar">SK</div><div><div class="testi-name">Sarah K.</div><div class="testi-role">Member since 2021</div></div></div>
+        <div class="testi-text">"I lost 34 lbs in 90 days and genuinely feel like a different person. My trainer Jake pushed me harder than I've ever been pushed while still making every session fun. Best investment I've ever made."</div>
+        <div class="testi-author">
+          <div class="testi-avatar">MR</div>
+          <div><div class="testi-name">Marcus R.</div><div class="testi-role">Member since 2023</div><div class="testi-result">↓ 34 lbs in 90 days</div></div>
+        </div>
       </div>
       <div class="testi-card reveal-scale">
         <div class="testi-stars">★★★★★</div>
-        <div class="testi-text">"I was terrified to try yoga but the team made me feel so welcome. Three months in and I can't imagine life without it. The hot yoga class is absolutely incredible."</div>
-        <div class="testi-author"><div class="testi-avatar">TM</div><div><div class="testi-name">Thabo M.</div><div class="testi-role">Member since 2023</div></div></div>
+        <div class="testi-text">"As a busy NYC professional I needed a gym that works with my schedule. IronForge opens at 5am and the trainers actually remember your name. I've tried 6 gyms in Manhattan — this is the only one that stuck."</div>
+        <div class="testi-author">
+          <div class="testi-avatar">SC</div>
+          <div><div class="testi-name">Sarah C.</div><div class="testi-role">Member since 2022</div><div class="testi-result">↑ 18 lbs muscle gained</div></div>
+        </div>
       </div>
       <div class="testi-card reveal-scale">
         <div class="testi-stars">★★★★★</div>
-        <div class="testi-text">"Best studio in Cape Town, hands down. The vinyasa classes are challenging and fun. I've tried many studios and nothing compares to the energy and quality here."</div>
-        <div class="testi-author"><div class="testi-avatar">LV</div><div><div class="testi-name">Lisa V.</div><div class="testi-role">Member since 2020</div></div></div>
+        <div class="testi-text">"The 90-day guarantee is real — I almost asked for my money back after week 3 and they doubled down with extra sessions. I ended up losing 28 lbs. The accountability here is unlike anything else."</div>
+        <div class="testi-author">
+          <div class="testi-avatar">DK</div>
+          <div><div class="testi-name">Derek K.</div><div class="testi-role">Member since 2024</div><div class="testi-result">↓ 28 lbs in 11 weeks</div></div>
+        </div>
       </div>
     </div>
   </div>
@@ -1946,107 +1948,112 @@ footer{background:var(--surface);border-top:1px solid var(--border);padding:72px
 <!-- PRICING -->
 <section class="section" id="pricing">
   <div class="section-label reveal">Pricing</div>
-  <h2 class="section-title reveal">Simple, Transparent Pricing</h2>
-  <p class="section-sub reveal">No hidden fees. Cancel anytime. Your first class is always free.</p>
+  <h2 class="section-title reveal">STRAIGHT TALK ON PRICE.</h2>
+  <p class="section-sub reveal">No hidden fees, no lock-in contracts. Cancel anytime. Your first session is always free.</p>
   <div class="pricing-grid">
     <div class="price-card reveal-scale">
-      <div class="price-name">Drop-In</div>
-      <div class="price-amount">R220</div>
-      <div class="price-period">per class</div>
+      <div class="price-name">Drop-In Pass</div>
+      <div class="price-amount">$35</div>
+      <div class="price-period">single class</div>
       <ul class="price-features">
-        <li>Any single class</li>
-        <li>All class types</li>
-        <li>Mat included</li>
+        <li>Any group class</li>
+        <li>All equipment access</li>
+        <li>Locker room included</li>
       </ul>
-      <a href="#contact" class="price-btn outline">Book a Class</a>
+      <a href="#contact" class="price-btn outline">BOOK A CLASS</a>
     </div>
     <div class="price-card featured reveal-scale">
       <div class="price-badge">MOST POPULAR</div>
-      <div class="price-name">Monthly Unlimited</div>
-      <div class="price-amount">R890</div>
-      <div class="price-period">per month</div>
+      <div class="price-name">Unlimited Monthly</div>
+      <div class="price-amount">$149</div>
+      <div class="price-period">per month · cancel anytime</div>
       <ul class="price-features">
-        <li>Unlimited classes</li>
-        <li>All class types</li>
-        <li>Mat & towel included</li>
+        <li>Unlimited group classes</li>
+        <li>2 PT sessions/month</li>
+        <li>Nutrition check-in</li>
         <li>Guest pass included</li>
+        <li>90-day guarantee</li>
       </ul>
-      <a href="#contact" class="price-btn main">Start Free Trial</a>
+      <a href="#contact" class="price-btn main">START FREE TRIAL</a>
     </div>
     <div class="price-card reveal-scale">
-      <div class="price-name">10-Class Pack</div>
-      <div class="price-amount">R1,600</div>
-      <div class="price-period">R160 per class · valid 3 months</div>
+      <div class="price-name">Elite 1-on-1</div>
+      <div class="price-amount">$299</div>
+      <div class="price-period">per month · 8 sessions</div>
       <ul class="price-features">
-        <li>10 classes to use flexibly</li>
-        <li>All class types</li>
-        <li>Mat included</li>
-        <li>Never expires</li>
+        <li>8 personal training sessions</li>
+        <li>Custom meal plan</li>
+        <li>Weekly progress tracking</li>
+        <li>Priority scheduling</li>
+        <li>90-day guarantee</li>
       </ul>
-      <a href="#contact" class="price-btn outline">Buy Pack</a>
+      <a href="#contact" class="price-btn outline">GET STARTED</a>
     </div>
   </div>
 </section>
 
 <!-- MAP -->
 <section class="map-section" id="location">
-  <div class="section-label reveal">Location</div>
-  <h2 class="section-title reveal">Find Us in Cape Town</h2>
-  <p class="section-sub reveal" style="margin-bottom:32px">12 Bree Street, Cape Town City Bowl, 8001 · <a href="tel:+27214612345" style="color:var(--accent)">+27 21 461 2345</a></p>
-  <a href="https://www.google.com/maps/search/12+Bree+Street+Cape+Town" target="_blank" class="map-img reveal">
-    <img src="https://maps.googleapis.com/maps/api/staticmap?center=12+Bree+Street+Cape+Town&zoom=15&size=1200x400&scale=2&markers=color:green%7C12+Bree+Street+Cape+Town&style=feature:all%7Celement:geometry%7Ccolor:0x1a231a&style=feature:road%7Celement:geometry%7Ccolor:0x2d3d2d&key=AIzaSyDemo" alt="Studio location map"/>
+  <div class="section-label reveal">Find Us</div>
+  <h2 class="section-title reveal">WE'RE IN MIDTOWN.</h2>
+  <p class="section-sub reveal" style="margin-bottom:32px">247 W 35th Street, New York, NY 10001 · <a href="tel:+12125550182" style="color:var(--accent)">(212) 555-0182</a></p>
+  <a href="https://www.google.com/maps/search/247+W+35th+Street+New+York+NY" target="_blank" class="map-wrap reveal">
+    <img src="https://maps.googleapis.com/maps/api/staticmap?center=247+W+35th+Street+New+York+NY&zoom=15&size=1280x400&scale=2&markers=color:red%7C247+W+35th+Street+New+York+NY&style=feature:all%7Celement:geometry%7Ccolor:0x1c1c1c&style=feature:road%7Celement:geometry%7Ccolor:0x2a2a2a&style=feature:water%7Celement:geometry%7Ccolor:0x0d0d0d&key=AIzaSyDemo" alt="IronForge Gym location map"/>
   </a>
 </section>
 
 <!-- FAQ -->
 <section class="section" id="faq">
   <div class="section-label reveal">FAQ</div>
-  <h2 class="section-title reveal" style="text-align:center">Frequently Asked Questions</h2>
+  <h2 class="section-title reveal" style="text-align:center">GOT QUESTIONS?</h2>
   <div class="faq-list">
     <div class="faq-item reveal">
-      <div class="faq-q">Do I need experience to start? <div class="faq-icon">+</div></div>
-      <div class="faq-a">Not at all! We welcome complete beginners. Our instructors offer modifications for every pose, and our beginner-friendly classes are designed to ease you in gently.</div>
+      <div class="faq-q">What is the 90-day guarantee exactly? <div class="faq-icon">+</div></div>
+      <div class="faq-a">If you complete all scheduled sessions, follow your nutrition plan, and don't see measurable results in 90 days, we give you a full refund — no questions asked. We've given out exactly 3 refunds in 9 years. That's how confident we are.</div>
     </div>
     <div class="faq-item reveal">
-      <div class="faq-q">What should I bring to my first class? <div class="faq-icon">+</div></div>
-      <div class="faq-a">Just yourself and comfortable workout clothes. We provide mats, towels, and filtered water. If you have your own mat, you're welcome to bring it.</div>
+      <div class="faq-q">Do I need experience to join? <div class="faq-icon">+</div></div>
+      <div class="faq-a">Zero experience needed. We work with complete beginners every day. Your first session is an assessment where we learn where you are and build your program from there.</div>
     </div>
     <div class="faq-item reveal">
-      <div class="faq-q">How hot is the hot yoga room? <div class="faq-icon">+</div></div>
-      <div class="faq-a">Our hot yoga room is maintained at 38°C with 40% humidity. We recommend arriving hydrated and eating a light meal 2 hours before class.</div>
+      <div class="faq-q">How early/late are you open? <div class="faq-icon">+</div></div>
+      <div class="faq-a">Monday–Friday 5am–11pm. Saturday 7am–9pm. Sunday 8am–8pm. We're built for busy New Yorkers — no excuses about hours.</div>
     </div>
     <div class="faq-item reveal">
-      <div class="faq-q">Can I cancel or pause my membership? <div class="faq-icon">+</div></div>
-      <div class="faq-a">Yes, absolutely. You can cancel or pause your monthly membership at any time with no penalty. We make it easy with no lock-in contracts.</div>
+      <div class="faq-q">Can I cancel my membership anytime? <div class="faq-icon">+</div></div>
+      <div class="faq-a">Yes — no lock-in contracts, ever. Cancel with 30 days notice at any time. We keep members because of results, not contracts.</div>
     </div>
   </div>
 </section>
 
 <!-- CTA -->
 <section class="cta-section" id="contact">
-  <div class="section-label reveal">Get Started</div>
-  <h2 class="reveal">Your First Class is <em style="color:var(--accent);font-style:italic;font-family:'Cormorant Garamond',serif">Free.</em></h2>
-  <p class="reveal">No commitment. No credit card. Just show up and experience what Zenflow can do for you.</p>
-  <div class="reveal" style="display:flex;gap:14px;justify-content:center;flex-wrap:wrap">
-    <a href="tel:+27214612345" class="btn-primary">📞 Call to Book Free Class</a>
-    <a href="mailto:hello@zenflow.co.za" class="btn-secondary">Email Us</a>
+  <div class="cta-bg"></div>
+  <div class="cta-content">
+    <div class="section-label reveal">Get Started</div>
+    <h2 class="reveal">YOUR FIRST<br/><span>SESSION IS FREE.</span></h2>
+    <p class="reveal">No commitment. No credit card. Just show up and let us show you what IronForge can do for you.</p>
+    <div class="reveal" style="display:flex;gap:14px;justify-content:center;flex-wrap:wrap">
+      <a href="tel:+12125550182" class="btn-primary">📞 CALL TO BOOK FREE SESSION</a>
+      <a href="mailto:hello@ironforgegym.com" class="btn-secondary">EMAIL US</a>
+    </div>
+    <p class="reveal" style="margin-top:20px;font-size:13px;color:var(--muted)">📍 247 W 35th St, New York, NY · Mon–Fri 5am–11pm · Sat–Sun 7am–9pm</p>
   </div>
-  <p class="reveal" style="margin-top:20px;font-size:13px;color:var(--muted)">📍 12 Bree Street, Cape Town · Mon–Sat 6am–9pm · Sun 7am–6pm</p>
 </section>
 
 <!-- FOOTER -->
 <footer>
   <div class="footer-grid">
     <div class="footer-brand">
-      <div class="logo-text" style="font-size:20px">Zen<span>flow</span></div>
-      <p>Cape Town's premier yoga studio. Transforming lives through mindful movement since 2018.</p>
+      <div class="logo" style="font-size:22px">Iron<span>Forge</span></div>
+      <p>NYC's most results-driven personal training studio. Transforming bodies and lives since 2015.</p>
     </div>
     <div class="footer-col">
-      <h4>Classes</h4>
-      <a href="#classes">Hot Yoga</a>
-      <a href="#classes">Vinyasa Flow</a>
-      <a href="#classes">Yin & Restore</a>
-      <a href="#classes">Meditation</a>
+      <h4>Programs</h4>
+      <a href="#programs">Personal Training</a>
+      <a href="#programs">HIIT & Strength</a>
+      <a href="#programs">Nutrition Coaching</a>
+      <a href="#programs">Group Classes</a>
     </div>
     <div class="footer-col">
       <h4>Studio</h4>
@@ -2057,83 +2064,73 @@ footer{background:var(--surface);border-top:1px solid var(--border);padding:72px
     </div>
     <div class="footer-col">
       <h4>Contact</h4>
-      <a href="tel:+27214612345">+27 21 461 2345</a>
-      <a href="mailto:hello@zenflow.co.za">hello@zenflow.co.za</a>
-      <a href="#location">12 Bree Street, CT</a>
+      <a href="tel:+12125550182">(212) 555-0182</a>
+      <a href="mailto:hello@ironforgegym.com">hello@ironforgegym.com</a>
+      <a href="#location">247 W 35th St, NYC</a>
     </div>
   </div>
   <div class="footer-bottom">
-    <span>© 2026 Zenflow Yoga Studio. All rights reserved.</span>
+    <span>© 2026 IronForge Gym. All rights reserved.</span>
     <span>Built with Sitefliq AI ⚡</span>
   </div>
 </footer>
 
 <script>
-// ── NAV SCROLL EFFECT ──
+// ── NAV SCROLL ──
 const nav = document.getElementById('nav');
-window.addEventListener('scroll', () => {
-  nav.classList.toggle('scrolled', window.scrollY > 80);
-});
+window.addEventListener('scroll', () => nav.classList.toggle('scrolled', window.scrollY > 80));
 
 // ── MOBILE MENU ──
-const burger = document.getElementById('burger');
-const mobileMenu = document.getElementById('mobileMenu');
-burger.addEventListener('click', () => mobileMenu.classList.toggle('open'));
-function closeMobile() { mobileMenu.classList.remove('open'); }
+document.getElementById('burger').addEventListener('click', () => document.getElementById('mobileMenu').classList.toggle('open'));
+function closeMobile() { document.getElementById('mobileMenu').classList.remove('open'); }
 
-// ── INTERSECTION OBSERVER — SCROLL REVEALS ──
-const observer = new IntersectionObserver((entries) => {
+// ── SCROLL REVEAL ──
+const observer = new IntersectionObserver(entries => {
   entries.forEach(entry => {
-    if (entry.isIntersecting) {
+    if(entry.isIntersecting) {
       entry.target.classList.add('visible');
-      // Trigger counter animation for stats
       const num = entry.target.querySelector('[data-target]');
-      if (num) animateCounter(num);
+      if(num) animateCounter(num);
     }
   });
-}, { threshold: 0.15 });
-
+}, {threshold: 0.15});
 document.querySelectorAll('.reveal, .reveal-left, .reveal-scale').forEach(el => observer.observe(el));
 
-// Stagger children within grids
-document.querySelectorAll('.classes-grid, .testi-grid, .pricing-grid').forEach(grid => {
+// Stagger grid children
+document.querySelectorAll('.programs-grid, .testi-grid, .pricing-grid').forEach(grid => {
   grid.querySelectorAll('.reveal-scale').forEach((card, i) => {
-    card.style.transitionDelay = (i * 0.12) + 's';
+    card.style.transitionDelay = (i * 0.1) + 's';
   });
 });
 
 // ── COUNTER ANIMATION ──
 function animateCounter(el) {
-  if (el.dataset.animated) return;
+  if(el.dataset.animated) return;
   el.dataset.animated = true;
   const target = parseInt(el.dataset.target);
-  const duration = 2000;
   const start = performance.now();
-  const update = (now) => {
+  const duration = 2000;
+  const update = now => {
     const progress = Math.min((now - start) / duration, 1);
     const ease = 1 - Math.pow(1 - progress, 3);
-    el.textContent = Math.floor(ease * target).toLocaleString();
-    if (progress < 1) requestAnimationFrame(update);
-    else el.textContent = target.toLocaleString() + (target >= 1000 ? '' : '+');
+    el.textContent = Math.floor(ease * target).toLocaleString() + (progress < 1 ? '' : '+');
+    if(progress < 1) requestAnimationFrame(update);
   };
   requestAnimationFrame(update);
 }
-
-// Also observe stats directly
 document.querySelectorAll('[data-target]').forEach(el => {
-  const statObserver = new IntersectionObserver(entries => {
-    if (entries[0].isIntersecting) animateCounter(el);
-  }, {threshold: 0.5});
-  statObserver.observe(el);
+  new IntersectionObserver(entries => {
+    if(entries[0].isIntersecting) animateCounter(el);
+  }, {threshold: 0.5}).observe(el);
 });
 
-// ── FAQ ACCORDION ──
+// ── FAQ ──
 document.querySelectorAll('.faq-q').forEach(q => {
   q.addEventListener('click', () => {
     const item = q.parentElement;
     const wasOpen = item.classList.contains('open');
     document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('open'));
-    if (!wasOpen) item.classList.add('open');
+    if(!wasOpen) item.classList.add('open');
   });
 });
 
@@ -2141,7 +2138,7 @@ document.querySelectorAll('.faq-q').forEach(q => {
 document.querySelectorAll('a[href^="#"]').forEach(a => {
   a.addEventListener('click', e => {
     const target = document.querySelector(a.getAttribute('href'));
-    if (target) { e.preventDefault(); target.scrollIntoView({behavior:'smooth'}); }
+    if(target) { e.preventDefault(); target.scrollIntoView({behavior:'smooth'}); }
   });
 });
 </script>
@@ -2342,7 +2339,7 @@ function ExamplePage({onBack,onBuild}) {
       <div style={{background:"#fff7ed",borderBottom:"1px solid #fed7aa",padding:"12px 28px",display:"flex",alignItems:"center",justifyContent:"space-between",flexWrap:"wrap",gap:10}}>
         <div style={{display:"flex",alignItems:"center",gap:10,fontSize:13}}>
           <span style={{fontSize:16}}>✦</span>
-          <span style={{fontWeight:600,color:"#111827"}}>Zenflow Yoga Studio</span>
+          <span style={{fontWeight:600,color:"#111827"}}>IronForge Gym NYC</span>
           <span style={{color:"#9ca3af"}}>— Sample page generated by Sitefliq AI</span>
           <span style={{background:"#f97316",color:"white",padding:"2px 8px",borderRadius:4,fontSize:10,fontWeight:700}}>EXAMPLE</span>
         </div>
