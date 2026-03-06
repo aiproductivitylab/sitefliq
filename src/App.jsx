@@ -1578,398 +1578,516 @@ const EXAMPLE_HTML = `<!DOCTYPE html>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{--bg:#0a0e0a;--surface:#111811;--surface2:#1a231a;--accent:#a8e063;--text:#f0f5f0;--muted:#7a9a7a;--border:rgba(168,224,99,.1)}
 html{scroll-behavior:smooth}
-body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);-webkit-font-smoothing:antialiased;overflow-x:hidden}
-h1,h2,h3,.logo{font-family:'Cormorant Garamond',serif}
-a{color:inherit;text-decoration:none}
-.btn{display:inline-flex;align-items:center;gap:8px;padding:13px 30px;border-radius:4px;font-size:13px;font-weight:600;cursor:pointer;border:none;font-family:'DM Sans',sans-serif;transition:all .25s;letter-spacing:.5px}
-.btn-primary{background:var(--accent);color:#0a0e0a}
-.btn-primary:hover{background:#bef264;transform:translateY(-1px);box-shadow:0 8px 24px rgba(168,224,99,.25)}
-.btn-outline{background:transparent;border:1.5px solid var(--accent);color:var(--accent)}
-.btn-outline:hover{background:rgba(168,224,99,.08)}
+body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;overflow-x:hidden}
 
-/* NAV */
-nav{position:fixed;top:0;left:0;right:0;z-index:100;height:64px;display:flex;align-items:center;justify-content:space-between;padding:0 48px;background:rgba(10,14,10,.9);backdrop-filter:blur(16px);border-bottom:1px solid var(--border)}
-.logo{font-size:20px;font-weight:700;color:var(--accent);letter-spacing:1px}
-.nav-links{display:flex;gap:32px;font-size:13px;color:var(--muted);letter-spacing:.3px}
-.nav-links a:hover{color:var(--text)}
-.hamburger{display:none;flex-direction:column;gap:5px;cursor:pointer}
-.hamburger span{width:22px;height:1.5px;background:var(--text);transition:all .3s}
-.mobile-menu{display:none;position:fixed;top:64px;left:0;right:0;background:var(--surface);padding:16px;border-bottom:1px solid var(--border);z-index:99;flex-direction:column;gap:4px}
-.mobile-menu.open{display:flex}
-.mobile-menu a{padding:12px 16px;font-size:14px;color:var(--muted);border-radius:6px;display:block}
+/* ── ANIMATIONS ── */
+@keyframes fadeUp{from{opacity:0;transform:translateY(32px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes slideRight{from{opacity:0;transform:translateX(-30px)}to{opacity:1;transform:translateX(0)}}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(168,224,99,.4)}50%{box-shadow:0 0 0 12px rgba(168,224,99,0)}}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+@keyframes shimmer{0%{background-position:-200% center}100%{background-position:200% center}}
+@keyframes scaleIn{from{opacity:0;transform:scale(0.92)}to{opacity:1;transform:scale(1)}}
+@keyframes typewriter{from{width:0}to{width:100%}}
 
-/* HERO — full real photo */
-.hero{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:100px 48px 80px;position:relative;overflow:hidden;text-align:center}
-.hero-img{position:absolute;inset:0;background-image:url('https://images.pexels.com/photos/3822906/pexels-photo-3822906.jpeg?auto=compress&cs=tinysrgb&w=1600');background-size:cover;background-position:center top}
-.hero-overlay{position:absolute;inset:0;background:linear-gradient(180deg,rgba(10,14,10,.72) 0%,rgba(10,14,10,.55) 40%,rgba(10,14,10,.88) 100%)}
-.hero-content{position:relative;z-index:1;max-width:800px;animation:fadeUp .9s ease both}
-.hero-eyebrow{display:inline-flex;align-items:center;gap:8px;padding:6px 18px;background:rgba(168,224,99,.1);border:1px solid rgba(168,224,99,.2);border-radius:100px;font-size:10px;color:var(--accent);letter-spacing:3px;text-transform:uppercase;margin-bottom:28px;font-family:'DM Sans',sans-serif}
-.hero h1{font-size:clamp(56px,8vw,104px);font-weight:600;line-height:.9;margin-bottom:24px;letter-spacing:-2px;color:var(--text)}
-.hero h1 em{font-style:italic;color:var(--accent)}
-.hero-sub{font-size:17px;color:rgba(240,245,240,.7);max-width:480px;margin:0 auto 40px;line-height:1.85;font-weight:300}
-.hero-btns{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-bottom:24px}
-.hero-trust{font-size:12px;color:rgba(240,245,240,.45);display:flex;align-items:center;justify-content:center;gap:6px}
+/* Scroll-triggered reveal */
+.reveal{opacity:0;transform:translateY(32px);transition:opacity .7s ease,transform .7s ease}
+.reveal.visible{opacity:1;transform:translateY(0)}
+.reveal-left{opacity:0;transform:translateX(-30px);transition:opacity .7s ease,transform .7s ease}
+.reveal-left.visible{opacity:1;transform:translateX(0)}
+.reveal-scale{opacity:0;transform:scale(0.93);transition:opacity .6s ease,transform .6s ease}
+.reveal-scale.visible{opacity:1;transform:scale(1)}
 
-/* PROOF BAR */
-.proof-bar{background:var(--surface);border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:24px 48px;display:grid;grid-template-columns:repeat(4,1fr);gap:0}
-.proof-item{text-align:center;padding:0 16px;border-right:1px solid var(--border)}
-.proof-item:last-child{border-right:none}
-.proof-num{font-family:'Cormorant Garamond',serif;font-size:36px;font-weight:700;color:var(--accent);line-height:1}
-.proof-label{font-size:11px;color:var(--muted);margin-top:4px;letter-spacing:.5px}
+/* ── NAV ── */
+nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:20px 48px;display:flex;align-items:center;justify-content:space-between;transition:all .3s ease}
+nav.scrolled{background:rgba(10,14,10,.92);backdrop-filter:blur(20px);padding:14px 48px;border-bottom:1px solid var(--border);box-shadow:0 4px 30px rgba(0,0,0,.3)}
+.logo-text{font-family:'Cormorant Garamond',serif;font-size:24px;font-weight:700;color:var(--text);letter-spacing:1px}
+.logo-text span{color:var(--accent)}
+.nav-links{display:flex;gap:32px;align-items:center}
+.nav-links a{color:var(--muted);text-decoration:none;font-size:14px;font-weight:500;transition:color .2s}
+.nav-links a:hover{color:var(--accent)}
+.nav-cta{background:var(--accent);color:#0a0e0a;padding:10px 22px;border-radius:100px;font-size:14px;font-weight:600;text-decoration:none;transition:all .2s;animation:pulse 3s infinite}
+.nav-cta:hover{transform:scale(1.06);box-shadow:0 6px 24px rgba(168,224,99,.35)}
+.hamburger{display:none;flex-direction:column;gap:5px;cursor:pointer;background:none;border:none;padding:4px}
+.hamburger span{display:block;width:24px;height:2px;background:var(--text);transition:all .3s}
+.mobile-menu{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:var(--bg);z-index:99;padding:100px 40px 40px;flex-direction:column;gap:28px}
+.mobile-menu.open{display:flex;animation:fadeIn .3s ease}
+.mobile-menu a{font-size:28px;font-family:'Cormorant Garamond',serif;color:var(--text);text-decoration:none}
 
-/* SECTIONS */
-section{padding:90px 48px}
-.container{max-width:1100px;margin:0 auto}
-.eyebrow{font-size:10px;color:var(--accent);letter-spacing:3px;text-transform:uppercase;font-weight:600;margin-bottom:14px;display:flex;align-items:center;gap:10px}
-.eyebrow::before{content:'';width:28px;height:1px;background:var(--accent);flex-shrink:0}
-h2{font-family:'Cormorant Garamond',serif;font-size:clamp(36px,5vw,62px);font-weight:600;line-height:1;letter-spacing:-1px;margin-bottom:16px}
+/* ── HERO ── */
+.hero{min-height:100vh;display:flex;align-items:center;justify-content:center;text-align:center;padding:120px 24px 80px;position:relative;overflow:hidden}
+.hero-bg{position:absolute;inset:0;background:url('https://images.pexels.com/photos/3822583/pexels-photo-3822583.jpeg?auto=compress&cs=tinysrgb&w=1600') center/cover;filter:brightness(.35);transform:scale(1.05);animation:scaleIn 1.5s ease forwards}
+.hero-content{position:relative;z-index:2;max-width:780px;animation:fadeUp .9s ease both}
+.hero-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(168,224,99,.12);border:1px solid rgba(168,224,99,.25);border-radius:100px;padding:6px 16px;font-size:12px;color:var(--accent);font-weight:600;letter-spacing:1.5px;margin-bottom:24px;animation:fadeIn .8s .2s both}
+.hero h1{font-family:'Cormorant Garamond',serif;font-size:clamp(48px,7vw,88px);font-weight:700;line-height:1.05;margin-bottom:22px;animation:fadeUp .9s .15s both}
+.hero h1 em{color:var(--accent);font-style:italic}
+.hero p{font-size:18px;color:rgba(240,245,240,.75);max-width:520px;margin:0 auto 36px;line-height:1.8;animation:fadeUp .9s .25s both}
+.hero-btns{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;animation:fadeUp .9s .35s both}
+.btn-primary{background:var(--accent);color:#0a0e0a;padding:15px 36px;border-radius:100px;font-size:15px;font-weight:700;text-decoration:none;display:inline-flex;align-items:center;gap:8px;transition:all .25s;animation:pulse 3s 1s infinite}
+.btn-primary:hover{transform:translateY(-3px) scale(1.04);box-shadow:0 12px 36px rgba(168,224,99,.4)}
+.btn-secondary{border:1px solid rgba(240,245,240,.25);color:var(--text);padding:15px 36px;border-radius:100px;font-size:15px;font-weight:500;text-decoration:none;transition:all .25s}
+.btn-secondary:hover{border-color:var(--accent);color:var(--accent);transform:translateY(-3px)}
+.hero-trust{margin-top:32px;font-size:13px;color:var(--muted);animation:fadeIn 1s .5s both}
+.stars{color:var(--accent);font-size:16px}
 
-/* SERVICES — image cards */
-.services-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--border);border:1px solid var(--border);border-radius:12px;overflow:hidden;margin-top:48px}
-.svc-card{position:relative;min-height:320px;overflow:hidden;display:flex;flex-direction:column;justify-content:flex-end;cursor:pointer}
-.svc-card-img{position:absolute;inset:0;background-size:cover;background-position:center;transition:transform .5s}
-.svc-card:hover .svc-card-img{transform:scale(1.06)}
-.svc-card-overlay{position:absolute;inset:0;background:linear-gradient(0deg,rgba(10,14,10,.93) 0%,rgba(10,14,10,.3) 70%,transparent 100%)}
-.svc-card-body{position:relative;z-index:1;padding:24px}
-.svc-price{font-size:11px;color:var(--accent);font-weight:600;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:8px}
-.svc-name{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:600;margin-bottom:6px}
-.svc-desc{font-size:12px;color:rgba(240,245,240,.6);line-height:1.65}
+/* ── STATS ── */
+.stats{background:var(--surface);padding:56px 48px;display:grid;grid-template-columns:repeat(4,1fr);gap:0;border-top:1px solid var(--border);border-bottom:1px solid var(--border)}
+.stat{text-align:center;padding:20px;border-right:1px solid var(--border)}
+.stat:last-child{border-right:none}
+.stat-num{font-family:'Cormorant Garamond',serif;font-size:52px;font-weight:700;color:var(--accent);line-height:1;margin-bottom:6px}
+.stat-label{font-size:13px;color:var(--muted);font-weight:500;letter-spacing:.5px}
 
-/* ABOUT — image left */
-.about-grid{display:grid;grid-template-columns:1fr 1fr;gap:72px;align-items:center}
-.about-img{position:relative;height:580px;border-radius:8px;overflow:hidden}
-.about-img img{width:100%;height:100%;object-fit:cover}
-.about-badge{position:absolute;bottom:28px;right:-20px;background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:16px 20px;backdrop-filter:blur(12px)}
-.about-badge-num{font-family:'Cormorant Garamond',serif;font-size:36px;font-weight:700;color:var(--accent);line-height:1}
-.about-badge-label{font-size:11px;color:var(--muted);margin-top:3px}
-.about-text p{font-size:14px;color:var(--muted);line-height:1.95;margin-bottom:18px}
+/* ── CLASSES ── */
+.section{padding:100px 48px;max-width:1200px;margin:0 auto}
+.section-label{font-size:11px;color:var(--accent);font-weight:700;letter-spacing:3px;text-transform:uppercase;margin-bottom:12px}
+.section-title{font-family:'Cormorant Garamond',serif;font-size:clamp(36px,4vw,56px);font-weight:700;line-height:1.1;margin-bottom:20px}
+.section-sub{font-size:16px;color:var(--muted);max-width:560px;line-height:1.8}
+.classes-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-top:52px}
+.class-card{background:var(--surface);border:1px solid var(--border);border-radius:20px;overflow:hidden;transition:all .3s;cursor:pointer}
+.class-card:hover{transform:translateY(-8px);box-shadow:0 20px 50px rgba(0,0,0,.4);border-color:rgba(168,224,99,.3)}
+.class-img{height:200px;overflow:hidden}
+.class-img img{width:100%;height:100%;object-fit:cover;transition:transform .5s ease}
+.class-card:hover .class-img img{transform:scale(1.08)}
+.class-body{padding:22px}
+.class-tag{font-size:10px;font-weight:700;letter-spacing:2px;color:var(--accent);text-transform:uppercase;margin-bottom:8px}
+.class-name{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:700;margin-bottom:8px}
+.class-desc{font-size:13px;color:var(--muted);line-height:1.7}
 
-/* GALLERY */
-.gallery-grid{display:grid;grid-template-columns:2fr 1fr 1fr;grid-template-rows:260px 260px;gap:8px;margin-top:48px}
-.gal-item{border-radius:6px;overflow:hidden;position:relative}
-.gal-item:first-child{grid-row:span 2}
-.gal-item img{width:100%;height:100%;object-fit:cover;transition:transform .5s}
-.gal-item:hover img{transform:scale(1.05)}
-.gal-caption{position:absolute;inset:0;background:rgba(10,14,10,.65);display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity .3s}
-.gal-item:hover .gal-caption{opacity:1}
-.gal-caption span{font-family:'Cormorant Garamond',serif;font-size:16px;color:var(--accent);letter-spacing:1px}
+/* ── ABOUT ── */
+.about-grid{display:grid;grid-template-columns:1fr 1fr;gap:72px;align-items:center;padding:100px 48px;max-width:1200px;margin:0 auto}
+.about-img{position:relative}
+.about-img img{width:100%;height:550px;object-fit:cover;border-radius:24px}
+.about-accent{position:absolute;bottom:-24px;right:-24px;width:180px;height:180px;background:var(--accent);border-radius:20px;z-index:-1;animation:float 4s ease-in-out infinite}
+.about-badge{display:inline-flex;background:var(--surface2);border:1px solid var(--border);border-radius:100px;padding:8px 18px;font-size:12px;color:var(--accent);font-weight:600;letter-spacing:1px;margin-bottom:18px}
+.about h2{font-family:'Cormorant Garamond',serif;font-size:clamp(32px,3.5vw,50px);font-weight:700;line-height:1.15;margin-bottom:18px}
+.about p{font-size:15px;color:var(--muted);line-height:1.9;margin-bottom:16px}
+.about-features{display:flex;flex-direction:column;gap:12px;margin-top:24px}
+.feature-row{display:flex;align-items:center;gap:12px;font-size:14px;color:var(--text)}
+.feature-icon{width:32px;height:32px;background:rgba(168,224,99,.12);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
 
-/* TESTIMONIALS */
-.tgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:48px}
-.tcard{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:28px;transition:border-color .2s}
-.tcard:hover{border-color:rgba(168,224,99,.2)}
-.tcard-stars{color:var(--accent);font-size:11px;letter-spacing:4px;margin-bottom:14px}
-.tcard-text{font-size:13px;color:rgba(240,245,240,.6);line-height:1.85;margin-bottom:20px;font-style:italic}
-.tcard-name{font-family:'Cormorant Garamond',serif;font-size:15px;font-weight:600}
-.tcard-loc{font-size:11px;color:var(--muted);margin-top:2px}
+/* ── TESTIMONIALS ── */
+.testimonials{background:var(--surface);padding:100px 48px;border-top:1px solid var(--border);border-bottom:1px solid var(--border)}
+.testi-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;margin-top:52px;max-width:1200px;margin-left:auto;margin-right:auto}
+.testi-card{background:var(--surface2);border:1px solid var(--border);border-radius:20px;padding:28px;transition:all .3s}
+.testi-card:hover{transform:translateY(-6px);border-color:rgba(168,224,99,.2)}
+.testi-stars{color:var(--accent);font-size:14px;margin-bottom:14px}
+.testi-text{font-size:14px;color:var(--text);line-height:1.8;margin-bottom:18px;font-style:italic}
+.testi-author{display:flex;align-items:center;gap:12px}
+.testi-avatar{width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,var(--accent),#5cb85c);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px;color:#0a0e0a}
+.testi-name{font-size:14px;font-weight:600}
+.testi-role{font-size:12px;color:var(--muted)}
 
-/* FAQ */
-.faq-wrap{max-width:720px;margin:40px auto 0}
+/* ── PRICING ── */
+.pricing-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-top:52px}
+.price-card{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:32px;transition:all .3s;position:relative}
+.price-card.featured{border-color:var(--accent);background:linear-gradient(135deg,rgba(168,224,99,.08),var(--surface))}
+.price-card:hover{transform:translateY(-6px);box-shadow:0 20px 50px rgba(0,0,0,.3)}
+.price-badge{position:absolute;top:-12px;left:50%;transform:translateX(-50%);background:var(--accent);color:#0a0e0a;font-size:11px;font-weight:700;padding:4px 14px;border-radius:100px;letter-spacing:1px}
+.price-name{font-size:13px;font-weight:600;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:10px}
+.price-amount{font-family:'Cormorant Garamond',serif;font-size:52px;font-weight:700;color:var(--text);line-height:1}
+.price-period{font-size:13px;color:var(--muted);margin-bottom:24px}
+.price-features{list-style:none;display:flex;flex-direction:column;gap:10px;margin-bottom:28px}
+.price-features li{display:flex;align-items:center;gap:8px;font-size:14px;color:var(--muted)}
+.price-features li::before{content:"✓";color:var(--accent);font-weight:700}
+.price-btn{display:block;text-align:center;padding:13px;border-radius:100px;font-size:14px;font-weight:700;text-decoration:none;transition:all .25s}
+.price-btn.main{background:var(--accent);color:#0a0e0a}
+.price-btn.main:hover{transform:scale(1.04);box-shadow:0 8px 24px rgba(168,224,99,.3)}
+.price-btn.outline{border:1px solid var(--border);color:var(--text)}
+.price-btn.outline:hover{border-color:var(--accent);color:var(--accent)}
+
+/* ── FAQ ── */
+.faq-list{max-width:720px;margin:52px auto 0}
 .faq-item{border-bottom:1px solid var(--border)}
-.faq-q{padding:20px 0;display:flex;justify-content:space-between;align-items:center;cursor:pointer;gap:16px}
-.faq-q-text{font-family:'Cormorant Garamond',serif;font-size:18px;font-weight:600;color:var(--text);line-height:1.3}
-.faq-icon{width:28px;height:28px;border-radius:50%;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;color:var(--accent);font-size:18px;font-weight:300;flex-shrink:0;transition:all .3s}
-.faq-a{font-size:13px;color:var(--muted);line-height:1.85;max-height:0;overflow:hidden;transition:max-height .4s,padding .3s}
-.faq-a.open{max-height:200px;padding-bottom:20px}
-.faq-item.active .faq-icon{transform:rotate(45deg);background:rgba(168,224,99,.1);border-color:rgba(168,224,99,.3)}
+.faq-q{display:flex;justify-content:space-between;align-items:center;padding:20px 0;cursor:pointer;font-size:16px;font-weight:500;transition:color .2s}
+.faq-q:hover{color:var(--accent)}
+.faq-icon{width:24px;height:24px;border-radius:50%;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;transition:all .3s}
+.faq-a{display:none;padding:0 0 18px;font-size:14px;color:var(--muted);line-height:1.8}
+.faq-item.open .faq-icon{background:var(--accent);border-color:var(--accent);color:#0a0e0a;transform:rotate(45deg)}
+.faq-item.open .faq-a{display:block}
 
-/* CTA BANNER */
-.cta-banner{position:relative;overflow:hidden;padding:100px 48px;text-align:center}
-.cta-img{position:absolute;inset:0;background-image:url('https://images.pexels.com/photos/4056723/pexels-photo-4056723.jpeg?auto=compress&cs=tinysrgb&w=1600');background-size:cover;background-position:center}
-.cta-overlay{position:absolute;inset:0;background:rgba(10,14,10,.82)}
-.cta-content{position:relative;z-index:1}
-.cta-banner h2{font-size:clamp(36px,5vw,64px);font-weight:600;letter-spacing:-1.5px;margin-bottom:14px}
-.cta-banner p{font-size:15px;color:var(--muted);margin-bottom:32px;max-width:440px;margin-left:auto;margin-right:auto;line-height:1.75}
+/* ── CTA ── */
+.cta-section{padding:120px 48px;text-align:center;background:radial-gradient(ellipse at center,rgba(168,224,99,.08) 0%,transparent 70%)}
+.cta-section h2{font-family:'Cormorant Garamond',serif;font-size:clamp(40px,5vw,68px);font-weight:700;margin-bottom:20px;line-height:1.1}
+.cta-section p{font-size:17px;color:var(--muted);margin-bottom:36px;max-width:480px;margin-left:auto;margin-right:auto;line-height:1.8}
 
-/* FOOTER */
-footer{background:var(--surface);border-top:1px solid var(--border);padding:56px 48px 24px}
-.footer-grid{max-width:1100px;margin:0 auto;display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:48px;padding-bottom:48px;border-bottom:1px solid var(--border);margin-bottom:24px}
-.footer-brand{font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:700;color:var(--accent);margin-bottom:12px;letter-spacing:1px}
-.footer-tagline{font-size:12px;color:var(--muted);line-height:1.8;max-width:220px}
-.footer-col-title{font-size:9px;font-weight:700;color:var(--accent);letter-spacing:2.5px;text-transform:uppercase;margin-bottom:16px}
-.footer-links{display:flex;flex-direction:column;gap:10px;font-size:12px;color:var(--muted)}
-.footer-links a:hover{color:var(--accent)}
-.footer-bottom{max-width:1100px;margin:0 auto;display:flex;justify-content:space-between;font-size:11px;color:var(--muted)}
+/* ── FOOTER ── */
+footer{background:var(--surface);border-top:1px solid var(--border);padding:72px 48px 32px}
+.footer-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:48px;max-width:1200px;margin:0 auto 48px}
+.footer-brand p{font-size:13px;color:var(--muted);line-height:1.8;margin-top:12px;max-width:240px}
+.footer-col h4{font-size:12px;font-weight:700;letter-spacing:2px;color:var(--accent);text-transform:uppercase;margin-bottom:16px}
+.footer-col a{display:block;font-size:13px;color:var(--muted);text-decoration:none;margin-bottom:10px;transition:color .2s}
+.footer-col a:hover{color:var(--text)}
+.footer-bottom{border-top:1px solid var(--border);padding-top:28px;display:flex;justify-content:space-between;align-items:center;max-width:1200px;margin:0 auto;font-size:12px;color:var(--muted)}
 
-@keyframes fadeUp{from{opacity:0;transform:translateY(28px)}to{opacity:1;transform:translateY(0)}}
-@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+/* ── MAP ── */
+.map-section{padding:80px 48px;max-width:1200px;margin:0 auto}
+.map-img{border-radius:16px;overflow:hidden;border:1px solid var(--border)}
+.map-img img{width:100%;display:block;transition:transform .4s}
+.map-img:hover img{transform:scale(1.02)}
 
-@media(max-width:900px){
-  nav{padding:0 20px}.nav-links,.nav-cta{display:none}.hamburger{display:flex}
-  .hero{padding:90px 20px 60px}
-  .proof-bar{grid-template-columns:repeat(2,1fr);padding:20px}
-  .proof-item{border-right:none;border-bottom:1px solid var(--border);padding:14px 0}
-  .proof-item:nth-child(3),.proof-item:nth-child(4){border-bottom:none}
-  section{padding:60px 20px}
-  .services-grid{grid-template-columns:1fr}
-  .about-grid{grid-template-columns:1fr;gap:32px}
-  .about-img{height:300px}.about-badge{right:0}
-  .gallery-grid{grid-template-columns:1fr 1fr;grid-template-rows:auto}
-  .gal-item:first-child{grid-row:span 1;grid-column:span 2;height:220px}
-  .gal-item{height:180px}
-  .tgrid{grid-template-columns:1fr}
-  .cta-banner{padding:60px 20px}
-  .footer-grid{grid-template-columns:1fr 1fr;gap:28px}
-  footer{padding:40px 20px 20px}
+/* ── RESPONSIVE ── */
+@media(max-width:768px){
+  nav{padding:16px 24px}
+  .nav-links{display:none}
+  .hamburger{display:flex}
+  .stats{grid-template-columns:repeat(2,1fr)}
+  .stat{border-right:none;border-bottom:1px solid var(--border)}
+  .classes-grid,.testi-grid,.pricing-grid{grid-template-columns:1fr}
+  .about-grid{grid-template-columns:1fr;gap:40px}
+  .section,.map-section{padding:72px 24px}
+  .about-grid{padding:72px 24px}
+  .testimonials{padding:72px 24px}
+  .footer-grid{grid-template-columns:1fr 1fr}
+  .cta-section{padding:80px 24px}
 }
 </style>
 </head>
 <body>
 
-<nav>
-  <div class="logo">ZENFLOW</div>
+<!-- NAV -->
+<nav id="nav">
+  <div class="logo-text">Zen<span>flow</span></div>
   <div class="nav-links">
     <a href="#classes">Classes</a>
     <a href="#about">About</a>
-    <a href="#gallery">Gallery</a>
-    <a href="#testimonials">Reviews</a>
+    <a href="#pricing">Pricing</a>
     <a href="#faq">FAQ</a>
-    <a href="#contact">Contact</a>
+    <a href="#contact" class="nav-cta">Free Trial Class</a>
   </div>
-  <a href="#contact" class="btn btn-primary nav-cta" style="padding:9px 22px;font-size:12px;letter-spacing:1px">BOOK FREE CLASS</a>
-  <div class="hamburger" onclick="document.querySelector('.mobile-menu').classList.toggle('open')">
+  <button class="hamburger" id="burger" aria-label="Menu">
     <span></span><span></span><span></span>
-  </div>
+  </button>
 </nav>
-<div class="mobile-menu">
-  <a href="#classes" onclick="this.closest('.mobile-menu').classList.remove('open')">Classes</a>
-  <a href="#about" onclick="this.closest('.mobile-menu').classList.remove('open')">About</a>
-  <a href="#gallery" onclick="this.closest('.mobile-menu').classList.remove('open')">Gallery</a>
-  <a href="#testimonials" onclick="this.closest('.mobile-menu').classList.remove('open')">Reviews</a>
-  <a href="#faq" onclick="this.closest('.mobile-menu').classList.remove('open')">FAQ</a>
+
+<!-- MOBILE MENU -->
+<div class="mobile-menu" id="mobileMenu">
+  <a href="#classes" onclick="closeMobile()">Classes</a>
+  <a href="#about" onclick="closeMobile()">About</a>
+  <a href="#pricing" onclick="closeMobile()">Pricing</a>
+  <a href="#faq" onclick="closeMobile()">FAQ</a>
+  <a href="#contact" onclick="closeMobile()" style="color:var(--accent)">Free Trial Class →</a>
 </div>
 
-<!-- HERO — real yoga photo background -->
-<section class="hero">
-  <div class="hero-img"></div>
-  <div class="hero-overlay"></div>
+<!-- HERO -->
+<section class="hero" id="home">
+  <div class="hero-bg"></div>
   <div class="hero-content">
-    <div class="hero-eyebrow"><span style="width:5px;height:5px;border-radius:50%;background:var(--accent);animation:pulse 2s infinite"></span>Cape Town · Est. 2016</div>
-    <h1>Find Your<br/><em>Flow.</em></h1>
-    <p class="hero-sub">Transform your body, calm your mind, and rediscover yourself through the ancient practice of yoga — guided by Cape Town's finest instructors.</p>
+    <div class="hero-badge">⬡ CAPE TOWN'S PREMIER YOGA STUDIO</div>
+    <h1>Find Your Flow.<br/><em>Transform Your Life.</em></h1>
+    <p>Expert-led yoga classes for every level. Hot yoga, vinyasa, yin & meditation in the heart of Cape Town.</p>
     <div class="hero-btns">
-      <a href="#contact" class="btn btn-primary">Book Free Trial Class →</a>
-      <a href="#classes" class="btn btn-outline">View Schedule</a>
+      <a href="#contact" class="btn-primary">Book Free Trial Class →</a>
+      <a href="#classes" class="btn-secondary">View Classes</a>
     </div>
     <div class="hero-trust">
-      <span style="color:var(--accent);letter-spacing:3px">★★★★★</span>
-      &nbsp;4.9/5 from 312 reviews &nbsp;·&nbsp; 500+ students &nbsp;·&nbsp; First class free
+      <span class="stars">★★★★★</span> &nbsp;4.9/5 from 312 reviews · Est. 2018
     </div>
   </div>
 </section>
 
-<!-- PROOF BAR -->
-<div class="proof-bar">
-  <div class="proof-item"><div class="proof-num">500+</div><div class="proof-label">Happy Students</div></div>
-  <div class="proof-item"><div class="proof-num">4.9★</div><div class="proof-label">Average Rating</div></div>
-  <div class="proof-item"><div class="proof-num">8 Yrs</div><div class="proof-label">Experience</div></div>
-  <div class="proof-item"><div class="proof-num">20+</div><div class="proof-label">Classes Weekly</div></div>
+<!-- STATS -->
+<div class="stats">
+  <div class="stat reveal">
+    <div class="stat-num" data-target="1200">0</div>
+    <div class="stat-label">Happy Students</div>
+  </div>
+  <div class="stat reveal">
+    <div class="stat-num" data-target="47">0</div>
+    <div class="stat-label">Weekly Classes</div>
+  </div>
+  <div class="stat reveal">
+    <div class="stat-num" data-target="6">0</div>
+    <div class="stat-label">Expert Instructors</div>
+  </div>
+  <div class="stat reveal">
+    <div class="stat-num" data-target="312">0</div>
+    <div class="stat-label">Five-Star Reviews</div>
+  </div>
 </div>
 
-<!-- CLASSES — image cards -->
-<section id="classes">
-  <div class="container">
-    <div class="eyebrow">Our Classes</div>
-    <h2>Every Body.<br/>Every Level.</h2>
-    <div class="services-grid">
-      <div class="svc-card">
-        <div class="svc-card-img" style="background-image:url('https://images.pexels.com/photos/4056535/pexels-photo-4056535.jpeg?auto=compress&cs=tinysrgb&w=800')"></div>
-        <div class="svc-card-overlay"></div>
-        <div class="svc-card-body">
-          <div class="svc-price">From R180 · 75 min</div>
-          <div class="svc-name">Hot Yoga</div>
-          <div class="svc-desc">Practiced in a heated room at 37°C. Deep stretching, detoxification, and intense focus. Our most popular class.</div>
-        </div>
+<!-- CLASSES -->
+<section class="section" id="classes">
+  <div class="section-label reveal">Our Classes</div>
+  <h2 class="section-title reveal">Find Your Perfect Practice</h2>
+  <p class="section-sub reveal">From energising hot yoga to deeply restorative yin — we have a class for where you are right now.</p>
+  <div class="classes-grid">
+    <div class="class-card reveal-scale">
+      <div class="class-img"><img src="https://images.pexels.com/photos/4056723/pexels-photo-4056723.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Hot Yoga" loading="lazy"/></div>
+      <div class="class-body">
+        <div class="class-tag">Intense · 60 min</div>
+        <div class="class-name">Hot Yoga</div>
+        <div class="class-desc">Practice in a heated room at 38°C. Detoxify, build strength, and improve flexibility. Burns up to 600 calories per session.</div>
       </div>
-      <div class="svc-card">
-        <div class="svc-card-img" style="background-image:url('https://images.pexels.com/photos/3822647/pexels-photo-3822647.jpeg?auto=compress&cs=tinysrgb&w=800')"></div>
-        <div class="svc-card-overlay"></div>
-        <div class="svc-card-body">
-          <div class="svc-price">From R160 · 60 min</div>
-          <div class="svc-name">Vinyasa Flow</div>
-          <div class="svc-desc">Dynamic movement synchronised with breath. Builds strength, flexibility and mental clarity through flowing sequences.</div>
-        </div>
+    </div>
+    <div class="class-card reveal-scale">
+      <div class="class-img"><img src="https://images.pexels.com/photos/3822583/pexels-photo-3822583.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Vinyasa Flow" loading="lazy"/></div>
+      <div class="class-body">
+        <div class="class-tag">Dynamic · 75 min</div>
+        <div class="class-name">Vinyasa Flow</div>
+        <div class="class-desc">Breath-linked movement that builds heat, strength and mindfulness. Energising and creative sequences every class.</div>
       </div>
-      <div class="svc-card">
-        <div class="svc-card-img" style="background-image:url('https://images.pexels.com/photos/3759657/pexels-photo-3759657.jpeg?auto=compress&cs=tinysrgb&w=800')"></div>
-        <div class="svc-card-overlay"></div>
-        <div class="svc-card-body">
-          <div class="svc-price">From R140 · 75 min</div>
-          <div class="svc-name">Yin & Restore</div>
-          <div class="svc-desc">Deep passive stretches held for 3–5 minutes each. Perfect for recovery, stress relief, and improving flexibility.</div>
-        </div>
+    </div>
+    <div class="class-card reveal-scale">
+      <div class="class-img"><img src="https://images.pexels.com/photos/3823039/pexels-photo-3823039.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Yin Yoga" loading="lazy"/></div>
+      <div class="class-body">
+        <div class="class-tag">Restorative · 90 min</div>
+        <div class="class-name">Yin & Restore</div>
+        <div class="class-desc">Deep, slow stretches held for 3–5 minutes. Targets connective tissue and promotes deep relaxation and recovery.</div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- ABOUT — real photo left -->
-<section id="about" style="background:var(--surface)">
-  <div class="container">
-    <div class="about-grid">
-      <div class="about-img">
-        <img src="https://images.pexels.com/photos/3823488/pexels-photo-3823488.jpeg?auto=compress&cs=tinysrgb&w=900" alt="Zenflow yoga instructor" loading="lazy"/>
-        <div class="about-badge">
-          <div class="about-badge-num">500+</div>
-          <div class="about-badge-label">Lives Transformed</div>
-        </div>
-      </div>
-      <div>
-        <div class="eyebrow">Our Story</div>
-        <h2>Where Yoga Becomes a Way of Life</h2>
-        <p>Zenflow was born from a simple idea: that everyone deserves access to a yoga practice that genuinely transforms their life. Founded in 2016 by two Cape Town yogis who believed that authentic teaching matters more than Instagram aesthetics.</p>
-        <p>Eight years later, we've built a community of over 500 students who come not just for the classes, but for the connection, the growth, and the stillness they find here. Our instructors bring decades of combined experience across multiple disciplines.</p>
-        <p>Whether you've never done yoga before or you're deepening an existing practice, Zenflow is where you belong.</p>
-        <a href="#contact" class="btn btn-primary" style="margin-top:8px">Start With a Free Class →</a>
-      </div>
+<!-- ABOUT -->
+<div class="about-grid" id="about">
+  <div class="about-img reveal-left">
+    <img src="https://images.pexels.com/photos/3822864/pexels-photo-3822864.jpeg?auto=compress&cs=tinysrgb&w=800" alt="Zenflow Studio"/>
+    <div class="about-accent"></div>
+  </div>
+  <div class="reveal">
+    <div class="about-badge">⬡ Our Story</div>
+    <h2 class="section-title">More Than a Studio.<br/>A Community.</h2>
+    <p>Founded in 2018 by Cape Town-born yogi Amara Singh, Zenflow was created with one mission: make world-class yoga accessible to everyone — from complete beginners to advanced practitioners.</p>
+    <p>Our studio is a sanctuary. A place to leave the noise behind, reconnect with your body, and find clarity in movement.</p>
+    <div class="about-features">
+      <div class="feature-row"><div class="feature-icon">🔥</div>State-of-the-art heated studio rooms</div>
+      <div class="feature-row"><div class="feature-icon">🎓</div>Internationally certified instructors</div>
+      <div class="feature-row"><div class="feature-icon">📱</div>Easy online booking & class management</div>
+      <div class="feature-row"><div class="feature-icon">🌿</div>Eco-conscious, sustainable studio design</div>
     </div>
   </div>
-</section>
-
-<!-- GALLERY — real photos -->
-<section id="gallery">
-  <div class="container">
-    <div class="eyebrow">The Studio</div>
-    <h2>See Our Space</h2>
-    <div class="gallery-grid">
-      <div class="gal-item">
-        <img src="https://images.pexels.com/photos/3822906/pexels-photo-3822906.jpeg?auto=compress&cs=tinysrgb&w=1200" alt="Yoga studio" loading="lazy"/>
-        <div class="gal-caption"><span>The Studio</span></div>
-      </div>
-      <div class="gal-item">
-        <img src="https://images.pexels.com/photos/4056535/pexels-photo-4056535.jpeg?auto=compress&cs=tinysrgb&w=800" alt="Hot yoga" loading="lazy"/>
-        <div class="gal-caption"><span>Hot Yoga</span></div>
-      </div>
-      <div class="gal-item">
-        <img src="https://images.pexels.com/photos/3759657/pexels-photo-3759657.jpeg?auto=compress&cs=tinysrgb&w=800" alt="Yin yoga" loading="lazy"/>
-        <div class="gal-caption"><span>Yin & Restore</span></div>
-      </div>
-      <div class="gal-item">
-        <img src="https://images.pexels.com/photos/3823488/pexels-photo-3823488.jpeg?auto=compress&cs=tinysrgb&w=800" alt="Instructor" loading="lazy"/>
-        <div class="gal-caption"><span>Our Instructors</span></div>
-      </div>
-      <div class="gal-item">
-        <img src="https://images.pexels.com/photos/3822647/pexels-photo-3822647.jpeg?auto=compress&cs=tinysrgb&w=800" alt="Vinyasa" loading="lazy"/>
-        <div class="gal-caption"><span>Vinyasa Flow</span></div>
-      </div>
-    </div>
-  </div>
-</section>
+</div>
 
 <!-- TESTIMONIALS -->
-<section id="testimonials" style="background:var(--surface)">
-  <div class="container">
-    <div class="eyebrow">What Students Say</div>
-    <h2>Real Transformations</h2>
-    <div class="tgrid">
-      <div class="tcard">
-        <div class="tcard-stars">★★★★★</div>
-        <div class="tcard-text">"I started Zenflow as a complete beginner, terrified and inflexible. Six months later I'm attending four classes a week and my body and mind have completely transformed. The instructors create the most welcoming environment I've ever experienced."</div>
-        <div class="tcard-name">Amelia Rousseau</div><div class="tcard-loc">Student · Sea Point</div>
+<section class="testimonials" id="testimonials">
+  <div style="max-width:1200px;margin:0 auto">
+    <div class="section-label reveal">Testimonials</div>
+    <h2 class="section-title reveal">What Our Students Say</h2>
+    <div class="testi-grid">
+      <div class="testi-card reveal-scale">
+        <div class="testi-stars">★★★★★</div>
+        <div class="testi-text">"Zenflow completely changed my relationship with my body. I've lost 8kg, sleep better, and feel more confident than ever. The instructors genuinely care about your progress."</div>
+        <div class="testi-author"><div class="testi-avatar">SK</div><div><div class="testi-name">Sarah K.</div><div class="testi-role">Member since 2021</div></div></div>
       </div>
-      <div class="tcard">
-        <div class="tcard-stars">★★★★★</div>
-        <div class="tcard-text">"The hot yoga classes here are unlike anything I've done before. The heat, the instruction, and the energy in the room combine into something truly special. I've tried studios across Cape Town and nothing comes close to Zenflow's standard."</div>
-        <div class="tcard-name">Marcus van Wyk</div><div class="tcard-loc">Student · Green Point</div>
+      <div class="testi-card reveal-scale">
+        <div class="testi-stars">★★★★★</div>
+        <div class="testi-text">"I was terrified to try yoga but the team made me feel so welcome. Three months in and I can't imagine life without it. The hot yoga class is absolutely incredible."</div>
+        <div class="testi-author"><div class="testi-avatar">TM</div><div><div class="testi-name">Thabo M.</div><div class="testi-role">Member since 2023</div></div></div>
       </div>
-      <div class="tcard">
-        <div class="tcard-stars">★★★★★</div>
-        <div class="tcard-text">"Yin & Restore on Thursday evenings has become the non-negotiable highlight of my week. After a stressful work week, 75 minutes of deep stretching and stillness completely resets me. I leave feeling like a different person every single time."</div>
-        <div class="tcard-name">Priya Naidoo</div><div class="tcard-loc">Student · Gardens</div>
+      <div class="testi-card reveal-scale">
+        <div class="testi-stars">★★★★★</div>
+        <div class="testi-text">"Best studio in Cape Town, hands down. The vinyasa classes are challenging and fun. I've tried many studios and nothing compares to the energy and quality here."</div>
+        <div class="testi-author"><div class="testi-avatar">LV</div><div><div class="testi-name">Lisa V.</div><div class="testi-role">Member since 2020</div></div></div>
       </div>
     </div>
   </div>
+</section>
+
+<!-- PRICING -->
+<section class="section" id="pricing">
+  <div class="section-label reveal">Pricing</div>
+  <h2 class="section-title reveal">Simple, Transparent Pricing</h2>
+  <p class="section-sub reveal">No hidden fees. Cancel anytime. Your first class is always free.</p>
+  <div class="pricing-grid">
+    <div class="price-card reveal-scale">
+      <div class="price-name">Drop-In</div>
+      <div class="price-amount">R220</div>
+      <div class="price-period">per class</div>
+      <ul class="price-features">
+        <li>Any single class</li>
+        <li>All class types</li>
+        <li>Mat included</li>
+      </ul>
+      <a href="#contact" class="price-btn outline">Book a Class</a>
+    </div>
+    <div class="price-card featured reveal-scale">
+      <div class="price-badge">MOST POPULAR</div>
+      <div class="price-name">Monthly Unlimited</div>
+      <div class="price-amount">R890</div>
+      <div class="price-period">per month</div>
+      <ul class="price-features">
+        <li>Unlimited classes</li>
+        <li>All class types</li>
+        <li>Mat & towel included</li>
+        <li>Guest pass included</li>
+      </ul>
+      <a href="#contact" class="price-btn main">Start Free Trial</a>
+    </div>
+    <div class="price-card reveal-scale">
+      <div class="price-name">10-Class Pack</div>
+      <div class="price-amount">R1,600</div>
+      <div class="price-period">R160 per class · valid 3 months</div>
+      <ul class="price-features">
+        <li>10 classes to use flexibly</li>
+        <li>All class types</li>
+        <li>Mat included</li>
+        <li>Never expires</li>
+      </ul>
+      <a href="#contact" class="price-btn outline">Buy Pack</a>
+    </div>
+  </div>
+</section>
+
+<!-- MAP -->
+<section class="map-section" id="location">
+  <div class="section-label reveal">Location</div>
+  <h2 class="section-title reveal">Find Us in Cape Town</h2>
+  <p class="section-sub reveal" style="margin-bottom:32px">12 Bree Street, Cape Town City Bowl, 8001 · <a href="tel:+27214612345" style="color:var(--accent)">+27 21 461 2345</a></p>
+  <a href="https://www.google.com/maps/search/12+Bree+Street+Cape+Town" target="_blank" class="map-img reveal">
+    <img src="https://maps.googleapis.com/maps/api/staticmap?center=12+Bree+Street+Cape+Town&zoom=15&size=1200x400&scale=2&markers=color:green%7C12+Bree+Street+Cape+Town&style=feature:all%7Celement:geometry%7Ccolor:0x1a231a&style=feature:road%7Celement:geometry%7Ccolor:0x2d3d2d&key=AIzaSyDemo" alt="Studio location map"/>
+  </a>
 </section>
 
 <!-- FAQ -->
-<section id="faq">
-  <div class="container" style="text-align:center">
-    <div class="eyebrow" style="justify-content:center">Questions</div>
-    <h2>Everything You Need to Know</h2>
-    <div class="faq-wrap">
-      <div class="faq-item">
-        <div class="faq-q" onclick="toggleFaq(this)"><span class="faq-q-text">Do I need any experience to join?</span><div class="faq-icon">+</div></div>
-        <div class="faq-a">Absolutely not. All of our classes welcome complete beginners. Our instructors offer modifications for every pose so you can work at your own level and progress at your own pace.</div>
-      </div>
-      <div class="faq-item">
-        <div class="faq-q" onclick="toggleFaq(this)"><span class="faq-q-text">What should I bring to my first class?</span><div class="faq-icon">+</div></div>
-        <div class="faq-a">Just yourself and comfortable workout clothes. We provide mats, blocks, straps and all props. For hot yoga, bring a small towel and a water bottle. Arrive 10 minutes early for your first visit so we can show you around.</div>
-      </div>
-      <div class="faq-item">
-        <div class="faq-q" onclick="toggleFaq(this)"><span class="faq-q-text">How do I book classes?</span><div class="faq-icon">+</div></div>
-        <div class="faq-a">Use the contact form below to book your free trial class. After that, you can book through our studio app or by WhatsApp. We recommend booking 24 hours in advance as classes fill up quickly.</div>
-      </div>
-      <div class="faq-item">
-        <div class="faq-q" onclick="toggleFaq(this)"><span class="faq-q-text">What are your class prices?</span><div class="faq-icon">+</div></div>
-        <div class="faq-a">Drop-in classes start from R140. Monthly unlimited memberships from R980. Your first class is always free, no strings attached. We also offer student and senior discounts — ask at reception.</div>
-      </div>
-      <div class="faq-item">
-        <div class="faq-q" onclick="toggleFaq(this)"><span class="faq-q-text">Where are you located?</span><div class="faq-icon">+</div></div>
-        <div class="faq-a">We're in the heart of Cape Town with easy access from Sea Point, Green Point and Gardens. Free parking is available on the street after 6pm. Full address provided on booking confirmation.</div>
-      </div>
+<section class="section" id="faq">
+  <div class="section-label reveal">FAQ</div>
+  <h2 class="section-title reveal" style="text-align:center">Frequently Asked Questions</h2>
+  <div class="faq-list">
+    <div class="faq-item reveal">
+      <div class="faq-q">Do I need experience to start? <div class="faq-icon">+</div></div>
+      <div class="faq-a">Not at all! We welcome complete beginners. Our instructors offer modifications for every pose, and our beginner-friendly classes are designed to ease you in gently.</div>
+    </div>
+    <div class="faq-item reveal">
+      <div class="faq-q">What should I bring to my first class? <div class="faq-icon">+</div></div>
+      <div class="faq-a">Just yourself and comfortable workout clothes. We provide mats, towels, and filtered water. If you have your own mat, you're welcome to bring it.</div>
+    </div>
+    <div class="faq-item reveal">
+      <div class="faq-q">How hot is the hot yoga room? <div class="faq-icon">+</div></div>
+      <div class="faq-a">Our hot yoga room is maintained at 38°C with 40% humidity. We recommend arriving hydrated and eating a light meal 2 hours before class.</div>
+    </div>
+    <div class="faq-item reveal">
+      <div class="faq-q">Can I cancel or pause my membership? <div class="faq-icon">+</div></div>
+      <div class="faq-a">Yes, absolutely. You can cancel or pause your monthly membership at any time with no penalty. We make it easy with no lock-in contracts.</div>
     </div>
   </div>
 </section>
 
-<!-- CTA BANNER — real photo bg -->
-<div class="cta-banner">
-  <div class="cta-img"></div>
-  <div class="cta-overlay"></div>
-  <div class="cta-content">
-    <div style="display:inline-block;background:rgba(168,224,99,.1);border:1px solid rgba(168,224,99,.2);color:var(--accent);font-size:10px;font-weight:600;letter-spacing:2px;text-transform:uppercase;padding:5px 14px;border-radius:100px;margin-bottom:20px">✦ First Class Free</div>
-    <h2>Your First Class<br/>is on Us</h2>
-    <p>No commitment. No pressure. Just show up, breathe, and see what yoga can do for you.</p>
-    <a href="#contact" class="btn btn-primary" style="font-size:14px;padding:15px 40px;letter-spacing:.5px">Book Your Free Class →</a>
+<!-- CTA -->
+<section class="cta-section" id="contact">
+  <div class="section-label reveal">Get Started</div>
+  <h2 class="reveal">Your First Class is <em style="color:var(--accent);font-style:italic;font-family:'Cormorant Garamond',serif">Free.</em></h2>
+  <p class="reveal">No commitment. No credit card. Just show up and experience what Zenflow can do for you.</p>
+  <div class="reveal" style="display:flex;gap:14px;justify-content:center;flex-wrap:wrap">
+    <a href="tel:+27214612345" class="btn-primary">📞 Call to Book Free Class</a>
+    <a href="mailto:hello@zenflow.co.za" class="btn-secondary">Email Us</a>
   </div>
-</div>
+  <p class="reveal" style="margin-top:20px;font-size:13px;color:var(--muted)">📍 12 Bree Street, Cape Town · Mon–Sat 6am–9pm · Sun 7am–6pm</p>
+</section>
 
 <!-- FOOTER -->
-<footer id="contact">
+<footer>
   <div class="footer-grid">
-    <div>
-      <div class="footer-brand">ZENFLOW</div>
-      <div class="footer-tagline">Transforming bodies and minds through the ancient practice of yoga. Cape Town's home for authentic yoga since 2016.</div>
+    <div class="footer-brand">
+      <div class="logo-text" style="font-size:20px">Zen<span>flow</span></div>
+      <p>Cape Town's premier yoga studio. Transforming lives through mindful movement since 2018.</p>
     </div>
-    <div>
-      <div class="footer-col-title">Classes</div>
-      <div class="footer-links">
-        <a href="#classes">Hot Yoga</a><a href="#classes">Vinyasa Flow</a>
-        <a href="#classes">Yin & Restore</a><a href="#classes">View Schedule</a>
-      </div>
+    <div class="footer-col">
+      <h4>Classes</h4>
+      <a href="#classes">Hot Yoga</a>
+      <a href="#classes">Vinyasa Flow</a>
+      <a href="#classes">Yin & Restore</a>
+      <a href="#classes">Meditation</a>
     </div>
-    <div>
-      <div class="footer-col-title">Studio</div>
-      <div class="footer-links">
-        <a href="#about">About Us</a><a href="#gallery">Gallery</a>
-        <a href="#testimonials">Reviews</a><a href="#faq">FAQ</a>
-      </div>
+    <div class="footer-col">
+      <h4>Studio</h4>
+      <a href="#about">Our Story</a>
+      <a href="#pricing">Pricing</a>
+      <a href="#faq">FAQ</a>
+      <a href="#contact">Contact</a>
     </div>
-    <div>
-      <div class="footer-col-title">Contact</div>
-      <div class="footer-links">
-        <a href="#">Cape Town</a><a href="#">Mon–Sat: 6am–8pm</a>
-        <a href="#">Instagram</a><a href="#">WhatsApp</a>
-      </div>
+    <div class="footer-col">
+      <h4>Contact</h4>
+      <a href="tel:+27214612345">+27 21 461 2345</a>
+      <a href="mailto:hello@zenflow.co.za">hello@zenflow.co.za</a>
+      <a href="#location">12 Bree Street, CT</a>
     </div>
   </div>
   <div class="footer-bottom">
     <span>© 2026 Zenflow Yoga Studio. All rights reserved.</span>
-    <span>Built with <a href="https://sitefliq.com" style="color:var(--accent)">Sitefliq</a></span>
+    <span>Built with Sitefliq AI ⚡</span>
   </div>
 </footer>
 
 <script>
-function toggleFaq(el) {
-  const item = el.closest('.faq-item');
-  const answer = item.querySelector('.faq-a');
-  const isOpen = answer.classList.contains('open');
-  document.querySelectorAll('.faq-a.open').forEach(a => a.classList.remove('open'));
-  document.querySelectorAll('.faq-item.active').forEach(i => i.classList.remove('active'));
-  if (!isOpen) { answer.classList.add('open'); item.classList.add('active'); }
+// ── NAV SCROLL EFFECT ──
+const nav = document.getElementById('nav');
+window.addEventListener('scroll', () => {
+  nav.classList.toggle('scrolled', window.scrollY > 80);
+});
+
+// ── MOBILE MENU ──
+const burger = document.getElementById('burger');
+const mobileMenu = document.getElementById('mobileMenu');
+burger.addEventListener('click', () => mobileMenu.classList.toggle('open'));
+function closeMobile() { mobileMenu.classList.remove('open'); }
+
+// ── INTERSECTION OBSERVER — SCROLL REVEALS ──
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+      // Trigger counter animation for stats
+      const num = entry.target.querySelector('[data-target]');
+      if (num) animateCounter(num);
+    }
+  });
+}, { threshold: 0.15 });
+
+document.querySelectorAll('.reveal, .reveal-left, .reveal-scale').forEach(el => observer.observe(el));
+
+// Stagger children within grids
+document.querySelectorAll('.classes-grid, .testi-grid, .pricing-grid').forEach(grid => {
+  grid.querySelectorAll('.reveal-scale').forEach((card, i) => {
+    card.style.transitionDelay = (i * 0.12) + 's';
+  });
+});
+
+// ── COUNTER ANIMATION ──
+function animateCounter(el) {
+  if (el.dataset.animated) return;
+  el.dataset.animated = true;
+  const target = parseInt(el.dataset.target);
+  const duration = 2000;
+  const start = performance.now();
+  const update = (now) => {
+    const progress = Math.min((now - start) / duration, 1);
+    const ease = 1 - Math.pow(1 - progress, 3);
+    el.textContent = Math.floor(ease * target).toLocaleString();
+    if (progress < 1) requestAnimationFrame(update);
+    else el.textContent = target.toLocaleString() + (target >= 1000 ? '' : '+');
+  };
+  requestAnimationFrame(update);
 }
+
+// Also observe stats directly
+document.querySelectorAll('[data-target]').forEach(el => {
+  const statObserver = new IntersectionObserver(entries => {
+    if (entries[0].isIntersecting) animateCounter(el);
+  }, {threshold: 0.5});
+  statObserver.observe(el);
+});
+
+// ── FAQ ACCORDION ──
+document.querySelectorAll('.faq-q').forEach(q => {
+  q.addEventListener('click', () => {
+    const item = q.parentElement;
+    const wasOpen = item.classList.contains('open');
+    document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('open'));
+    if (!wasOpen) item.classList.add('open');
+  });
+});
+
+// ── SMOOTH SCROLL ──
+document.querySelectorAll('a[href^="#"]').forEach(a => {
+  a.addEventListener('click', e => {
+    const target = document.querySelector(a.getAttribute('href'));
+    if (target) { e.preventDefault(); target.scrollIntoView({behavior:'smooth'}); }
+  });
+});
 </script>
 </body>
-</html>`;
+</html>
+`;
 
 /* ─────────────────────────────────────────────────────────────────────────────
    HELP PAGE
