@@ -321,6 +321,7 @@ function buildPrompt(f, images=[]) {
     "Phone: "+(f.phone||""),
     "Email: "+(f.email||""),
     "CTA: "+(f.cta||"Get Started Today"),
+    f.logo ? "LOGO: A base64 logo image is provided. Embed it as <img src=\""+f.logo+"\" alt=\""+f.name+" logo\"> in the header (height:48px, object-fit:contain) AND footer (height:36px). Always show the logo prominently." : "LOGO: No logo provided — use a styled text logo with the business name in the accent colour instead.",
     "",
     "DESIGN:",
     "Palette bg:"+pal.bg+" surface:"+pal.surface+" accent:"+pal.accent+" text:"+pal.text,
@@ -331,25 +332,36 @@ function buildPrompt(f, images=[]) {
     "",
     "SECTIONS:",
     "1. Full SEO <head>: title, meta description, keywords, OG tags, Twitter card, canonical, schema.org LocalBusiness JSON-LD",
-    "2. Sticky header: name left, nav right, mobile hamburger",
+    "2. Sticky header: logo/name left, nav right, mobile hamburger",
     "3. Hero: 100vh, H1 with keyword, subheadline, 2 CTAs, star rating trust line"+heroNote,
-    "4. Social proof bar: 4 stats",
+    "4. Social proof bar: 4 animated counter stats (use JS to count up from 0 on page load)",
     secsPrompt,
     "- Footer: logo, tagline, 3 link columns, social icons, copyright 2026",
     "",
     "GOOGLE MAPS:",
     mapsHtml,
     "",
+    "ANIMATIONS — REQUIRED:",
+    "1. On page load: fade-up each section as it enters viewport using IntersectionObserver with CSS classes",
+    "2. Hero: headline animates in with a typewriter or slide-up effect on load",
+    "3. Stats counter: count up from 0 to final value over 2s when section scrolls into view",
+    "4. CTA buttons: subtle pulse/glow animation on hover + scale(1.04) transform",
+    "5. Cards/service boxes: lift up on hover with box-shadow and translateY(-6px)",
+    "6. Nav: smooth scroll to sections, highlight active nav item on scroll",
+    "7. Sticky header: add backdrop-blur and subtle shadow after scrolling 80px",
+    "8. Images: fade in with a slight zoom effect when they load",
+    "9. Mobile menu: slide down smoothly with CSS transition",
+    "10. Use CSS @keyframes for all animations — no external libraries",
+    "",
     "RULES:",
     "1. CSS in <style>, JS in <script> at bottom. One Google Fonts @import only.",
-    "2. NEVER use IntersectionObserver. ALL content visible on load. CSS keyframe animations are fine.",
-    "3. Real niche-specific copy. Zero lorem ipsum.",
-    "4. Conversion: urgency, social proof, 5+ CTAs, trust signals throughout.",
-    "5. One H1 with keyword, descriptive H2s, semantic HTML.",
-    "6. Working JS accordion for FAQ. Working hamburger menu. Mobile-first responsive.",
-    "7. All images must use object-fit:cover with appropriate container heights.",
-    "8. Hero image overlay: always add a dark semi-transparent overlay so text is readable.",
-    "9. If address provided, ALWAYS include the static map image (clickable), street view link, and plain text address.",
+    "2. Real niche-specific copy. Zero lorem ipsum.",
+    "3. Conversion: urgency, social proof, 5+ CTAs, trust signals throughout.",
+    "4. One H1 with keyword, descriptive H2s, semantic HTML.",
+    "5. Working JS accordion for FAQ. Working hamburger menu. Mobile-first responsive.",
+    "6. All images must use object-fit:cover with appropriate container heights.",
+    "7. Hero image overlay: always add a dark semi-transparent overlay so text is readable.",
+    "8. If address provided, ALWAYS include the static map image (clickable), street view link, and plain text address.",
     "",
     "OUTPUT: Raw HTML only. Start with <!DOCTYPE html>. End with </html>. Nothing else."
   ].join("\n");
@@ -411,6 +423,45 @@ function Field({label,value,onChange,placeholder,required}) {
   );
 }
 
+
+/* ───────────────────────────────────────────────────────────────────────────────
+   LOGO UPLOAD FIELD
+─────────────────────────────────────────────────────────────────────────────── */
+function LogoUpload({value, onChange}) {
+  const ref = useRef();
+  const handleFile = (e) => {
+    const file = e.target.files[0];
+    if(!file) return;
+    if(file.size > 500000) { alert("Logo must be under 500KB"); return; }
+    const reader = new FileReader();
+    reader.onload = (ev) => onChange(ev.target.result);
+    reader.readAsDataURL(file);
+  };
+  return (
+    <div>
+      <label style={{fontSize:11,fontWeight:700,color:"#374151",letterSpacing:.5,display:"block",marginBottom:6,textTransform:"uppercase"}}>
+        Logo <span style={{fontSize:9,color:"#9ca3af",fontWeight:400,textTransform:"none"}}>— optional, embedded in page</span>
+      </label>
+      <div onClick={()=>ref.current.click()} style={{border:"1.5px dashed #e5e7eb",borderRadius:9,padding:"10px 13px",cursor:"pointer",display:"flex",alignItems:"center",gap:10,background:"#fafaf9",transition:"border-color .15s",minHeight:44}}
+        onMouseEnter={e=>e.currentTarget.style.borderColor="#f97316"}
+        onMouseLeave={e=>e.currentTarget.style.borderColor="#e5e7eb"}>
+        {value ? (
+          <>
+            <img src={value} alt="logo" style={{height:28,maxWidth:80,objectFit:"contain",borderRadius:4}}/>
+            <span style={{fontSize:12,color:"#6b7280",flex:1}}>Logo uploaded</span>
+            <span onClick={e=>{e.stopPropagation();onChange("");}} style={{fontSize:11,color:"#ef4444",cursor:"pointer",padding:"2px 6px",border:"1px solid #fecaca",borderRadius:4}}>Remove</span>
+          </>
+        ) : (
+          <>
+            <span style={{fontSize:18}}>🖼️</span>
+            <span style={{fontSize:12,color:"#9ca3af"}}>Upload logo (PNG, JPG, SVG, max 500KB)</span>
+          </>
+        )}
+      </div>
+      <input ref={ref} type="file" accept="image/*" onChange={handleFile} style={{display:"none"}}/>
+    </div>
+  );
+}
 
 /* ───────────────────────────────────────────────────────────────────────────────
    ADDRESS FIELD WITH GOOGLE PLACES AUTOCOMPLETE
@@ -641,6 +692,7 @@ function BuilderPanel({form,up,togSec,onNext,ready}) {
       <div style={{flex:1,overflowY:"auto",padding:"18px 22px"}}>
         {tab==="info"&&(
           <div style={{display:"flex",flexDirection:"column",gap:13}}>
+            <LogoUpload value={form.logo} onChange={v=>up("logo",v)}/>
             <Field label="Business Name" required value={form.name} onChange={v=>up("name",v)} placeholder="e.g. Green Haven Garden Services"/>
             <div>
               <label style={{fontSize:11,fontWeight:700,color:"#374151",letterSpacing:.5,display:"block",marginBottom:6,textTransform:"uppercase"}}>Industry <span style={{color:"#f97316"}}>*</span></label>
@@ -2212,7 +2264,7 @@ export default function Sitefliq() {
   const [form,setForm]=useState({
     name:"",industry:"",tagline:"",description:"",
     location:"",phone:"",email:"",cta:"Get Started Today",
-    palette:"noir",vibe:"bold",
+    palette:"noir",vibe:"bold",logo:"",
     sections:["hero","social_proof","services","about","testimonials","contact"],
   });
   const up=(k,v)=>setForm(p=>({...p,[k]:v}));
