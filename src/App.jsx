@@ -325,6 +325,7 @@ function buildPrompt(f, images=[]) {
     "",
     "DESIGN:",
     "Palette bg:"+pal.bg+" surface:"+pal.surface+" accent:"+pal.accent+" text:"+pal.text,
+    f.importedColours && f.importedColours.length ? "BRAND COLOURS EXTRACTED FROM EXISTING SITE — use these as the primary palette, overriding the default palette above: " + f.importedColours.join(", ") : "",
     "Vibe: "+vib.label+" - "+vib.desc,
     "Font: ONE distinctive Google Font pair (NOT Inter/Roboto - something memorable for this vibe)",
     "",
@@ -419,6 +420,59 @@ function Field({label,value,onChange,placeholder,required}) {
         onFocus={e=>e.target.style.borderColor="#f97316"}
         onBlur={e=>e.target.style.borderColor="#e5e7eb"}
       />
+    </div>
+  );
+}
+
+
+/* ───────────────────────────────────────────────────────────────────────────────
+   WEBSITE IMPORTER
+─────────────────────────────────────────────────────────────────────────────── */
+function WebsiteImporter({onImport}) {
+  const [url, setUrl] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [status, setStatus] = useState(null);
+  const [msg, setMsg] = useState("");
+
+  const handleImport = async () => {
+    if(!url.trim()) return;
+    setLoading(true); setStatus(null); setMsg("");
+    try {
+      const r = await fetch("/api/scrape-website", {
+        method:"POST",
+        headers:{"Content-Type":"application/json"},
+        body:JSON.stringify({url:url.trim()})
+      });
+      const data = await r.json();
+      if(data.success) {
+        onImport(data);
+        setStatus("success");
+        setMsg("Branding imported! Logo, colours and info auto-filled below.");
+      } else {
+        setStatus("error");
+        setMsg(data.error || "Couldn't extract branding from that site.");
+      }
+    } catch(e) {
+      setStatus("error");
+      setMsg("Network error — please try again.");
+    }
+    setLoading(false);
+  };
+
+  return (
+    <div style={{background:"linear-gradient(135deg,#fff7ed,#fffbf5)",border:"1.5px solid #fed7aa",borderRadius:12,padding:"14px 16px",marginBottom:4}}>
+      <div style={{fontSize:11,fontWeight:700,color:"#f97316",letterSpacing:.5,textTransform:"uppercase",marginBottom:8}}>✨ Import from existing website</div>
+      <div style={{display:"flex",gap:8}}>
+        <input value={url} onChange={e=>setUrl(e.target.value)} onKeyDown={e=>e.key==="Enter"&&handleImport()} placeholder="yourwebsite.com"
+          style={{flex:1,padding:"9px 12px",border:"1.5px solid #fed7aa",borderRadius:8,fontSize:13,outline:"none",fontFamily:"inherit",background:"white"}}
+          onFocus={e=>e.target.style.borderColor="#f97316"} onBlur={e=>e.target.style.borderColor="#fed7aa"}/>
+        <button onClick={handleImport} disabled={loading||!url.trim()}
+          style={{padding:"9px 16px",background:loading||!url.trim()?"#e5e7eb":"#f97316",color:loading||!url.trim()?"#9ca3af":"white",border:"none",borderRadius:8,fontSize:12,fontWeight:700,cursor:loading||!url.trim()?"not-allowed":"pointer",fontFamily:"inherit",whiteSpace:"nowrap",transition:"background .15s"}}>
+          {loading ? "⏳ Scanning…" : "Import →"}
+        </button>
+      </div>
+      {status && <div style={{marginTop:8,fontSize:12,color:status==="success"?"#16a34a":"#dc2626"}}>{status==="success"?"✅":"⚠️"} {msg}</div>}
+      {!status && <div style={{marginTop:6,fontSize:11,color:"#9ca3af"}}>Auto-extracts your logo, brand colours & business info</div>}
     </div>
   );
 }
@@ -692,6 +746,12 @@ function BuilderPanel({form,up,togSec,onNext,ready}) {
       <div style={{flex:1,overflowY:"auto",padding:"18px 22px"}}>
         {tab==="info"&&(
           <div style={{display:"flex",flexDirection:"column",gap:13}}>
+            <WebsiteImporter onImport={data=>{
+              if(data.logo) up("logo", data.logo);
+              if(data.title) up("name", data.title.replace(/\s*[|\-–].*/,"").trim());
+              if(data.description) up("description", data.description);
+              if(data.colours && data.colours.length) up("importedColours", data.colours);
+            }}/>
             <LogoUpload value={form.logo} onChange={v=>up("logo",v)}/>
             <Field label="Business Name" required value={form.name} onChange={v=>up("name",v)} placeholder="e.g. Green Haven Garden Services"/>
             <div>
@@ -2393,7 +2453,7 @@ export default function Sitefliq() {
   const [form,setForm]=useState({
     name:"",industry:"",tagline:"",description:"",
     location:"",phone:"",email:"",cta:"Get Started Today",
-    palette:"noir",vibe:"bold",logo:"",
+    palette:"noir",vibe:"bold",logo:"",importedColours:[],
     sections:["hero","social_proof","services","about","testimonials","contact"],
   });
   const up=(k,v)=>setForm(p=>({...p,[k]:v}));
