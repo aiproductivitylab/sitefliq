@@ -1201,10 +1201,6 @@ function AuthModal({mode="signin", onSuccess, onClose}) {
 }
 
 /* ─────────────────────────────────────────────────────────────────────────────
-   HOME PAGE
-───────────────────────────────────────────────────────────────────────────── */
-
-/* ─────────────────────────────────────────────────────────────────────────────
    LEGAL PAGES
 ───────────────────────────────────────────────────────────────────────────── */
 function LegalPage({title, onHome, children}) {
@@ -1306,7 +1302,7 @@ function TermsPage({onHome}) {
         <p>We reserve the right to modify these Terms at any time. We will notify users of significant changes via email or a prominent notice on our website. Continued use of the Service after changes constitutes acceptance of the new Terms.</p>
       </Section>
       <Section title="13. Contact">
-        <p>For any questions regarding these Terms, please contact us at: <strong>ai.productivitylab95@gmail.com</strong></p>
+        <p>For any questions regarding these Terms, please contact us at: <strong>hello@sitefliq.com</strong></p>
       </Section>
     </LegalPage>
   );
@@ -1364,13 +1360,13 @@ function PrivacyPage({onHome}) {
           <li style={{marginBottom:8}}>Object to processing of your data</li>
           <li style={{marginBottom:8}}>Request a copy of your data in a portable format</li>
         </ul>
-        <p style={{marginTop:10}}>To exercise any of these rights, contact us at ai.productivitylab95@gmail.com.</p>
+        <p style={{marginTop:10}}>To exercise any of these rights, contact us at hello@sitefliq.com.</p>
       </Section>
       <Section title="8. Cookies">
         <p>We use minimal cookies necessary for authentication (session tokens stored in localStorage). We do not use advertising or tracking cookies. You can clear these at any time through your browser settings.</p>
       </Section>
       <Section title="9. Contact">
-        <p>For privacy-related enquiries, contact us at: <strong>ai.productivitylab95@gmail.com</strong></p>
+        <p>For privacy-related enquiries, contact us at: <strong>hello@sitefliq.com</strong></p>
       </Section>
     </LegalPage>
   );
@@ -1390,10 +1386,10 @@ function RefundPage({onHome}) {
         <p style={{marginTop:10}}>Please note: Paddle acts as the Merchant of Record for all Sitefliq transactions. All refund requests are handled in accordance with <a href="https://www.paddle.com/legal/checkout-buyer-terms" target="_blank" style={{color:"#f97316"}}>Paddle's Buyer Terms</a>, which grant consumers the right to cancel within 14 days of purchase.</p>
       </Section>
       <Section title="How to Request a Refund">
-        <p>To request a refund, email us at <strong>ai.productivitylab95@gmail.com</strong> with the subject line "Refund Request" and include your account email address and transaction date. We will respond within 1 business day and process your refund within 5–10 business days.</p>
+        <p>To request a refund, email us at <strong>hello@sitefliq.com</strong> with the subject line "Refund Request" and include your account email address and transaction date. We will respond within 1 business day and process your refund within 5–10 business days.</p>
       </Section>
       <Section title="Contact">
-        <p>For any questions about our refund policy, contact us at: <strong>ai.productivitylab95@gmail.com</strong></p>
+        <p>For any questions about our refund policy, contact us at: <strong>hello@sitefliq.com</strong></p>
       </Section>
     </LegalPage>
   );
@@ -1610,9 +1606,6 @@ function PricingPage({onBuild,onHome,user,credits,onSignIn,onSignOut,onPurchase}
 }
 
 /* ─────────────────────────────────────────────────────────────────────────────
-   MAIN APP
-───────────────────────────────────────────────────────────────────────────── */
-/* ─────────────────────────────────────────────────────────────────────────────
    EXAMPLE PAGE — pre-built sample to show clients
 ───────────────────────────────────────────────────────────────────────────── */
 const EXAMPLE_HTML = `<!DOCTYPE html>
@@ -1632,39 +1625,31 @@ const EXAMPLE_HTML = `<!DOCTYPE html>
 :root{--bg:#0d0d0d;--surface:#141414;--surface2:#1c1c1c;--accent:#e63946;--text:#f5f5f5;--muted:#888;--border:rgba(230,57,70,.12)}
 html{scroll-behavior:smooth}
 body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;overflow-x:hidden}
-
-/* ── ANIMATIONS ── */
 @keyframes fadeUp{from{opacity:0;transform:translateY(32px)}to{opacity:1;transform:translateY(0)}}
 @keyframes fadeIn{from{opacity:0}to{opacity:1}}
 @keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(230,57,70,.4)}50%{box-shadow:0 0 0 14px rgba(230,57,70,0)}}
 @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
 @keyframes scaleIn{from{opacity:0;transform:scale(1.05)}to{opacity:1;transform:scale(1)}}
-@keyframes slideRight{from{opacity:0;transform:translateX(-40px)}to{opacity:1;transform:translateX(0)}}
-
 .reveal{opacity:0;transform:translateY(32px);transition:opacity .7s ease,transform .7s ease}
 .reveal.visible{opacity:1;transform:translateY(0)}
 .reveal-left{opacity:0;transform:translateX(-30px);transition:opacity .7s ease,transform .7s ease}
 .reveal-left.visible{opacity:1;transform:translateX(0)}
 .reveal-scale{opacity:0;transform:scale(0.93);transition:opacity .6s ease,transform .6s ease}
 .reveal-scale.visible{opacity:1;transform:scale(1)}
-
-/* ── NAV ── */
 nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:22px 56px;display:flex;align-items:center;justify-content:space-between;transition:all .3s}
 nav.scrolled{background:rgba(13,13,13,.95);backdrop-filter:blur(20px);padding:14px 56px;border-bottom:1px solid var(--border);box-shadow:0 4px 30px rgba(0,0,0,.5)}
 .logo{font-family:'Bebas Neue',sans-serif;font-size:28px;letter-spacing:2px;color:var(--text)}
 .logo span{color:var(--accent)}
 .nav-links{display:flex;gap:36px;align-items:center}
-.nav-links a{color:var(--muted);text-decoration:none;font-size:14px;font-weight:500;transition:color .2s;letter-spacing:.3px}
+.nav-links a{color:var(--muted);text-decoration:none;font-size:14px;font-weight:500;transition:color .2s}
 .nav-links a:hover{color:var(--text)}
-.nav-cta{background:var(--accent);color:white;padding:11px 24px;border-radius:6px;font-size:14px;font-weight:700;text-decoration:none;transition:all .2s;animation:pulse 3s infinite;letter-spacing:.5px}
+.nav-cta{background:var(--accent);color:white;padding:11px 24px;border-radius:6px;font-size:14px;font-weight:700;text-decoration:none;transition:all .2s;animation:pulse 3s infinite}
 .nav-cta:hover{transform:scale(1.05);background:#c1121f}
 .hamburger{display:none;flex-direction:column;gap:5px;cursor:pointer;background:none;border:none;padding:4px}
 .hamburger span{display:block;width:24px;height:2px;background:var(--text);transition:all .3s}
 .mobile-menu{display:none;position:fixed;inset:0;background:var(--bg);z-index:99;padding:100px 40px;flex-direction:column;gap:32px}
 .mobile-menu.open{display:flex;animation:fadeIn .3s ease}
 .mobile-menu a{font-family:'Bebas Neue',sans-serif;font-size:36px;letter-spacing:2px;color:var(--text);text-decoration:none}
-
-/* ── HERO ── */
 .hero{min-height:100vh;display:flex;align-items:center;padding:120px 56px 80px;position:relative;overflow:hidden}
 .hero-bg{position:absolute;inset:0;background:url('https://images.pexels.com/photos/1552242/pexels-photo-1552242.jpeg?auto=compress&cs=tinysrgb&w=1600') center/cover;filter:brightness(.25);animation:scaleIn 1.5s ease forwards}
 .hero-bg::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(13,13,13,.8) 50%,transparent)}
@@ -1674,21 +1659,17 @@ nav.scrolled{background:rgba(13,13,13,.95);backdrop-filter:blur(20px);padding:14
 .hero h1 span{color:var(--accent)}
 .hero p{font-size:18px;color:rgba(245,245,245,.7);max-width:480px;margin-bottom:36px;line-height:1.8;animation:fadeUp .9s .2s both}
 .hero-btns{display:flex;gap:14px;flex-wrap:wrap;animation:fadeUp .9s .3s both}
-.btn-primary{background:var(--accent);color:white;padding:16px 38px;border-radius:6px;font-size:15px;font-weight:700;text-decoration:none;display:inline-flex;align-items:center;gap:8px;transition:all .25s;animation:pulse 3s 1s infinite;letter-spacing:.5px}
+.btn-primary{background:var(--accent);color:white;padding:16px 38px;border-radius:6px;font-size:15px;font-weight:700;text-decoration:none;display:inline-flex;align-items:center;gap:8px;transition:all .25s;animation:pulse 3s 1s infinite}
 .btn-primary:hover{transform:translateY(-3px) scale(1.04);background:#c1121f;box-shadow:0 12px 36px rgba(230,57,70,.4)}
 .btn-secondary{border:1px solid rgba(245,245,245,.2);color:var(--text);padding:16px 38px;border-radius:6px;font-size:15px;font-weight:500;text-decoration:none;transition:all .25s}
 .btn-secondary:hover{border-color:var(--accent);color:var(--accent);transform:translateY(-3px)}
 .hero-trust{margin-top:28px;font-size:13px;color:var(--muted);animation:fadeIn 1s .5s both}
 .stars{color:var(--accent)}
-
-/* ── STATS ── */
 .stats{background:var(--accent);padding:48px 56px;display:grid;grid-template-columns:repeat(4,1fr)}
 .stat{text-align:center;padding:16px;border-right:1px solid rgba(255,255,255,.2)}
 .stat:last-child{border-right:none}
 .stat-num{font-family:'Bebas Neue',sans-serif;font-size:56px;color:white;line-height:1;margin-bottom:4px;letter-spacing:2px}
 .stat-label{font-size:12px;color:rgba(255,255,255,.8);font-weight:600;letter-spacing:1px;text-transform:uppercase}
-
-/* ── PROGRAMS ── */
 .section{padding:100px 56px;max-width:1280px;margin:0 auto}
 .section-label{font-size:11px;color:var(--accent);font-weight:700;letter-spacing:3px;text-transform:uppercase;margin-bottom:10px}
 .section-title{font-family:'Bebas Neue',sans-serif;font-size:clamp(44px,5vw,72px);font-weight:400;line-height:1;margin-bottom:18px;letter-spacing:2px}
@@ -1702,8 +1683,6 @@ nav.scrolled{background:rgba(13,13,13,.95);backdrop-filter:blur(20px);padding:14
 .program-name{font-family:'Bebas Neue',sans-serif;font-size:28px;letter-spacing:1px;margin-bottom:8px}
 .program-desc{font-size:13px;color:rgba(245,245,245,.75);line-height:1.6;max-height:0;overflow:hidden;transition:max-height .4s ease}
 .program-card:hover .program-desc{max-height:80px}
-
-/* ── ABOUT ── */
 .about-grid{display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:center;padding:100px 56px;max-width:1280px;margin:0 auto}
 .about-img{position:relative}
 .about-img img{width:100%;height:580px;object-fit:cover}
@@ -1716,8 +1695,6 @@ nav.scrolled{background:rgba(13,13,13,.95);backdrop-filter:blur(20px);padding:14
 .about-features{display:flex;flex-direction:column;gap:14px;margin-top:28px}
 .feature-row{display:flex;align-items:center;gap:14px;font-size:14px;color:var(--text);font-weight:500}
 .feature-check{width:28px;height:28px;background:var(--accent);border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0}
-
-/* ── TESTIMONIALS ── */
 .testimonials{background:var(--surface);padding:100px 56px;border-top:1px solid #1f1f1f}
 .testi-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:2px;margin-top:52px;max-width:1280px;margin-left:auto;margin-right:auto}
 .testi-card{background:var(--surface2);padding:32px;transition:all .3s;border-left:3px solid transparent}
@@ -1729,8 +1706,6 @@ nav.scrolled{background:rgba(13,13,13,.95);backdrop-filter:blur(20px);padding:14
 .testi-name{font-size:14px;font-weight:700;letter-spacing:.3px}
 .testi-role{font-size:12px;color:var(--muted)}
 .testi-result{font-size:11px;color:var(--accent);font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-top:2px}
-
-/* ── PRICING ── */
 .pricing-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:2px;margin-top:52px}
 .price-card{background:var(--surface);padding:36px;transition:all .3s;position:relative;border-top:3px solid transparent}
 .price-card.featured{border-top-color:var(--accent);background:var(--surface2)}
@@ -1747,26 +1722,20 @@ nav.scrolled{background:rgba(13,13,13,.95);backdrop-filter:blur(20px);padding:14
 .price-btn.main:hover{background:#c1121f;transform:scale(1.03)}
 .price-btn.outline{border:1px solid #333;color:var(--muted)}
 .price-btn.outline:hover{border-color:var(--accent);color:var(--accent)}
-
-/* ── FAQ ── */
 .faq-list{max-width:760px;margin:52px auto 0}
 .faq-item{border-bottom:1px solid #1f1f1f}
-.faq-q{display:flex;justify-content:space-between;align-items:center;padding:22px 0;cursor:pointer;font-size:16px;font-weight:600;transition:color .2s;letter-spacing:.2px}
+.faq-q{display:flex;justify-content:space-between;align-items:center;padding:22px 0;cursor:pointer;font-size:16px;font-weight:600;transition:color .2s}
 .faq-q:hover{color:var(--accent)}
 .faq-icon{width:28px;height:28px;border:1px solid #333;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;transition:all .3s;color:var(--muted)}
 .faq-a{display:none;padding:0 0 20px;font-size:14px;color:var(--muted);line-height:1.9}
 .faq-item.open .faq-icon{background:var(--accent);border-color:var(--accent);color:white;transform:rotate(45deg)}
 .faq-item.open .faq-a{display:block}
-
-/* ── CTA ── */
 .cta-section{padding:120px 56px;text-align:center;position:relative;overflow:hidden}
 .cta-bg{position:absolute;inset:0;background:url('https://images.pexels.com/photos/1552249/pexels-photo-1552249.jpeg?auto=compress&cs=tinysrgb&w=1600') center/cover;filter:brightness(.15)}
 .cta-content{position:relative;z-index:2}
 .cta-section h2{font-family:'Bebas Neue',sans-serif;font-size:clamp(52px,7vw,96px);line-height:.95;margin-bottom:20px;letter-spacing:3px}
 .cta-section h2 span{color:var(--accent)}
 .cta-section p{font-size:18px;color:rgba(245,245,245,.7);margin-bottom:36px;max-width:480px;margin-left:auto;margin-right:auto;line-height:1.8}
-
-/* ── FOOTER ── */
 footer{background:#080808;border-top:1px solid #1a1a1a;padding:72px 56px 32px}
 .footer-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:48px;max-width:1280px;margin:0 auto 48px}
 .footer-brand p{font-size:13px;color:var(--muted);line-height:1.8;margin-top:12px;max-width:260px}
@@ -1774,14 +1743,10 @@ footer{background:#080808;border-top:1px solid #1a1a1a;padding:72px 56px 32px}
 .footer-col a{display:block;font-size:13px;color:var(--muted);text-decoration:none;margin-bottom:10px;transition:color .2s}
 .footer-col a:hover{color:var(--text)}
 .footer-bottom{border-top:1px solid #1a1a1a;padding-top:28px;display:flex;justify-content:space-between;align-items:center;max-width:1280px;margin:0 auto;font-size:12px;color:#444}
-
-/* ── MAP ── */
 .map-section{padding:80px 56px;max-width:1280px;margin:0 auto}
 .map-wrap{border-radius:4px;overflow:hidden;border:1px solid #1f1f1f}
 .map-wrap img{width:100%;display:block;transition:transform .4s;filter:grayscale(.8) contrast(1.1)}
 .map-wrap:hover img{transform:scale(1.02);filter:grayscale(.3)}
-
-/* ── RESPONSIVE ── */
 @media(max-width:768px){
   nav,nav.scrolled{padding:16px 24px}
   .nav-links{display:none}
@@ -1797,8 +1762,6 @@ footer{background:#080808;border-top:1px solid #1a1a1a;padding:72px 56px 32px}
 </style>
 </head>
 <body>
-
-<!-- NAV -->
 <nav id="nav">
   <div class="logo">Iron<span>Forge</span></div>
   <div class="nav-links">
@@ -1812,8 +1775,6 @@ footer{background:#080808;border-top:1px solid #1a1a1a;padding:72px 56px 32px}
     <span></span><span></span><span></span>
   </button>
 </nav>
-
-<!-- MOBILE MENU -->
 <div class="mobile-menu" id="mobileMenu">
   <a href="#programs" onclick="closeMobile()">Programs</a>
   <a href="#about" onclick="closeMobile()">About</a>
@@ -1821,8 +1782,6 @@ footer{background:#080808;border-top:1px solid #1a1a1a;padding:72px 56px 32px}
   <a href="#faq" onclick="closeMobile()">FAQ</a>
   <a href="#contact" onclick="closeMobile()" style="color:var(--accent)">Free Session →</a>
 </div>
-
-<!-- HERO -->
 <section class="hero" id="home">
   <div class="hero-bg"></div>
   <div class="hero-content">
@@ -1838,16 +1797,12 @@ footer{background:#080808;border-top:1px solid #1a1a1a;padding:72px 56px 32px}
     </div>
   </div>
 </section>
-
-<!-- STATS -->
 <div class="stats">
   <div class="stat reveal"><div class="stat-num" data-target="2400">0</div><div class="stat-label">Members Transformed</div></div>
   <div class="stat reveal"><div class="stat-num" data-target="90">0</div><div class="stat-label">Day Guarantee</div></div>
   <div class="stat reveal"><div class="stat-num" data-target="12">0</div><div class="stat-label">Expert Trainers</div></div>
   <div class="stat reveal"><div class="stat-num" data-target="428">0</div><div class="stat-label">5-Star Reviews</div></div>
 </div>
-
-<!-- PROGRAMS -->
 <section class="section" id="programs">
   <div class="section-label reveal">Our Programs</div>
   <h2 class="section-title reveal">TRAIN WITH PURPOSE</h2>
@@ -1858,7 +1813,7 @@ footer{background:#080808;border-top:1px solid #1a1a1a;padding:72px 56px 32px}
       <div class="program-overlay">
         <div class="program-tag">1-on-1 · 60 min</div>
         <div class="program-name">PERSONAL TRAINING</div>
-        <div class="program-desc">Fully customized workouts built around your goals, schedule, and fitness level. Your dedicated trainer is with you every rep.</div>
+        <div class="program-desc">Fully customized workouts built around your goals, schedule, and fitness level.</div>
       </div>
     </div>
     <div class="program-card reveal-scale">
@@ -1866,7 +1821,7 @@ footer{background:#080808;border-top:1px solid #1a1a1a;padding:72px 56px 32px}
       <div class="program-overlay">
         <div class="program-tag">Group · 45 min</div>
         <div class="program-name">HIIT & STRENGTH</div>
-        <div class="program-desc">High-intensity interval training combined with strength work. Burns up to 800 calories per session. Max 12 per class.</div>
+        <div class="program-desc">High-intensity interval training combined with strength work. Burns up to 800 calories per session.</div>
       </div>
     </div>
     <div class="program-card reveal-scale">
@@ -1874,26 +1829,21 @@ footer{background:#080808;border-top:1px solid #1a1a1a;padding:72px 56px 32px}
       <div class="program-overlay">
         <div class="program-tag">Online + In-Person</div>
         <div class="program-name">NUTRITION COACHING</div>
-        <div class="program-desc">Custom meal plans, weekly check-ins, and macro tracking. Because abs are made in the kitchen, not just the gym.</div>
+        <div class="program-desc">Custom meal plans, weekly check-ins, and macro tracking.</div>
       </div>
     </div>
   </div>
 </section>
-
-<!-- ABOUT -->
 <div class="about-grid" id="about">
   <div class="about-img reveal-left">
     <img src="https://images.pexels.com/photos/1552252/pexels-photo-1552252.jpeg?auto=compress&cs=tinysrgb&w=800" alt="IronForge Gym NYC"/>
     <div class="about-accent"></div>
-    <div class="about-year">
-      <div class="num">9+</div>
-      <div class="lbl">Years Strong</div>
-    </div>
+    <div class="about-year"><div class="num">9+</div><div class="lbl">Years Strong</div></div>
   </div>
   <div class="reveal">
     <div class="section-label">Our Story</div>
     <h2 class="section-title">WE DON'T DO AVERAGE.</h2>
-    <p>IronForge was founded in 2015 with one mission: build a gym where every single member gets real, measurable results. No fluff, no gimmicks — just elite coaching and a community that holds you accountable.</p>
+    <p>IronForge was founded in 2015 with one mission: build a gym where every single member gets real, measurable results.</p>
     <p>Located in the heart of Midtown Manhattan, we've helped over 2,400 New Yorkers lose weight, build muscle, and completely transform how they feel about their bodies.</p>
     <div class="about-features">
       <div class="feature-row"><div class="feature-check">✓</div>90-day transformation guarantee — results or full refund</div>
@@ -1903,8 +1853,6 @@ footer{background:#080808;border-top:1px solid #1a1a1a;padding:72px 56px 32px}
     </div>
   </div>
 </div>
-
-<!-- TESTIMONIALS -->
 <section class="testimonials" id="testimonials">
   <div style="max-width:1280px;margin:0 auto">
     <div class="section-label reveal">Results</div>
@@ -1912,33 +1860,22 @@ footer{background:#080808;border-top:1px solid #1a1a1a;padding:72px 56px 32px}
     <div class="testi-grid">
       <div class="testi-card reveal-scale">
         <div class="testi-stars">★★★★★</div>
-        <div class="testi-text">"I lost 34 lbs in 90 days and genuinely feel like a different person. My trainer Jake pushed me harder than I've ever been pushed while still making every session fun. Best investment I've ever made."</div>
-        <div class="testi-author">
-          <div class="testi-avatar">MR</div>
-          <div><div class="testi-name">Marcus R.</div><div class="testi-role">Member since 2023</div><div class="testi-result">↓ 34 lbs in 90 days</div></div>
-        </div>
+        <div class="testi-text">"I lost 34 lbs in 90 days and genuinely feel like a different person. My trainer Jake pushed me harder than I've ever been pushed while still making every session fun."</div>
+        <div class="testi-author"><div class="testi-avatar">MR</div><div><div class="testi-name">Marcus R.</div><div class="testi-role">Member since 2023</div><div class="testi-result">↓ 34 lbs in 90 days</div></div></div>
       </div>
       <div class="testi-card reveal-scale">
         <div class="testi-stars">★★★★★</div>
-        <div class="testi-text">"As a busy NYC professional I needed a gym that works with my schedule. IronForge opens at 5am and the trainers actually remember your name. I've tried 6 gyms in Manhattan — this is the only one that stuck."</div>
-        <div class="testi-author">
-          <div class="testi-avatar">SC</div>
-          <div><div class="testi-name">Sarah C.</div><div class="testi-role">Member since 2022</div><div class="testi-result">↑ 18 lbs muscle gained</div></div>
-        </div>
+        <div class="testi-text">"As a busy NYC professional I needed a gym that works with my schedule. IronForge opens at 5am and the trainers actually remember your name."</div>
+        <div class="testi-author"><div class="testi-avatar">SC</div><div><div class="testi-name">Sarah C.</div><div class="testi-role">Member since 2022</div><div class="testi-result">↑ 18 lbs muscle gained</div></div></div>
       </div>
       <div class="testi-card reveal-scale">
         <div class="testi-stars">★★★★★</div>
-        <div class="testi-text">"The 90-day guarantee is real — I almost asked for my money back after week 3 and they doubled down with extra sessions. I ended up losing 28 lbs. The accountability here is unlike anything else."</div>
-        <div class="testi-author">
-          <div class="testi-avatar">DK</div>
-          <div><div class="testi-name">Derek K.</div><div class="testi-role">Member since 2024</div><div class="testi-result">↓ 28 lbs in 11 weeks</div></div>
-        </div>
+        <div class="testi-text">"The 90-day guarantee is real. I ended up losing 28 lbs. The accountability here is unlike anything else."</div>
+        <div class="testi-author"><div class="testi-avatar">DK</div><div><div class="testi-name">Derek K.</div><div class="testi-role">Member since 2024</div><div class="testi-result">↓ 28 lbs in 11 weeks</div></div></div>
       </div>
     </div>
   </div>
 </section>
-
-<!-- PRICING -->
 <section class="section" id="pricing">
   <div class="section-label reveal">Pricing</div>
   <h2 class="section-title reveal">STRAIGHT TALK ON PRICE.</h2>
@@ -1948,11 +1885,7 @@ footer{background:#080808;border-top:1px solid #1a1a1a;padding:72px 56px 32px}
       <div class="price-name">Drop-In Pass</div>
       <div class="price-amount">$35</div>
       <div class="price-period">single class</div>
-      <ul class="price-features">
-        <li>Any group class</li>
-        <li>All equipment access</li>
-        <li>Locker room included</li>
-      </ul>
+      <ul class="price-features"><li>Any group class</li><li>All equipment access</li><li>Locker room included</li></ul>
       <a href="#contact" class="price-btn outline">BOOK A CLASS</a>
     </div>
     <div class="price-card featured reveal-scale">
@@ -1960,66 +1893,28 @@ footer{background:#080808;border-top:1px solid #1a1a1a;padding:72px 56px 32px}
       <div class="price-name">Unlimited Monthly</div>
       <div class="price-amount">$149</div>
       <div class="price-period">per month · cancel anytime</div>
-      <ul class="price-features">
-        <li>Unlimited group classes</li>
-        <li>2 PT sessions/month</li>
-        <li>Nutrition check-in</li>
-        <li>Guest pass included</li>
-        <li>90-day guarantee</li>
-      </ul>
+      <ul class="price-features"><li>Unlimited group classes</li><li>2 PT sessions/month</li><li>Nutrition check-in</li><li>Guest pass included</li><li>90-day guarantee</li></ul>
       <a href="#contact" class="price-btn main">START FREE TRIAL</a>
     </div>
     <div class="price-card reveal-scale">
       <div class="price-name">Elite 1-on-1</div>
       <div class="price-amount">$299</div>
       <div class="price-period">per month · 8 sessions</div>
-      <ul class="price-features">
-        <li>8 personal training sessions</li>
-        <li>Custom meal plan</li>
-        <li>Weekly progress tracking</li>
-        <li>Priority scheduling</li>
-        <li>90-day guarantee</li>
-      </ul>
+      <ul class="price-features"><li>8 personal training sessions</li><li>Custom meal plan</li><li>Weekly progress tracking</li><li>Priority scheduling</li><li>90-day guarantee</li></ul>
       <a href="#contact" class="price-btn outline">GET STARTED</a>
     </div>
   </div>
 </section>
-
-<!-- MAP -->
-<section class="map-section" id="location">
-  <div class="section-label reveal">Find Us</div>
-  <h2 class="section-title reveal">WE'RE IN MIDTOWN.</h2>
-  <p class="section-sub reveal" style="margin-bottom:32px">247 W 35th Street, New York, NY 10001 · <a href="tel:+12125550182" style="color:var(--accent)">(212) 555-0182</a></p>
-  <a href="https://www.google.com/maps/search/247+W+35th+Street+New+York+NY" target="_blank" class="map-wrap reveal">
-    <img src="https://maps.googleapis.com/maps/api/staticmap?center=247+W+35th+Street+New+York+NY&zoom=15&size=1280x400&scale=2&markers=color:red%7C247+W+35th+Street+New+York+NY&style=feature:all%7Celement:geometry%7Ccolor:0x1c1c1c&style=feature:road%7Celement:geometry%7Ccolor:0x2a2a2a&style=feature:water%7Celement:geometry%7Ccolor:0x0d0d0d&key=AIzaSyDemo" alt="IronForge Gym location map"/>
-  </a>
-</section>
-
-<!-- FAQ -->
 <section class="section" id="faq">
   <div class="section-label reveal">FAQ</div>
   <h2 class="section-title reveal" style="text-align:center">GOT QUESTIONS?</h2>
   <div class="faq-list">
-    <div class="faq-item reveal">
-      <div class="faq-q">What is the 90-day guarantee exactly? <div class="faq-icon">+</div></div>
-      <div class="faq-a">If you complete all scheduled sessions, follow your nutrition plan, and don't see measurable results in 90 days, we give you a full refund — no questions asked. We've given out exactly 3 refunds in 9 years. That's how confident we are.</div>
-    </div>
-    <div class="faq-item reveal">
-      <div class="faq-q">Do I need experience to join? <div class="faq-icon">+</div></div>
-      <div class="faq-a">Zero experience needed. We work with complete beginners every day. Your first session is an assessment where we learn where you are and build your program from there.</div>
-    </div>
-    <div class="faq-item reveal">
-      <div class="faq-q">How early/late are you open? <div class="faq-icon">+</div></div>
-      <div class="faq-a">Monday–Friday 5am–11pm. Saturday 7am–9pm. Sunday 8am–8pm. We're built for busy New Yorkers — no excuses about hours.</div>
-    </div>
-    <div class="faq-item reveal">
-      <div class="faq-q">Can I cancel my membership anytime? <div class="faq-icon">+</div></div>
-      <div class="faq-a">Yes — no lock-in contracts, ever. Cancel with 30 days notice at any time. We keep members because of results, not contracts.</div>
-    </div>
+    <div class="faq-item reveal"><div class="faq-q">What is the 90-day guarantee exactly? <div class="faq-icon">+</div></div><div class="faq-a">If you complete all scheduled sessions, follow your nutrition plan, and don't see measurable results in 90 days, we give you a full refund — no questions asked.</div></div>
+    <div class="faq-item reveal"><div class="faq-q">Do I need experience to join? <div class="faq-icon">+</div></div><div class="faq-a">Zero experience needed. We work with complete beginners every day. Your first session is an assessment where we learn where you are and build your program from there.</div></div>
+    <div class="faq-item reveal"><div class="faq-q">How early/late are you open? <div class="faq-icon">+</div></div><div class="faq-a">Monday–Friday 5am–11pm. Saturday 7am–9pm. Sunday 8am–8pm.</div></div>
+    <div class="faq-item reveal"><div class="faq-q">Can I cancel my membership anytime? <div class="faq-icon">+</div></div><div class="faq-a">Yes — no lock-in contracts, ever. Cancel with 30 days notice at any time.</div></div>
   </div>
 </section>
-
-<!-- CTA -->
 <section class="cta-section" id="contact">
   <div class="cta-bg"></div>
   <div class="cta-content">
@@ -2033,107 +1928,33 @@ footer{background:#080808;border-top:1px solid #1a1a1a;padding:72px 56px 32px}
     <p class="reveal" style="margin-top:20px;font-size:13px;color:var(--muted)">📍 247 W 35th St, New York, NY · Mon–Fri 5am–11pm · Sat–Sun 7am–9pm</p>
   </div>
 </section>
-
-<!-- FOOTER -->
 <footer>
   <div class="footer-grid">
-    <div class="footer-brand">
-      <div class="logo" style="font-size:22px">Iron<span>Forge</span></div>
-      <p>NYC's most results-driven personal training studio. Transforming bodies and lives since 2015.</p>
-    </div>
-    <div class="footer-col">
-      <h4>Programs</h4>
-      <a href="#programs">Personal Training</a>
-      <a href="#programs">HIIT & Strength</a>
-      <a href="#programs">Nutrition Coaching</a>
-      <a href="#programs">Group Classes</a>
-    </div>
-    <div class="footer-col">
-      <h4>Studio</h4>
-      <a href="#about">Our Story</a>
-      <a href="#pricing">Pricing</a>
-      <a href="#faq">FAQ</a>
-      <a href="#contact">Contact</a>
-    </div>
-    <div class="footer-col">
-      <h4>Contact</h4>
-      <a href="tel:+12125550182">(212) 555-0182</a>
-      <a href="mailto:hello@ironforgegym.com">hello@ironforgegym.com</a>
-      <a href="#location">247 W 35th St, NYC</a>
-    </div>
+    <div class="footer-brand"><div class="logo" style="font-size:22px">Iron<span>Forge</span></div><p>NYC's most results-driven personal training studio. Transforming bodies and lives since 2015.</p></div>
+    <div class="footer-col"><h4>Programs</h4><a href="#programs">Personal Training</a><a href="#programs">HIIT & Strength</a><a href="#programs">Nutrition Coaching</a></div>
+    <div class="footer-col"><h4>Studio</h4><a href="#about">Our Story</a><a href="#pricing">Pricing</a><a href="#faq">FAQ</a></div>
+    <div class="footer-col"><h4>Contact</h4><a href="tel:+12125550182">(212) 555-0182</a><a href="mailto:hello@ironforgegym.com">hello@ironforgegym.com</a><a href="#location">247 W 35th St, NYC</a></div>
   </div>
-  <div class="footer-bottom">
-    <span>© 2026 IronForge Gym. All rights reserved.</span>
-    <span>Built with Sitefliq AI ⚡</span>
-  </div>
+  <div class="footer-bottom"><span>© 2026 IronForge Gym. All rights reserved.</span><span>Built with Sitefliq AI ⚡</span></div>
 </footer>
-
 <script>
-// ── NAV SCROLL ──
 const nav = document.getElementById('nav');
 window.addEventListener('scroll', () => nav.classList.toggle('scrolled', window.scrollY > 80));
-
-// ── MOBILE MENU ──
 document.getElementById('burger').addEventListener('click', () => document.getElementById('mobileMenu').classList.toggle('open'));
 function closeMobile() { document.getElementById('mobileMenu').classList.remove('open'); }
-
-// ── SCROLL REVEAL ──
 const observer = new IntersectionObserver(entries => {
-  entries.forEach(entry => {
-    if(entry.isIntersecting) {
-      entry.target.classList.add('visible');
-      const num = entry.target.querySelector('[data-target]');
-      if(num) animateCounter(num);
-    }
-  });
+  entries.forEach(entry => { if(entry.isIntersecting) { entry.target.classList.add('visible'); const num = entry.target.querySelector('[data-target]'); if(num) animateCounter(num); } });
 }, {threshold: 0.15});
 document.querySelectorAll('.reveal, .reveal-left, .reveal-scale').forEach(el => observer.observe(el));
-
-// Stagger grid children
-document.querySelectorAll('.programs-grid, .testi-grid, .pricing-grid').forEach(grid => {
-  grid.querySelectorAll('.reveal-scale').forEach((card, i) => {
-    card.style.transitionDelay = (i * 0.1) + 's';
-  });
-});
-
-// ── COUNTER ANIMATION ──
 function animateCounter(el) {
-  if(el.dataset.animated) return;
-  el.dataset.animated = true;
-  const target = parseInt(el.dataset.target);
-  const start = performance.now();
-  const duration = 2000;
-  const update = now => {
-    const progress = Math.min((now - start) / duration, 1);
-    const ease = 1 - Math.pow(1 - progress, 3);
-    el.textContent = Math.floor(ease * target).toLocaleString() + (progress < 1 ? '' : '+');
-    if(progress < 1) requestAnimationFrame(update);
-  };
+  if(el.dataset.animated) return; el.dataset.animated = true;
+  const target = parseInt(el.dataset.target); const start = performance.now(); const duration = 2000;
+  const update = now => { const progress = Math.min((now - start) / duration, 1); const ease = 1 - Math.pow(1 - progress, 3); el.textContent = Math.floor(ease * target).toLocaleString() + (progress < 1 ? '' : '+'); if(progress < 1) requestAnimationFrame(update); };
   requestAnimationFrame(update);
 }
-document.querySelectorAll('[data-target]').forEach(el => {
-  new IntersectionObserver(entries => {
-    if(entries[0].isIntersecting) animateCounter(el);
-  }, {threshold: 0.5}).observe(el);
-});
-
-// ── FAQ ──
-document.querySelectorAll('.faq-q').forEach(q => {
-  q.addEventListener('click', () => {
-    const item = q.parentElement;
-    const wasOpen = item.classList.contains('open');
-    document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('open'));
-    if(!wasOpen) item.classList.add('open');
-  });
-});
-
-// ── SMOOTH SCROLL ──
-document.querySelectorAll('a[href^="#"]').forEach(a => {
-  a.addEventListener('click', e => {
-    const target = document.querySelector(a.getAttribute('href'));
-    if(target) { e.preventDefault(); target.scrollIntoView({behavior:'smooth'}); }
-  });
-});
+document.querySelectorAll('[data-target]').forEach(el => { new IntersectionObserver(entries => { if(entries[0].isIntersecting) animateCounter(el); }, {threshold: 0.5}).observe(el); });
+document.querySelectorAll('.faq-q').forEach(q => { q.addEventListener('click', () => { const item = q.parentElement; const wasOpen = item.classList.contains('open'); document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('open')); if(!wasOpen) item.classList.add('open'); }); });
+document.querySelectorAll('a[href^="#"]').forEach(a => { a.addEventListener('click', e => { const target = document.querySelector(a.getAttribute('href')); if(target) { e.preventDefault(); target.scrollIntoView({behavior:'smooth'}); } }); });
 </script>
 </body>
 </html>
@@ -2159,18 +1980,18 @@ function HelpPage({onHome}) {
   const faqs = [
     {q:"My page didn't generate — what happened?", a:"Usually a network timeout or very short description. Try again with a longer business description (3–5 sentences). If you see 'API 401' contact us immediately."},
     {q:"I paid but nothing happened", a:"After paying, return to Sitefliq and click 'I've Paid — Generate My Page'. If credits aren't showing, email us your payment receipt and we'll sort it within the hour."},
-    {q:"The images don't match my business", a:"Make sure you select the correct industry from the dropdown — this controls which photos are sourced. If matches are still poor for your industry, let us know and we'll improve the search terms."},
-    {q:"How do I host my downloaded HTML file?", a:"Go to netlify.com, create a free account, and drag-and-drop your HTML file onto the dashboard. Your site goes live instantly at a free URL. You can connect a custom domain anytime."},
+    {q:"The images don't match my business", a:"Make sure you select the correct industry from the dropdown — this controls which photos are sourced."},
+    {q:"How do I host my downloaded HTML file?", a:"Go to netlify.com, create a free account, and drag-and-drop your HTML file onto the dashboard. Your site goes live instantly at a free URL."},
     {q:"Do my credits expire?", a:"Never. Credits are yours to use whenever you're ready — no time pressure, no subscription."},
-    {q:"Can I edit the page after downloading?", a:"Yes — open the file in any text editor (VS Code, Notepad) and edit the text between HTML tags directly. For major redesigns, it's faster to regenerate with new settings."},
-    {q:"What does 'No Sitefliq branding' mean?", a:"Starter pages include a small 'Built with Sitefliq' link in the footer. Pro and Agency plans remove this completely so your clients see a clean, unbranded page."},
+    {q:"Can I edit the page after downloading?", a:"Yes — open the file in any text editor (VS Code, Notepad) and edit the text between HTML tags directly."},
+    {q:"What does 'No Sitefliq branding' mean?", a:"Starter pages include a small 'Built with Sitefliq' link in the footer. Pro and Agency plans remove this completely."},
   ];
 
   const handleSubmit = () => {
     if(!form.name||!form.email||!form.message||!category) return;
     const subject = encodeURIComponent(`[Sitefliq ${categories.find(c=>c.id===category)?.label}] ${form.subject||"Support Request"}`);
     const body = encodeURIComponent(`Name: ${form.name}\nEmail: ${form.email}\nCategory: ${categories.find(c=>c.id===category)?.label}\nSubject: ${form.subject}\n\nMessage:\n${form.message}`);
-    window.open(`mailto:ai.productivitylab95@gmail.com?subject=${subject}&body=${body}`,"_blank");
+    window.open(`mailto:hello@sitefliq.com?subject=${subject}&body=${body}`,"_blank");
     setSubmitted(true);
   };
 
@@ -2179,12 +2000,8 @@ function HelpPage({onHome}) {
   return (
     <div style={{minHeight:"100vh",background:"#fafaf9",fontFamily:"'Geist',sans-serif"}}>
       <GS/>
-
-      {/* Top bar */}
       <div style={{height:52,background:"white",borderBottom:"1px solid #f3f4f6",display:"flex",alignItems:"center",justifyContent:"space-between",padding:"0 28px",position:"sticky",top:0,zIndex:10}}>
-        <button onClick={onHome} style={{display:"flex",alignItems:"center",gap:6,background:"transparent",border:"none",cursor:"pointer",fontSize:13,color:"#6b7280",fontFamily:"inherit",fontWeight:500}}>
-          ← Back
-        </button>
+        <button onClick={onHome} style={{display:"flex",alignItems:"center",gap:6,background:"transparent",border:"none",cursor:"pointer",fontSize:13,color:"#6b7280",fontFamily:"inherit",fontWeight:500}}>← Back</button>
         <div style={{display:"flex",alignItems:"center",gap:7}}>
           <div style={{width:24,height:24,background:"#f97316",borderRadius:6,display:"flex",alignItems:"center",justifyContent:"center",fontSize:11,color:"white",fontWeight:800}}>S</div>
           <span style={{fontSize:14,fontWeight:800,color:"#111827"}}>Sitefliq</span>
@@ -2192,99 +2009,50 @@ function HelpPage({onHome}) {
         </div>
         <div style={{width:80}}/>
       </div>
-
       <div style={{maxWidth:680,margin:"0 auto",padding:"44px 24px 80px"}}>
-
-        {/* Hero */}
         <div style={{textAlign:"center",marginBottom:40}}>
           <h1 style={{fontSize:28,fontWeight:800,color:"#111827",marginBottom:10,fontFamily:"'Instrument Serif',serif",letterSpacing:"-.5px"}}>Help Center</h1>
           <p style={{fontSize:14,color:"#6b7280",lineHeight:1.6}}>Have a question, found a bug, or want a new feature? Let us know!</p>
         </div>
-
-        {/* Category picker */}
         <div style={{display:"grid",gridTemplateColumns:"repeat(4,1fr)",gap:10,marginBottom:28}}>
           {categories.map(c=>(
-            <div
-              key={c.id}
-              onClick={()=>setCategory(c.id)}
-              style={{
-                background:"white",border:`1.5px solid ${category===c.id?"#f97316":"#e5e7eb"}`,
-                borderRadius:12,padding:"18px 12px",textAlign:"center",cursor:"pointer",
-                transition:"all .15s",boxShadow:category===c.id?"0 0 0 3px rgba(249,115,22,.1)":"none"
-              }}
-            >
+            <div key={c.id} onClick={()=>setCategory(c.id)} style={{background:"white",border:`1.5px solid ${category===c.id?"#f97316":"#e5e7eb"}`,borderRadius:12,padding:"18px 12px",textAlign:"center",cursor:"pointer",transition:"all .15s",boxShadow:category===c.id?"0 0 0 3px rgba(249,115,22,.1)":"none"}}>
               <div style={{fontSize:22,marginBottom:8}}>{c.icon}</div>
               <div style={{fontSize:12,fontWeight:600,color:category===c.id?"#f97316":"#374151"}}>{c.label}</div>
             </div>
           ))}
         </div>
-
-        {/* Submit form */}
         <div style={{background:"white",border:"1px solid #e5e7eb",borderRadius:14,padding:"28px 28px 24px",marginBottom:40,boxShadow:"0 1px 4px rgba(0,0,0,.04)"}}>
           {submitted ? (
             <div style={{textAlign:"center",padding:"32px 0"}}>
               <div style={{fontSize:44,marginBottom:16}}>✅</div>
               <div style={{fontSize:18,fontWeight:800,color:"#111827",marginBottom:8}}>Query Submitted!</div>
-              <p style={{fontSize:13,color:"#6b7280",lineHeight:1.7}}>Your email client opened with your message pre-filled. We'll respond to <strong>{form.email}</strong> within 24 hours.</p>
+              <p style={{fontSize:13,color:"#6b7280",lineHeight:1.7}}>Your email client opened with your message pre-filled. We'll respond within 24 hours.</p>
               <button onClick={()=>setSubmitted(false)} style={{marginTop:20,padding:"10px 22px",background:"#f97316",border:"none",borderRadius:8,fontSize:13,fontWeight:700,color:"white",cursor:"pointer",fontFamily:"inherit"}}>Submit Another</button>
             </div>
           ) : (
             <>
               <h2 style={{fontSize:17,fontWeight:800,color:"#111827",marginBottom:4}}>Submit a Query</h2>
               <p style={{fontSize:12,color:"#9ca3af",marginBottom:22}}>Fill out the form below and we'll respond via email.</p>
-
               <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:14,marginBottom:14}}>
-                <div>
-                  <label style={{fontSize:12,fontWeight:600,color:"#374151",display:"block",marginBottom:6}}>Your Name</label>
-                  <input style={inp} placeholder="John Doe" value={form.name} onChange={e=>setForm(f=>({...f,name:e.target.value}))}/>
-                </div>
-                <div>
-                  <label style={{fontSize:12,fontWeight:600,color:"#374151",display:"block",marginBottom:6}}>Email Address</label>
-                  <input style={inp} placeholder="john@email.com" type="email" value={form.email} onChange={e=>setForm(f=>({...f,email:e.target.value}))}/>
-                </div>
+                <div><label style={{fontSize:12,fontWeight:600,color:"#374151",display:"block",marginBottom:6}}>Your Name</label><input style={inp} placeholder="John Doe" value={form.name} onChange={e=>setForm(f=>({...f,name:e.target.value}))}/></div>
+                <div><label style={{fontSize:12,fontWeight:600,color:"#374151",display:"block",marginBottom:6}}>Email Address</label><input style={inp} placeholder="john@email.com" type="email" value={form.email} onChange={e=>setForm(f=>({...f,email:e.target.value}))}/></div>
               </div>
-
-              <div style={{marginBottom:14}}>
-                <label style={{fontSize:12,fontWeight:600,color:"#374151",display:"block",marginBottom:6}}>Category</label>
-                <select style={{...inp,appearance:"none",backgroundImage:"url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%236b7280' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E\")",backgroundRepeat:"no-repeat",backgroundPosition:"right 14px center",paddingRight:36}} value={category||""} onChange={e=>setCategory(e.target.value)}>
-                  <option value="">Select a category</option>
-                  {categories.map(c=><option key={c.id} value={c.id}>{c.icon} {c.label}</option>)}
-                </select>
-              </div>
-
               <div style={{marginBottom:14}}>
                 <label style={{fontSize:12,fontWeight:600,color:"#374151",display:"block",marginBottom:6}}>Subject</label>
                 <input style={inp} placeholder="Brief summary of your query" value={form.subject} onChange={e=>setForm(f=>({...f,subject:e.target.value}))}/>
               </div>
-
               <div style={{marginBottom:8}}>
                 <label style={{fontSize:12,fontWeight:600,color:"#374151",display:"block",marginBottom:6}}>Message</label>
-                <textarea
-                  style={{...inp,resize:"vertical",minHeight:130,lineHeight:1.6}}
-                  placeholder="Describe your query in detail..."
-                  maxLength={500}
-                  value={form.message}
-                  onChange={e=>{setForm(f=>({...f,message:e.target.value}));setCharCount(e.target.value.length);}}
-                />
+                <textarea style={{...inp,resize:"vertical",minHeight:130,lineHeight:1.6}} placeholder="Describe your query in detail..." maxLength={500} value={form.message} onChange={e=>{setForm(f=>({...f,message:e.target.value}));setCharCount(e.target.value.length);}}/>
               </div>
-
-              <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:18,fontSize:11,color:"#9ca3af"}}>
-                <span>{new Date().toLocaleDateString("en-US",{month:"numeric",day:"numeric",year:"numeric"})+", "+new Date().toLocaleTimeString()}</span>
-                <span>{charCount}/500</span>
-              </div>
-
-              <button
-                onClick={handleSubmit}
-                disabled={!form.name||!form.email||!form.message||!category}
-                style={{width:"100%",padding:"13px",background:(!form.name||!form.email||!form.message||!category)?"#fde8d8":"#f97316",border:"none",borderRadius:10,fontSize:14,fontWeight:700,color:"white",cursor:(!form.name||!form.email||!form.message||!category)?"not-allowed":"pointer",fontFamily:"inherit",display:"flex",alignItems:"center",justifyContent:"center",gap:8,transition:"background .2s"}}
-              >
+              <div style={{display:"flex",justifyContent:"flex-end",marginBottom:18,fontSize:11,color:"#9ca3af"}}><span>{charCount}/500</span></div>
+              <button onClick={handleSubmit} disabled={!form.name||!form.email||!form.message||!category} style={{width:"100%",padding:"13px",background:(!form.name||!form.email||!form.message||!category)?"#fde8d8":"#f97316",border:"none",borderRadius:10,fontSize:14,fontWeight:700,color:"white",cursor:(!form.name||!form.email||!form.message||!category)?"not-allowed":"pointer",fontFamily:"inherit",transition:"background .2s"}}>
                 ✈️ Submit Query
               </button>
             </>
           )}
         </div>
-
-        {/* FAQ */}
         <div>
           <h2 style={{fontSize:17,fontWeight:800,color:"#111827",marginBottom:16}}>Frequently Asked Questions</h2>
           <div style={{borderRadius:12,overflow:"hidden",border:"1px solid #e5e7eb",background:"white"}}>
@@ -2294,19 +2062,15 @@ function HelpPage({onHome}) {
                   <span style={{fontSize:13,fontWeight:600,color:"#111827",lineHeight:1.4}}>{faq.q}</span>
                   <span style={{color:"#f97316",fontSize:18,fontWeight:300,flexShrink:0,transition:"transform .25s",display:"inline-block",transform:openFaq===i?"rotate(45deg)":"rotate(0)"}}>+</span>
                 </div>
-                {openFaq===i&&(
-                  <div style={{padding:"0 20px 16px",fontSize:13,color:"#6b7280",lineHeight:1.75}}>{faq.a}</div>
-                )}
+                {openFaq===i&&(<div style={{padding:"0 20px 16px",fontSize:13,color:"#6b7280",lineHeight:1.75}}>{faq.a}</div>)}
               </div>
             ))}
           </div>
         </div>
-
       </div>
     </div>
   );
 }
-
 
 function ExamplePage({onBack,onBuild}) {
   const [blobUrl,setBlobUrl]=useState(null);
@@ -2319,7 +2083,6 @@ function ExamplePage({onBack,onBuild}) {
   return (
     <div style={{minHeight:"100vh",background:"#fafaf9",fontFamily:"'Geist',sans-serif"}}>
       <GS/>
-      {/* Top bar */}
       <div style={{height:54,background:"white",borderBottom:"1px solid #f3f4f6",display:"flex",alignItems:"center",justifyContent:"space-between",padding:"0 28px",position:"sticky",top:0,zIndex:10}}>
         <button onClick={onBack} style={{display:"flex",alignItems:"center",gap:6,background:"transparent",border:"none",cursor:"pointer",fontSize:13,color:"#6b7280",fontFamily:"inherit"}}>← Back</button>
         <div style={{display:"flex",alignItems:"center",gap:8}}>
@@ -2328,7 +2091,6 @@ function ExamplePage({onBack,onBuild}) {
         </div>
         <button onClick={onBuild} style={{padding:"8px 18px",background:"#f97316",border:"none",borderRadius:8,fontSize:13,cursor:"pointer",color:"white",fontFamily:"inherit",fontWeight:700}}>Build Mine →</button>
       </div>
-      {/* Info banner */}
       <div style={{background:"#fff7ed",borderBottom:"1px solid #fed7aa",padding:"12px 28px",display:"flex",alignItems:"center",justifyContent:"space-between",flexWrap:"wrap",gap:10}}>
         <div style={{display:"flex",alignItems:"center",gap:10,fontSize:13}}>
           <span style={{fontSize:16}}>✦</span>
@@ -2341,48 +2103,32 @@ function ExamplePage({onBack,onBuild}) {
           <button onClick={onBuild} style={{padding:"7px 16px",background:"#f97316",border:"none",borderRadius:7,fontSize:12,cursor:"pointer",color:"white",fontFamily:"inherit",fontWeight:700}}>Build Your Page →</button>
         </div>
       </div>
-      {/* What's included callouts */}
       <div style={{background:"white",borderBottom:"1px solid #f3f4f6",padding:"12px 28px",display:"flex",gap:20,flexWrap:"wrap"}}>
         {[["🔍","Full SEO meta tags"],["🎯","5+ Conversion CTAs"],["📱","Mobile responsive"],["✍️","Niche-specific copy"],["⚡","FAQ accordion"],["🌙","Dark luxury theme"]].map(([ic,t])=>(
-          <div key={t} style={{display:"flex",alignItems:"center",gap:6,fontSize:12,color:"#374151"}}>
-            <span>{ic}</span><span style={{fontWeight:500}}>{t}</span>
-          </div>
+          <div key={t} style={{display:"flex",alignItems:"center",gap:6,fontSize:12,color:"#374151"}}><span>{ic}</span><span style={{fontWeight:500}}>{t}</span></div>
         ))}
       </div>
-      {/* Iframe preview */}
       <div style={{padding:"24px 28px"}}>
         <div style={{borderRadius:14,overflow:"hidden",boxShadow:"0 4px 30px rgba(0,0,0,.1)",border:"1px solid #e5e7eb"}}>
-          {/* Browser chrome */}
           <div style={{background:"#f1f5f9",padding:"10px 16px",display:"flex",alignItems:"center",gap:10,borderBottom:"1px solid #e5e7eb"}}>
             <div style={{display:"flex",gap:5}}>{["#ef4444","#f59e0b","#22c55e"].map(c=><div key={c} style={{width:10,height:10,borderRadius:"50%",background:c}}/>)}</div>
-            <div style={{flex:1,background:"white",borderRadius:20,padding:"5px 14px",fontSize:11,color:"#6b7280",display:"flex",alignItems:"center",gap:6,maxWidth:400,margin:"0 auto"}}>
-              <span>🔒</span> zenflow-yoga-studio.com
-            </div>
+            <div style={{flex:1,background:"white",borderRadius:20,padding:"5px 14px",fontSize:11,color:"#6b7280",display:"flex",alignItems:"center",gap:6,maxWidth:400,margin:"0 auto"}}><span>🔒</span> ironforgegym.com</div>
           </div>
           {blobUrl
             ? <iframe src={blobUrl} style={{width:"100%",height:"85vh",border:"none",display:"block"}} title="Example landing page"/>
-            : <div style={{height:"85vh",display:"flex",alignItems:"center",justifyContent:"center",background:"#f9fafb"}}>
-                <div style={{textAlign:"center",color:"#9ca3af"}}>
-                  <div style={{fontSize:32,marginBottom:8,animation:"spin 1s linear infinite",display:"inline-block"}}>◌</div>
-                  <div style={{fontSize:13}}>Loading example…</div>
-                </div>
-              </div>
+            : <div style={{height:"85vh",display:"flex",alignItems:"center",justifyContent:"center",background:"#f9fafb"}}><div style={{textAlign:"center",color:"#9ca3af"}}><div style={{fontSize:32,marginBottom:8,animation:"spin 1s linear infinite",display:"inline-block"}}>◌</div><div style={{fontSize:13}}>Loading example…</div></div></div>
           }
         </div>
       </div>
-      {/* Bottom CTA */}
       <div style={{textAlign:"center",padding:"32px 28px 48px"}}>
         <div style={{fontSize:14,color:"#6b7280",marginBottom:16}}>Ready to build your own version? It takes 60 seconds.</div>
-        <button onClick={onBuild} style={{padding:"14px 40px",background:"#f97316",color:"white",border:"none",borderRadius:10,fontSize:15,fontWeight:700,cursor:"pointer",fontFamily:"inherit",boxShadow:"0 4px 20px #f9731640"}}>
-          Build My Landing Page →
-        </button>
+        <button onClick={onBuild} style={{padding:"14px 40px",background:"#f97316",color:"white",border:"none",borderRadius:10,fontSize:15,fontWeight:700,cursor:"pointer",fontFamily:"inherit",boxShadow:"0 4px 20px #f9731640"}}>Build My Landing Page →</button>
       </div>
     </div>
   );
 }
 
 export default function Sitefliq() {
-  // screens: home | builder | pricing_wall | generating | result
   const [screen,setScreen]=useState("home");
   const [resHtml,setResHtml]=useState("");
   const [genErr,setGenErr]=useState(null);
@@ -2390,12 +2136,11 @@ export default function Sitefliq() {
   const [credits,setCredits]=useState(0);
   const [showAuth,setShowAuth]=useState(false);
   const [authMode,setAuthMode]=useState("signin");
-  const [legalScreen,setLegalScreen]=useState(null); // terms | privacy | refund
+  const [legalScreen,setLegalScreen]=useState(null);
 
   useEffect(()=>{
     const handler = (e) => setLegalScreen(e.detail);
     window.addEventListener("sitefliq-legal", handler);
-    // Handle hash-based routing for legal pages
     const hash = window.location.hash.replace("#","");
     if(["terms","privacy","refund"].includes(hash)) setLegalScreen(hash);
     const hashHandler = () => {
@@ -2410,13 +2155,11 @@ export default function Sitefliq() {
     };
   },[]);
 
-  // Restore session on mount
   useEffect(()=>{
     if(sb.restoreSession()){
       setUser(sb._user);
       sb.getCredits().then(setCredits);
     }
-    // Check for paddle payment success
     const params = new URLSearchParams(window.location.search);
     if(params.get("payment")==="success"){
       setTimeout(()=>{
@@ -2440,6 +2183,7 @@ export default function Sitefliq() {
     setCredits(c);
     return c;
   };
+
   const [form,setForm]=useState({
     name:"",industry:"",tagline:"",description:"",
     location:"",phone:"",email:"",cta:"Get Started Today",
@@ -2453,18 +2197,14 @@ export default function Sitefliq() {
   };
   const ready=form.name.trim()&&form.industry.trim()&&form.description.trim();
 
-  // Load Paddle SDK once
   useEffect(()=>{
     if(window.Paddle) return;
     const s=document.createElement("script");
     s.src="https://cdn.paddle.com/paddle/v2/paddle.js";
-    s.onload=()=>{
-      window.Paddle.Setup({token:"live_b719e178798ff8d1da2e0d42565"});
-    };
+    s.onload=()=>{ window.Paddle.Setup({token:"live_b719e178798ff8d1da2e0d42565"}); };
     document.head.appendChild(s);
   },[]);
 
-  // When user clicks a plan — require login then open Paddle
   const handlePurchase=(plan)=>{
     if(!user){
       setAuthMode("signup");
@@ -2493,34 +2233,25 @@ export default function Sitefliq() {
   if(screen==="pricing_standalone") return <><PricingPage onBuild={()=>setScreen("builder")} onHome={()=>setScreen("home")} user={user} credits={credits} onSignIn={()=>{setAuthMode("signin");setShowAuth(true);}} onSignOut={handleSignOut} onPurchase={handlePurchase}/>{showAuth&&<AuthModal mode={authMode} onSuccess={()=>{setUser(sb._user);sb.getCredits().then(setCredits);setShowAuth(false);}} onClose={()=>setShowAuth(false)}/>}</>;
   if(screen==="pricing_wall") return <><PricingWall form={form} onBack={()=>setScreen("builder")} onPurchase={handlePurchase} user={user} credits={credits} onSignIn={()=>{setAuthMode("signin");setShowAuth(true);}}/>{showAuth&&<AuthModal mode={authMode} onSuccess={()=>{setUser(sb._user);sb.getCredits().then(setCredits);setShowAuth(false);}} onClose={()=>setShowAuth(false)}/>}</>;
 
-  // Waiting for payment confirmation
   if(screen==="waiting_payment") return (
     <div style={{minHeight:"100vh",background:"#fafaf9",display:"flex",alignItems:"center",justifyContent:"center",fontFamily:"'Geist',sans-serif"}}>
       <GS/>
       <div style={{textAlign:"center",maxWidth:480,padding:40}}>
         <div style={{fontSize:48,marginBottom:20}}>💳</div>
         <h2 style={{fontSize:26,fontWeight:800,color:"#111827",marginBottom:12}}>Complete your payment</h2>
-        <p style={{fontSize:14,color:"#6b7280",marginBottom:28,lineHeight:1.7}}>
-          A Complete your payment in the Paddle window. Once paid your credits will be added automatically and you can start building!
-        </p>
+        <p style={{fontSize:14,color:"#6b7280",marginBottom:28,lineHeight:1.7}}>Complete your payment in the Paddle window. Once paid your credits will be added automatically.</p>
         <button onClick={async()=>{await refreshCredits();setScreen("pricing_wall");}} style={{width:"100%",padding:"14px",background:"#f97316",color:"white",border:"none",borderRadius:10,fontSize:15,fontWeight:700,cursor:"pointer",fontFamily:"inherit",marginBottom:12}}>
           ✓ I've Paid — Check Credits & Continue →
         </button>
-        <button onClick={()=>setScreen("pricing_wall")} style={{width:"100%",padding:"12px",background:"white",color:"#6b7280",border:"1px solid #e5e7eb",borderRadius:10,fontSize:13,cursor:"pointer",fontFamily:"inherit"}}>
-          ← Go back
-        </button>
-        <p style={{marginTop:16,fontSize:11,color:"#9ca3af"}}>
-          🔒 Payments secured by Paddle · 14-day money back guarantee
-        </p>
+        <button onClick={()=>setScreen("pricing_wall")} style={{width:"100%",padding:"12px",background:"white",color:"#6b7280",border:"1px solid #e5e7eb",borderRadius:10,fontSize:13,cursor:"pointer",fontFamily:"inherit"}}>← Go back</button>
+        <p style={{marginTop:16,fontSize:11,color:"#9ca3af"}}>🔒 Payments secured by Paddle · 14-day money back guarantee</p>
       </div>
     </div>
   );
 
-  /* Split panel layout */
   return (
     <div style={{height:"100vh",display:"flex",flexDirection:"column",fontFamily:"'Geist',sans-serif",background:"#f1f5f9"}}>
       <GS/>
-      {/* Top bar */}
       <div style={{height:50,background:"white",borderBottom:"1px solid #f3f4f6",display:"flex",alignItems:"center",justifyContent:"space-between",padding:"0 20px",flexShrink:0}}>
         {showAuth&&<AuthModal mode={authMode} onSuccess={()=>{setUser(sb._user);sb.getCredits().then(setCredits);setShowAuth(false);}} onClose={()=>setShowAuth(false)}/>}
         <div onClick={()=>setScreen("home")} style={{display:"flex",alignItems:"center",gap:7,cursor:"pointer"}}>
@@ -2528,34 +2259,30 @@ export default function Sitefliq() {
           <div style={{width:23,height:23,background:"#f97316",borderRadius:5,display:"flex",alignItems:"center",justifyContent:"center",fontSize:11,color:"white",fontWeight:800}}>S</div>
           <span style={{fontSize:13,fontWeight:700,color:"#111827"}}>Landing Page Builder</span>
         </div>
-        <div style={{fontSize:11,color:"#9ca3af"}}>
+        <div style={{fontSize:11,color:"#9ca3af",display:"flex",alignItems:"center",gap:10}}>
           {screen==="builder"&&"⚡ Powered by Claude AI"}
           {screen==="result"&&<span style={{color:"#16a34a",fontWeight:600}}>✓ Page Ready — {form.name}</span>}
           {screen==="generating"&&<span style={{color:"#f97316"}}>⚡ Generating…</span>}
-          <div style={{display:"flex",alignItems:"center",gap:10,marginLeft:"auto"}}>
-            {user ? (
-              <>
-                <span style={{fontSize:12,background:"#fff7ed",color:"#f97316",border:"1px solid #fed7aa",borderRadius:20,padding:"3px 10px",fontWeight:700}}>⚡ {credits} credits</span>
-                <button onClick={handleSignOut} style={{fontSize:12,background:"none",border:"1px solid #e5e7eb",borderRadius:6,padding:"4px 10px",cursor:"pointer",color:"#6b7280"}}>Sign out</button>
-              </>
-            ) : (
-              <button onClick={()=>{setAuthMode("signin");setShowAuth(true);}} style={{fontSize:12,background:"#f97316",color:"white",border:"none",borderRadius:6,padding:"5px 12px",cursor:"pointer",fontWeight:600}}>Sign In</button>
-            )}
-          </div>
+          {user ? (
+            <>
+              <span style={{fontSize:12,background:"#fff7ed",color:"#f97316",border:"1px solid #fed7aa",borderRadius:20,padding:"3px 10px",fontWeight:700}}>⚡ {credits} credits</span>
+              <button onClick={handleSignOut} style={{fontSize:12,background:"none",border:"1px solid #e5e7eb",borderRadius:6,padding:"4px 10px",cursor:"pointer",color:"#6b7280"}}>Sign out</button>
+            </>
+          ) : (
+            <button onClick={()=>{setAuthMode("signin");setShowAuth(true);}} style={{fontSize:12,background:"#f97316",color:"white",border:"none",borderRadius:6,padding:"5px 12px",cursor:"pointer",fontWeight:600}}>Sign In</button>
+          )}
         </div>
         <div style={{width:80}}/>
       </div>
 
-      {/* Split */}
       <div style={{flex:1,display:"grid",gridTemplateColumns:"360px 1fr",overflow:"hidden"}}>
-        {/* Left */}
         <div style={{borderRight:"1px solid #e5e7eb",overflow:"hidden",display:"flex",flexDirection:"column",background:"white"}}>
           {screen==="builder"&&<BuilderPanel form={form} up={up} togSec={togSec} ready={ready} onNext={()=>setScreen("pricing_wall")}/>}
           {screen==="generating"&&(
             <div style={{padding:"22px",display:"flex",flexDirection:"column",gap:9,height:"100%",overflowY:"auto",background:"white"}}>
               <div style={{fontSize:12,fontWeight:700,color:"#374151",marginBottom:4}}>Building your page…</div>
               {[["✓","SEO meta tags & schema"],["✓","Niche-specific copy"],["✓","Conversion CTAs"],["✓","Mobile responsive"],["⏳","Finalising HTML…"]].map(([ic,t],i)=>(
-                <div key={t} style={{display:"flex",gap:8,alignItems:"center",fontSize:12,color:ic==="⏳"?"#f97316":"#16a34a",animation:`slideIn .3s ${i*.08}s ease both`}}>
+                <div key={t} style={{display:"flex",gap:8,alignItems:"center",fontSize:12,color:ic==="⏳"?"#f97316":"#16a34a"}}>
                   <span>{ic==="⏳"?<span style={{animation:"spin .8s linear infinite",display:"inline-block"}}>◌</span>:"✓"}</span>{t}
                 </div>
               ))}
@@ -2563,8 +2290,6 @@ export default function Sitefliq() {
           )}
           {screen==="result"&&<ResultScreen html={resHtml} form={form} onReset={()=>setScreen("builder")}/>}
         </div>
-
-        {/* Right */}
         <div style={{overflow:"hidden",display:"flex",flexDirection:"column"}}>
           {screen==="builder"&&<LivePreview form={form}/>}
           {screen==="generating"&&<GeneratingScreen form={form} onDone={async h=>{await sb.deductCredit();await refreshCredits();setResHtml(h);setScreen("result");}} onError={e=>{setGenErr(e);setScreen("builder");}}/>}
@@ -2572,9 +2297,7 @@ export default function Sitefliq() {
             <div style={{height:"100%",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",padding:40,background:"#f1f5f9",gap:18,textAlign:"center"}}>
               <div style={{fontSize:44}}>🎉</div>
               <div style={{fontSize:20,fontWeight:800,color:"#111827"}}>{form.name}</div>
-              <p style={{fontSize:13,color:"#6b7280",maxWidth:340,lineHeight:1.7}}>
-                Click <strong>"Open Preview in New Tab"</strong> on the left to see your full website in the browser.
-              </p>
+              <p style={{fontSize:13,color:"#6b7280",maxWidth:340,lineHeight:1.7}}>Click <strong>"Open Preview in New Tab"</strong> on the left to see your full website in the browser.</p>
               <div style={{padding:"14px 22px",background:"white",borderRadius:12,border:"1px solid #e5e7eb",maxWidth:380,width:"100%"}}>
                 <div style={{fontSize:10,color:"#9ca3af",marginBottom:8,textTransform:"uppercase",letterSpacing:1}}>Page Summary</div>
                 <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:8,fontSize:12}}>
