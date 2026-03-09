@@ -950,7 +950,7 @@ function PricingWall({form, onBack, onPurchase}) {
 
         {/* Trust signals */}
         <div style={{display:"flex",justifyContent:"center",gap:32,fontSize:12,color:"#9ca3af",flexWrap:"wrap"}}>
-          {["🔒 Secure checkout via Paddle","⚡ 1 credit = 1 full landing page","💾 Credits never expire","↩ 7-day money back guarantee"].map(t=>(
+          {["🔒 Secure checkout via Paddle","⚡ 1 credit = 1 full landing page","💾 Credits never expire","↩ 14-day money back guarantee"].map(t=>(
             <span key={t}>{t}</span>
           ))}
         </div>
@@ -1268,7 +1268,7 @@ function TermsPage({onHome}) {
         </ul>
       </Section>
       <Section title="5. Refund Policy">
-        <p>We offer a 7-day money-back guarantee on unused credit packages. If you have not used any credits from a purchase, you may request a full refund within 7 days of purchase by contacting us at ai.productivitylab95@gmail.com. Partial refunds are not available for partially-used credit packages. Refunds are processed within 5-10 business days.</p>
+        <p>We offer a full 14-day money-back guarantee on all purchases. If you are not satisfied for any reason, contact us within 14 days of your purchase and we will issue a full refund — no questions asked. Refunds are processed through Paddle within 5–10 business days.</p>
       </Section>
       <Section title="6. AI-Generated Content">
         <p style={{marginBottom:10}}>Our Service uses artificial intelligence to generate landing page content. You acknowledge and agree that:</p>
@@ -1380,24 +1380,17 @@ function RefundPage({onHome}) {
   return (
     <LegalPage title="Refund Policy" onHome={onHome}>
       <Section title="Our Commitment">
-        <p>We want you to be completely satisfied with Sitefliq. If for any reason you are not happy with your purchase, we offer a straightforward refund policy.</p>
+        <p>We want you to be completely satisfied with Sitefliq. If for any reason you are not happy with your purchase, we offer a straightforward, no-questions-asked refund policy.</p>
       </Section>
-      <Section title="7-Day Money-Back Guarantee">
-        <p>We offer a full refund on any credit package within <strong>7 days of purchase</strong>, provided that <strong>none of the credits have been used</strong>. If you purchased a package and have not generated any landing pages, simply contact us and we will issue a full refund, no questions asked.</p>
+      <Section title="14-Day Money-Back Guarantee">
+        <p>You may request a full refund on any Sitefliq purchase within <strong>14 days of the original transaction date</strong>, no questions asked. Simply contact us within this window and we will process your refund promptly.</p>
       </Section>
-      <Section title="Partial Refunds">
-        <p>If you have used some but not all of your credits, we do not offer partial refunds. However, your remaining unused credits will stay in your account and never expire, so you can use them whenever you need to.</p>
-      </Section>
-      <Section title="Non-Refundable Circumstances">
-        <p style={{marginBottom:10}}>Refunds will not be issued in the following circumstances:</p>
-        <ul style={{paddingLeft:20,margin:0}}>
-          <li style={{marginBottom:8}}>More than 7 days have passed since the original purchase</li>
-          <li style={{marginBottom:8}}>One or more credits from the package have been used</li>
-          <li style={{marginBottom:8}}>The account has been suspended for violating our Terms of Service</li>
-        </ul>
+      <Section title="How Refunds Work">
+        <p>Refunds are processed through Paddle, our payment provider and Merchant of Record. Once approved, the full amount will be returned to the original payment method used at checkout. Processing typically takes 5–10 business days depending on your bank or card issuer.</p>
+        <p style={{marginTop:10}}>Please note: Paddle acts as the Merchant of Record for all Sitefliq transactions. All refund requests are handled in accordance with <a href="https://www.paddle.com/legal/checkout-buyer-terms" target="_blank" style={{color:"#f97316"}}>Paddle's Buyer Terms</a>, which grant consumers the right to cancel within 14 days of purchase.</p>
       </Section>
       <Section title="How to Request a Refund">
-        <p>To request a refund, email us at <strong>ai.productivitylab95@gmail.com</strong> with the subject line "Refund Request" and include your account email address and the date of purchase. We will process your refund within 5-10 business days. Refunds will be returned to the original payment method.</p>
+        <p>To request a refund, email us at <strong>ai.productivitylab95@gmail.com</strong> with the subject line "Refund Request" and include your account email address and transaction date. We will respond within 1 business day and process your refund within 5–10 business days.</p>
       </Section>
       <Section title="Contact">
         <p>For any questions about our refund policy, contact us at: <strong>ai.productivitylab95@gmail.com</strong></p>
@@ -1609,7 +1602,7 @@ function PricingPage({onBuild,onHome,user,credits,onSignIn,onSignOut,onPurchase}
           ))}
         </div>
         <div style={{marginTop:24,textAlign:"center",fontSize:12,color:"#9ca3af"}}>
-          🔒 Secure checkout via Paddle · Credits never expire · 7-day money back guarantee
+          🔒 Secure checkout via Paddle · Credits never expire · 14-day money back guarantee
         </div>
       </div>
     </div>
@@ -2517,7 +2510,7 @@ export default function Sitefliq() {
           ← Go back
         </button>
         <p style={{marginTop:16,fontSize:11,color:"#9ca3af"}}>
-          🔒 Payments secured by Paddle · 7-day money back guarantee
+          🔒 Payments secured by Paddle · 14-day money back guarantee
         </p>
       </div>
     </div>
