@@ -18,7 +18,9 @@ export default async function handler(req, res) {
     if (!creditsToAdd) return res.status(400).json({ error: 'Unknown plan' });
 
     const SUPABASE_URL = "https://fcajlfdykudsunczdrex.supabase.co";
-    const SUPABASE_SERVICE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZjYWpsZmR5a3Vkc3VuY3pkcmV4Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3MjY1NzAyNiwiZXhwIjoyMDg4MjMzMDI2fQ.0rhp9CuvxZpwXBC6kK1FnHrnU-Rit8-XBgPtHl01Mpg";
+    const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_KEY;
+
+    if (!SUPABASE_SERVICE_KEY) return res.status(500).json({ error: 'Server configuration error' });
 
     // Add credits
     await fetch(SUPABASE_URL + '/rest/v1/rpc/add_credits', {
