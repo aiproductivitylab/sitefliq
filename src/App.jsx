@@ -769,28 +769,35 @@ function BuilderPanel({form,up,togSec,onNext,ready,credits,user}) {
               if(data.address) up("location", data.address);
               if(data.colours && data.colours.length) {
                 up("importedColours", data.colours);
-                // Auto-pick palette and vibe based on dominant colour
-                const dominant = data.colours[0] || '#000000';
+                // Find most saturated colour — that's the brand accent, not bg/text
+                const getSaturation = (hex) => {
+                  const r=parseInt(hex.slice(1,3),16)/255;
+                  const g=parseInt(hex.slice(3,5),16)/255;
+                  const b=parseInt(hex.slice(5,7),16)/255;
+                  const max=Math.max(r,g,b), min=Math.min(r,g,b);
+                  return max===0?0:(max-min)/max;
+                };
+                const sorted = [...data.colours].sort((a,b)=>getSaturation(b)-getSaturation(a));
+                const dominant = sorted[0] || '#000000';
                 const r = parseInt(dominant.slice(1,3),16);
                 const g = parseInt(dominant.slice(3,5),16);
                 const b = parseInt(dominant.slice(5,7),16);
-                const brightness = (r*299 + g*587 + b*114) / 1000;
-                const isLight = brightness > 128;
                 const isRed = r > 150 && g < 100 && b < 100;
-                const isBlue = b > 150 && r < 120;
-                const isGreen = g > 150 && r < 120 && b < 120;
-                const isYellow = r > 180 && g > 160 && b < 80;
+                const isBlue = b > 120 && r < 120 && b > g;
+                const isGreen = g > 120 && r < 120 && g > b;
+                const isYellow = r > 180 && g > 150 && b < 80;
                 const isOrange = r > 180 && g > 80 && g < 160 && b < 80;
-                // Pick palette
+                const brightness = (r*299 + g*587 + b*114) / 1000;
+                const isLight = brightness > 160;
                 let palette = "clean";
-                if(isLight) palette = "clean";
-                else if(isRed || isOrange) palette = "ember";
+                if(isRed) palette = "ember";
+                else if(isOrange) palette = "ember";
                 else if(isBlue) palette = "slate";
                 else if(isGreen) palette = "forest";
                 else if(isYellow) palette = "gold";
+                else if(isLight) palette = "clean";
                 else palette = "noir";
                 up("palette", palette);
-                // Pick vibe based on industry hint from description
                 const desc = (data.description || "").toLowerCase();
                 let vibe = "warm";
                 if(/luxury|premium|elite|exclusive|high.end/.test(desc)) vibe = "elegant";
