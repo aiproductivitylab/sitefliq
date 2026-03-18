@@ -7,6 +7,7 @@ export default async function handler(req, res) {
   const token = process.env.VERCEL_DEPLOY_TOKEN;
   if (!token) return res.status(500).json({ error: 'Deploy token not configured' });
 
+  // Slugify the business name for the project name
   const slug = name.toLowerCase().replace(/[^a-z0-9]/g, '-').replace(/-+/g, '-').replace(/^-|-$/g, '').substring(0, 40);
   const projectName = `sf-${slug}-${Date.now().toString(36)}`;
 
@@ -19,8 +20,16 @@ export default async function handler(req, res) {
       },
       body: JSON.stringify({
         name: projectName,
-        files: [{ file: 'index.html', data: html, encoding: 'utf8' }],
-        projectSettings: { framework: null },
+        files: [
+          {
+            file: 'index.html',
+            data: html,
+            encoding: 'utf-8',
+          }
+        ],
+        projectSettings: {
+          framework: null,
+        },
         target: 'production',
       }),
     });
@@ -32,6 +41,7 @@ export default async function handler(req, res) {
       return res.status(500).json({ error: data.error?.message || 'Deploy failed' });
     }
 
+    // Wait for deployment to be ready (poll up to 30s)
     const deployId = data.id;
     let url = data.url;
     let ready = data.readyState === 'READY';
@@ -48,7 +58,10 @@ export default async function handler(req, res) {
       attempts++;
     }
 
-    return res.status(200).json({ url: `https://${url}`, ready });
+    return res.status(200).json({ 
+      url: `https://${url}`,
+      ready 
+    });
 
   } catch (err) {
     console.error('Publish error:', err);
