@@ -1086,8 +1086,11 @@ function ResultScreen({html,form,onReset}) {
   },[html]);
 
   const open=()=>{
-    const w=window.open('','_blank');
-    if(w){w.document.write(html);w.document.close();setOpened(true);}
+    const blob=new Blob([html],{type:'text/html'});
+    const url=URL.createObjectURL(blob);
+    const w=window.open(url,'_blank');
+    if(w) setOpened(true);
+    setTimeout(()=>URL.revokeObjectURL(url),10000);
   };
   const dl=()=>{const a=document.createElement("a");a.href=blobUrl;a.download=`${form.name.replace(/\s+/g,"-").toLowerCase()}-landing-page.html`;a.click();};
   const copy=()=>navigator.clipboard.writeText(html).then(()=>{setCopied(true);setTimeout(()=>setCopied(false),2500);});
@@ -1120,8 +1123,8 @@ function ResultScreen({html,form,onReset}) {
             <div style={{fontSize:11,color:"#6b7280"}}>{html.length.toLocaleString()} chars · {form.sections.length} sections</div>
           </div>
         </div>
-        <button onClick={open} style={{width:"100%",padding:"12px",background:"#f97316",color:"white",border:"none",borderRadius:9,fontSize:14,fontWeight:700,cursor:"pointer",marginBottom:8,display:"flex",alignItems:"center",justifyContent:"center",gap:8,fontFamily:"inherit"}}>
-          🔗 Open Preview in New Tab
+        <button onClick={open} style={{width:"100%",padding:"10px",background:"white",color:"#374151",border:"1px solid #e5e7eb",borderRadius:9,fontSize:13,fontWeight:600,cursor:"pointer",marginBottom:8,display:"flex",alignItems:"center",justifyContent:"center",gap:8,fontFamily:"inherit"}}>
+          🔗 Open in New Tab
         </button>
         {opened&&<div style={{fontSize:11,color:"#16a34a",textAlign:"center",marginBottom:8}}>✓ Opened! Allow popups if blocked.</div>}
 
@@ -2510,23 +2513,21 @@ export default function Sitefliq() {
           {screen==="builder"&&<LivePreview form={form}/>}
           {screen==="generating"&&<GeneratingScreen form={form} onDone={async h=>{await sb.deductCredit();await refreshCredits();setResHtml(h);setScreen("result");}} onError={e=>{setGenErr(e);setScreen("builder");}}/>}
           {screen==="result"&&(
-            <div style={{height:"100%",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",padding:40,background:"#f1f5f9",gap:18,textAlign:"center"}}>
-              <div style={{fontSize:44}}>🎉</div>
-              <div style={{fontSize:20,fontWeight:800,color:"#111827"}}>{form.name}</div>
-              <p style={{fontSize:13,color:"#6b7280",maxWidth:340,lineHeight:1.7}}>
-                Click <strong>"Open Preview in New Tab"</strong> on the left to see your full website in the browser.
-              </p>
-              <div style={{padding:"14px 22px",background:"white",borderRadius:12,border:"1px solid #e5e7eb",maxWidth:380,width:"100%"}}>
-                <div style={{fontSize:10,color:"#9ca3af",marginBottom:8,textTransform:"uppercase",letterSpacing:1}}>Page Summary</div>
-                <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:8,fontSize:12}}>
-                  {[["Sections",form.sections.length],["Size",Math.round(resHtml.length/1000)+"KB"],["SEO","✓ Included"],["Mobile","✓ Ready"]].map(([k,v])=>(
-                    <div key={k} style={{padding:"8px 11px",background:"#f9fafb",borderRadius:7}}>
-                      <div style={{color:"#9ca3af",fontSize:10}}>{k}</div>
-                      <div style={{fontWeight:700,color:"#111827",marginTop:1}}>{v}</div>
-                    </div>
-                  ))}
+            <div style={{height:"100%",display:"flex",flexDirection:"column",background:"#f1f5f9"}}>
+              <div style={{padding:"10px 16px",background:"white",borderBottom:"1px solid #e5e7eb",display:"flex",alignItems:"center",gap:8}}>
+                <div style={{width:10,height:10,borderRadius:"50%",background:"#ef4444"}}/>
+                <div style={{width:10,height:10,borderRadius:"50%",background:"#f59e0b"}}/>
+                <div style={{width:10,height:10,borderRadius:"50%",background:"#22c55e"}}/>
+                <div style={{flex:1,background:"#f3f4f6",borderRadius:6,padding:"4px 12px",fontSize:11,color:"#9ca3af",marginLeft:8}}>
+                  {form.name.toLowerCase().replace(/\s+/g,"-")}.vercel.app
                 </div>
               </div>
+              <iframe
+                srcDoc={resHtml}
+                style={{flex:1,width:"100%",border:"none",display:"block"}}
+                title="Page Preview"
+                sandbox="allow-scripts allow-same-origin"
+              />
             </div>
           )}
         </div>
