@@ -72,7 +72,12 @@ const sb = {
     });
     return r.ok;
   },
-  restoreSession() {
+  async resetPassword(email) {
+    return await this.req("/auth/v1/recover", {
+      method: "POST",
+      body: JSON.stringify({email})
+    });
+  },
     try {
       const token = localStorage.getItem("sb_token");
       const user = localStorage.getItem("sb_user");
@@ -1178,11 +1183,16 @@ function AuthModal({mode="signin", onSuccess, onClose}) {
   const [loading, setLoading] = useState(false);
   const [err, setErr] = useState("");
   const [msg, setMsg] = useState("");
+  const [forgotMode, setForgotMode] = useState(false);
 
   const handle = async () => {
     setErr(""); setMsg(""); setLoading(true);
     try {
-      if(tab === "signup") {
+      if(forgotMode) {
+        const r = await sb.resetPassword(email);
+        if(!r.ok) { setErr("Could not send reset email. Please check the address."); }
+        else { setMsg("Reset email sent! Check your inbox and follow the link."); }
+      } else if(tab === "signup") {
         const r = await sb.signUp(email, password);
         if(!r.ok) { setErr(r.data?.msg || r.data?.error_description || "Sign up failed"); }
         else { setMsg("Check your email to confirm your account, then sign in!"); setTab("signin"); }
@@ -1195,42 +1205,71 @@ function AuthModal({mode="signin", onSuccess, onClose}) {
     setLoading(false);
   };
 
+  const inp = {width:"100%",padding:"10px 12px",border:"1px solid #e5e7eb",borderRadius:8,fontSize:14,outline:"none",boxSizing:"border-box"};
+
   return (
     <div style={{position:"fixed",inset:0,background:"rgba(0,0,0,0.5)",display:"flex",alignItems:"center",justifyContent:"center",zIndex:9999,fontFamily:"'Geist',sans-serif"}}>
       <div style={{background:"white",borderRadius:16,padding:36,width:"100%",maxWidth:400,position:"relative"}}>
         <button onClick={onClose} style={{position:"absolute",top:16,right:16,background:"none",border:"none",fontSize:20,cursor:"pointer",color:"#9ca3af"}}>×</button>
         <div style={{textAlign:"center",marginBottom:24}}>
           <div style={{fontSize:28,fontWeight:800,color:"#111827",marginBottom:4}}>
-            {tab==="signin" ? "Welcome back" : "Create account"}
+            {forgotMode ? "Reset Password" : tab==="signin" ? "Welcome back" : "Create account"}
           </div>
-          <p style={{fontSize:13,color:"#6b7280"}}>{tab==="signin" ? "Sign in to access your credits" : "Start building landing pages with AI"}</p>
+          <p style={{fontSize:13,color:"#6b7280"}}>
+            {forgotMode ? "Enter your email and we'll send a reset link" : tab==="signin" ? "Sign in to access your credits" : "Start building landing pages with AI"}
+          </p>
         </div>
-        <div style={{display:"flex",gap:0,marginBottom:24,background:"#f3f4f6",borderRadius:8,padding:3}}>
-          {["signin","signup"].map(t=>(
-            <button key={t} onClick={()=>{setTab(t);setErr("");setMsg("");}} style={{flex:1,padding:"8px 0",border:"none",borderRadius:6,fontSize:13,fontWeight:600,cursor:"pointer",background:tab===t?"white":"transparent",color:tab===t?"#111827":"#6b7280",boxShadow:tab===t?"0 1px 3px rgba(0,0,0,.1)":"none",transition:"all .15s"}}>
-              {t==="signin"?"Sign In":"Sign Up"}
-            </button>
-          ))}
-        </div>
+
+        {!forgotMode && (
+          <div style={{display:"flex",gap:0,marginBottom:24,background:"#f3f4f6",borderRadius:8,padding:3}}>
+            {["signin","signup"].map(t=>(
+              <button key={t} onClick={()=>{setTab(t);setErr("");setMsg("");}} style={{flex:1,padding:"8px 0",border:"none",borderRadius:6,fontSize:13,fontWeight:600,cursor:"pointer",background:tab===t?"white":"transparent",color:tab===t?"#111827":"#6b7280",boxShadow:tab===t?"0 1px 3px rgba(0,0,0,.1)":"none",transition:"all .15s"}}>
+                {t==="signin"?"Sign In":"Sign Up"}
+              </button>
+            ))}
+          </div>
+        )}
+
         {err && <div style={{background:"#fef2f2",border:"1px solid #fecaca",borderRadius:8,padding:"10px 14px",fontSize:13,color:"#dc2626",marginBottom:16}}>{err}</div>}
         {msg && <div style={{background:"#f0fdf4",border:"1px solid #bbf7d0",borderRadius:8,padding:"10px 14px",fontSize:13,color:"#16a34a",marginBottom:16}}>{msg}</div>}
-        <div style={{marginBottom:14}}>
-          <label style={{fontSize:12,fontWeight:600,color:"#374151",display:"block",marginBottom:5}}>EMAIL</label>
-          <input value={email} onChange={e=>setEmail(e.target.value)} type="email" placeholder="you@example.com"
-            style={{width:"100%",padding:"10px 12px",border:"1px solid #e5e7eb",borderRadius:8,fontSize:14,outline:"none",boxSizing:"border-box"}}
-            onKeyDown={e=>e.key==="Enter"&&handle()}/>
-        </div>
-        <div style={{marginBottom:20}}>
-          <label style={{fontSize:12,fontWeight:600,color:"#374151",display:"block",marginBottom:5}}>PASSWORD</label>
-          <input value={password} onChange={e=>setPassword(e.target.value)} type="password" placeholder="••••••••"
-            style={{width:"100%",padding:"10px 12px",border:"1px solid #e5e7eb",borderRadius:8,fontSize:14,outline:"none",boxSizing:"border-box"}}
-            onKeyDown={e=>e.key==="Enter"&&handle()}/>
-        </div>
-        <button onClick={handle} disabled={loading||!email||!password}
-          style={{width:"100%",padding:"13px",background: loading||!email||!password?"#e5e7eb":"#f97316",color:loading||!email||!password?"#9ca3af":"white",border:"none",borderRadius:10,fontSize:15,fontWeight:700,cursor:loading||!email||!password?"not-allowed":"pointer",transition:"background .15s"}}>
-          {loading ? "Please wait…" : tab==="signin" ? "Sign In →" : "Create Account →"}
-        </button>
-        <p style={{textAlign:"center",marginTop:16,fontSize:12,color:"#9ca3af"}}>🔒 Secure · Your data is never shared</p>
+
+        <form onSubmit={e=>{e.preventDefault();handle();}} autoComplete="on">
+          <div style={{marginBottom:14}}>
+            <label style={{fontSize:12,fontWeight:600,color:"#374151",display:"block",marginBottom:5}}>EMAIL</label>
+            <input
+              value={email} onChange={e=>setEmail(e.target.value)}
+              type="email" name="email" autoComplete="email"
+              placeholder="you@example.com" style={inp}/>
+          </div>
+          {!forgotMode && (
+            <div style={{marginBottom:8}}>
+              <label style={{fontSize:12,fontWeight:600,color:"#374151",display:"block",marginBottom:5}}>PASSWORD</label>
+              <input
+                value={password} onChange={e=>setPassword(e.target.value)}
+                type="password" name={tab==="signin"?"current-password":"new-password"}
+                autoComplete={tab==="signin"?"current-password":"new-password"}
+                placeholder="••••••••" style={inp}/>
+            </div>
+          )}
+          {tab==="signin" && !forgotMode && (
+            <div style={{textAlign:"right",marginBottom:16}}>
+              <button type="button" onClick={()=>{setForgotMode(true);setErr("");setMsg("");}} style={{background:"none",border:"none",fontSize:12,color:"#f97316",cursor:"pointer",fontFamily:"inherit",padding:0}}>
+                Forgot password?
+              </button>
+            </div>
+          )}
+          <button type="submit" disabled={loading||!email||(forgotMode?false:!password)}
+            style={{width:"100%",padding:"13px",background:loading||!email||(forgotMode?false:!password)?"#e5e7eb":"#f97316",color:loading||!email||(forgotMode?false:!password)?"#9ca3af":"white",border:"none",borderRadius:10,fontSize:15,fontWeight:700,cursor:"pointer",transition:"background .15s",marginBottom:12}}>
+            {loading ? "Please wait…" : forgotMode ? "Send Reset Email →" : tab==="signin" ? "Sign In →" : "Create Account →"}
+          </button>
+        </form>
+
+        {forgotMode && (
+          <button onClick={()=>{setForgotMode(false);setErr("");setMsg("");}} style={{width:"100%",padding:"10px",background:"none",border:"1px solid #e5e7eb",borderRadius:10,fontSize:13,color:"#6b7280",cursor:"pointer",fontFamily:"inherit"}}>
+            ← Back to Sign In
+          </button>
+        )}
+        <p style={{textAlign:"center",marginTop:12,fontSize:12,color:"#9ca3af"}}>🔒 Secure · Your data is never shared</p>
       </div>
     </div>
   );
