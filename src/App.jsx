@@ -987,14 +987,11 @@ function GeneratingScreen({form,onDone,onError}) {
       setSi(Math.floor(p/100*(stages.length-1)));
     },800);
 
-    const PEXELS_KEY = import.meta.env.VITE_PEXELS_KEY;
     // Get section-specific targeted queries for this industry
     const queries = getSectionKeywords(form.industry);
 
     const fetchImg = (q) =>
-      fetch(`https://api.pexels.com/v1/search?query=${encodeURIComponent(q)}&per_page=5&orientation=landscape`, {
-        headers: { Authorization: PEXELS_KEY }
-      })
+      fetch(`/api/images?query=${encodeURIComponent(q)}`)
         .then(r=>r.json())
         .then(d=>{
           if(d.photos&&d.photos.length>0){
@@ -1011,15 +1008,9 @@ function GeneratingScreen({form,onDone,onError}) {
       .then(images=>{
         const validImages = images.filter(Boolean);
         if(!cancelled) setImgStatus(validImages.length>0 ? `Found ${validImages.length} photos ✓`:"Using styled design…");
-        // Now generate the page with the images
-        return fetch("https://api.anthropic.com/v1/messages",{
+        return fetch("/api/generate",{
           method:"POST",
-          headers:{
-            "Content-Type":"application/json",
-            "x-api-key":import.meta.env.VITE_ANTHROPIC_KEY,
-            "anthropic-version":"2023-06-01",
-            "anthropic-dangerous-direct-browser-access":"true"
-          },
+          headers:{"Content-Type":"application/json"},
           body:JSON.stringify({
             model:"claude-sonnet-4-20250514",
             max_tokens:8000,
