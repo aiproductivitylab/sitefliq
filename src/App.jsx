@@ -2327,8 +2327,8 @@ function ExamplePage({onBack,onBuild}) {
 
 export default function Sitefliq() {
   // screens: home | builder | pricing_wall | generating | result
-  const [screen,setScreen]=useState("home");
-  const [resHtml,setResHtml]=useState("");
+  const [screen,setScreen]=useState(()=>localStorage.getItem("sf_screen")==="result"?"result":"home");
+  const [resHtml,setResHtml]=useState(()=>localStorage.getItem("sf_html")||"");
   const [genErr,setGenErr]=useState(null);
   const [user,setUser]=useState(null);
   const [credits,setCredits]=useState(0);
@@ -2505,13 +2505,13 @@ export default function Sitefliq() {
               ))}
             </div>
           )}
-          {screen==="result"&&<ResultScreen html={resHtml} form={form} onReset={()=>setScreen("builder")}/>}
+          {screen==="result"&&<ResultScreen html={resHtml} form={form} onReset={()=>{localStorage.removeItem("sf_html");localStorage.removeItem("sf_screen");setScreen("builder");}}/>}
         </div>
 
         {/* Right */}
         <div style={{overflow:"hidden",display:"flex",flexDirection:"column"}}>
           {screen==="builder"&&<LivePreview form={form}/>}
-          {screen==="generating"&&<GeneratingScreen form={form} onDone={async h=>{await sb.deductCredit();await refreshCredits();setResHtml(h);setScreen("result");}} onError={e=>{setGenErr(e);setScreen("builder");}}/>}
+          {screen==="generating"&&<GeneratingScreen form={form} onDone={async h=>{await sb.deductCredit();await refreshCredits();setResHtml(h);localStorage.setItem("sf_html",h);localStorage.setItem("sf_screen","result");setScreen("result");}} onError={e=>{setGenErr(e);setScreen("builder");}}/>}
           {screen==="result"&&(
             <div style={{height:"100%",display:"flex",flexDirection:"column",background:"#f1f5f9"}}>
               <div style={{padding:"10px 16px",background:"white",borderBottom:"1px solid #e5e7eb",display:"flex",alignItems:"center",gap:8}}>
