@@ -335,7 +335,7 @@ function buildPrompt(f, images=[]) {
     "Phone: "+(f.phone||""),
     "Email: "+(f.email||""),
     "CTA: "+(f.cta||"Get Started Today"),
-    f.logo ? "LOGO: A base64 logo image is provided. Embed it as <img src=\""+f.logo+"\" alt=\""+f.name+" logo\"> in the header (height:48px, object-fit:contain) AND footer (height:36px). Always show the logo prominently." : "LOGO: No logo provided — use a styled text logo with the business name in the accent colour instead.",
+    f.logo ? "LOGO: Use this exact img tag in header (height:48px) and footer (height:36px): <img src=\"LOGO_PLACEHOLDER\" alt=\""+f.name+" logo\" style=\"height:48px;object-fit:contain\">  — replace LOGO_PLACEHOLDER with the actual src at runtime." : "LOGO: No logo provided — use a styled text logo with the business name in the accent colour instead.",
     "",
     "DESIGN:",
     "Palette bg:"+pal.bg+" surface:"+pal.surface+" accent:"+pal.accent+" text:"+pal.text,
@@ -1096,6 +1096,8 @@ function GeneratingScreen({form,onDone,onError}) {
         if(idx>0)html=html.slice(idx);
         const end=html.lastIndexOf("</html>");
         if(end!==-1)html=html.slice(0,end+7);
+        // Replace logo placeholder with actual logo if provided
+        if(form.logo) html=html.replace(/LOGO_PLACEHOLDER/g, form.logo);
         if(!html.toLowerCase().includes("<!doctype"))throw new Error("Invalid HTML. Please try again.");
         setTimeout(()=>onDone(html),400);
       })
