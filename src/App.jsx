@@ -753,9 +753,12 @@ function BuilderPanel({form,up,togSec,onNext,ready,credits,user}) {
           <div style={{display:"flex",flexDirection:"column",gap:13}}>
             <WebsiteImporter onImport={data=>{
               if(data.logo) up("logo", data.logo);
-              if(data.title) up("name", data.title.replace(/\s*[|\-–].*/,"").trim());
+              if(data.businessName || data.title) up("name", (data.businessName || data.title.replace(/\s*[|\-–].*/,"")).trim());
               if(data.description) up("description", data.description);
               if(data.colours && data.colours.length) up("importedColours", data.colours);
+              if(data.phone) up("phone", data.phone);
+              if(data.email) up("email", data.email);
+              if(data.address) up("location", data.address);
             }}/>
             <LogoUpload value={form.logo} onChange={v=>up("logo",v)}/>
             <Field label="Business Name" required value={form.name} onChange={v=>up("name",v)} placeholder="e.g. Green Haven Garden Services"/>
