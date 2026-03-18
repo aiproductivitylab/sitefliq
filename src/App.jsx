@@ -722,7 +722,7 @@ function LivePreview({form}) {
 /* ─────────────────────────────────────────────────────────────────────────────
    BUILDER PANEL (left side)
 ───────────────────────────────────────────────────────────────────────────── */
-function BuilderPanel({form,up,togSec,onNext,ready}) {
+function BuilderPanel({form,up,togSec,onNext,ready,credits,user}) {
   const [tab,setTab]=useState("info");
   return (
     <div style={{display:"flex",flexDirection:"column",height:"100%",background:"white"}}>
@@ -841,7 +841,7 @@ function BuilderPanel({form,up,togSec,onNext,ready}) {
       {/* CTA */}
       <div style={{padding:"14px 22px",borderTop:"1px solid #f3f4f6",background:"white"}}>
         <button onClick={onNext} disabled={!ready} style={{width:"100%",padding:"13px",background:ready?"#f97316":"#e5e7eb",color:ready?"white":"#9ca3af",border:"none",borderRadius:10,fontSize:14,fontWeight:700,cursor:ready?"pointer":"not-allowed",fontFamily:"inherit",display:"flex",alignItems:"center",justifyContent:"center",gap:8,transition:"all .2s",animation:ready?"glow 3s ease-in-out infinite":"none"}}>
-          <span>✦</span> {ready?"See Pricing & Continue →":"Fill in required fields first"}
+          <span>✦</span> {ready?(user&&credits>0?"Generate My Page →":"See Pricing & Continue →"):"Fill in required fields first"}
         </button>
         {!ready&&<div style={{marginTop:7,fontSize:11,color:"#f97316",textAlign:"center"}}>
           Missing: {[!form.name&&"Name",!form.industry&&"Industry",!form.description&&"Description"].filter(Boolean).join(", ")}
@@ -2497,7 +2497,7 @@ export default function Sitefliq() {
       <div style={{flex:1,display:"grid",gridTemplateColumns:"360px 1fr",overflow:"hidden"}}>
         {/* Left */}
         <div style={{borderRight:"1px solid #e5e7eb",overflow:"hidden",display:"flex",flexDirection:"column",background:"white"}}>
-          {screen==="builder"&&<BuilderPanel form={form} up={up} togSec={togSec} ready={ready} onNext={()=>setScreen("pricing_wall")}/>}
+          {screen==="builder"&&<BuilderPanel form={form} up={up} togSec={togSec} ready={ready} onNext={()=>{ if(user && credits>0){ setScreen("generating"); } else { setScreen("pricing_wall"); } }} credits={credits} user={user}/>}
           {screen==="generating"&&(
             <div style={{padding:"22px",display:"flex",flexDirection:"column",gap:9,height:"100%",overflowY:"auto",background:"white"}}>
               <div style={{fontSize:12,fontWeight:700,color:"#374151",marginBottom:4}}>Building your page…</div>
