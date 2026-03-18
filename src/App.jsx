@@ -756,10 +756,42 @@ function BuilderPanel({form,up,togSec,onNext,ready,credits,user}) {
               if(data.logo) up("logo", data.logo);
               if(data.businessName || data.title) up("name", (data.businessName || data.title.replace(/\s*[|\-–].*/,"")).trim());
               if(data.description) up("description", data.description);
-              if(data.colours && data.colours.length) up("importedColours", data.colours);
               if(data.phone) up("phone", data.phone);
               if(data.email) up("email", data.email);
               if(data.address) up("location", data.address);
+              if(data.colours && data.colours.length) {
+                up("importedColours", data.colours);
+                // Auto-pick palette and vibe based on dominant colour
+                const dominant = data.colours[0] || '#000000';
+                const r = parseInt(dominant.slice(1,3),16);
+                const g = parseInt(dominant.slice(3,5),16);
+                const b = parseInt(dominant.slice(5,7),16);
+                const brightness = (r*299 + g*587 + b*114) / 1000;
+                const isLight = brightness > 128;
+                const isRed = r > 150 && g < 100 && b < 100;
+                const isBlue = b > 150 && r < 120;
+                const isGreen = g > 150 && r < 120 && b < 120;
+                const isYellow = r > 180 && g > 160 && b < 80;
+                const isOrange = r > 180 && g > 80 && g < 160 && b < 80;
+                // Pick palette
+                let palette = "clean";
+                if(isLight) palette = "clean";
+                else if(isRed || isOrange) palette = "ember";
+                else if(isBlue) palette = "slate";
+                else if(isGreen) palette = "forest";
+                else if(isYellow) palette = "gold";
+                else palette = "noir";
+                up("palette", palette);
+                // Pick vibe based on industry hint from description
+                const desc = (data.description || "").toLowerCase();
+                let vibe = "warm";
+                if(/luxury|premium|elite|exclusive|high.end/.test(desc)) vibe = "elegant";
+                else if(/fast|quick|energy|power|sport|gym|fit/.test(desc)) vibe = "energetic";
+                else if(/tech|software|saas|digital|minimal/.test(desc)) vibe = "minimal";
+                else if(/bold|strong|industrial|auto|roofing|construct/.test(desc)) vibe = "bold";
+                else vibe = "warm";
+                up("vibe", vibe);
+              }
             }}/>
             <LogoUpload value={form.logo} onChange={v=>up("logo",v)}/>
             <Field label="Business Name" required value={form.name} onChange={v=>up("name",v)} placeholder="e.g. Green Haven Garden Services"/>
