@@ -33,6 +33,9 @@ export default async function handler(req, res) {
       || getTag(/<meta[^>]*property="og:title"[^>]*content="([^"]+)"/i)
       || null;
 
+    // og:site_name is usually the cleanest business name
+    const siteName = getTag(/<meta[^>]*property="og:site_name"[^>]*content="([^"]+)"/i);
+
     const description = getTag(/<meta[^>]*name="description"[^>]*content="([^"]+)"/i)
       || getTag(/<meta[^>]*property="og:description"[^>]*content="([^"]+)"/i)
       || null;
@@ -84,13 +87,18 @@ export default async function handler(req, res) {
 
     // ── BUSINESS NAME ──
     let businessName = null;
-    if (title) {
+    if (siteName) {
+      // og:site_name is cleanest — use directly
+      businessName = siteName.trim();
+    } else if (title) {
       businessName = title
+        .replace(/&#8211;/g, '-').replace(/&#8212;/g, '-').replace(/&amp;/g, '&')
+        .replace(/&#\d+;/g, ' ').replace(/&[a-z]+;/g, ' ')
         .replace(/\s*[|\-–—]\s*.*/g, '')
         .replace(/\s*::\s*.*/g, '')
         .replace(/\s*»\s*.*/g, '')
-        .replace(/home\s*$/i, '')
-        .replace(/welcome to\s*/i, '')
+        .replace(/^(?:home|about|contact|services|welcome to)\s*/i, '')
+        .replace(/\s*(?:home|about|contact|services)$/i, '')
         .trim();
     }
 
