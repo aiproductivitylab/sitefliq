@@ -1085,7 +1085,10 @@ function ResultScreen({html,form,onReset}) {
     return()=>URL.revokeObjectURL(u);
   },[html]);
 
-  const open=()=>{if(blobUrl){window.open(blobUrl,"_blank");setOpened(true);}};
+  const open=()=>{
+    const w=window.open('','_blank');
+    if(w){w.document.write(html);w.document.close();setOpened(true);}
+  };
   const dl=()=>{const a=document.createElement("a");a.href=blobUrl;a.download=`${form.name.replace(/\s+/g,"-").toLowerCase()}-landing-page.html`;a.click();};
   const copy=()=>navigator.clipboard.writeText(html).then(()=>{setCopied(true);setTimeout(()=>setCopied(false),2500);});
 
