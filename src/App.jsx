@@ -2400,9 +2400,19 @@ function ExamplePage({onBack,onBuild}) {
   );
 }
 
+const DEFAULT_FORM = {
+  name:"",industry:"",tagline:"",description:"",
+  location:"",phone:"",email:"",cta:"Get Started Today",
+  palette:"noir",vibe:"bold",logo:"",importedColours:[],
+  sections:["hero","social_proof","services","about","testimonials","contact"],
+};
+
 export default function Sitefliq() {
   // screens: home | builder | pricing_wall | generating | result
-  const [screen,setScreen]=useState(()=>localStorage.getItem("sf_screen")==="result"?"result":"home");
+  const [screen,setScreen]=useState(()=>{
+    const s=localStorage.getItem("sf_screen");
+    return s==="result"?"result":s==="builder"?"builder":"home";
+  });
   const [resHtml,setResHtml]=useState(()=>localStorage.getItem("sf_html")||"");
   const [genErr,setGenErr]=useState(null);
   const [user,setUser]=useState(null);
@@ -2454,21 +2464,32 @@ export default function Sitefliq() {
     setScreen("home");
   };
 
-  const refreshCredits = async () => {
+  const goScreen=(s)=>{
+    localStorage.setItem("sf_screen",s);
+    setScreen(s);
+  };
     const c = await sb.getCredits();
     setCredits(c);
     return c;
   };
-  const [form,setForm]=useState({
-    name:"",industry:"",tagline:"",description:"",
-    location:"",phone:"",email:"",cta:"Get Started Today",
-    palette:"noir",vibe:"bold",logo:"",importedColours:[],
-    sections:["hero","social_proof","services","about","testimonials","contact"],
+  const [form,setForm]=useState(()=>{
+    try {
+      const saved = localStorage.getItem("sf_form");
+      return saved ? {...DEFAULT_FORM,...JSON.parse(saved)} : DEFAULT_FORM;
+    } catch { return DEFAULT_FORM; }
   });
-  const up=(k,v)=>setForm(p=>({...p,[k]:v}));
+  const up=(k,v)=>setForm(p=>{
+    const next={...p,[k]:v};
+    try{localStorage.setItem("sf_form",JSON.stringify(next));}catch{}
+    return next;
+  });
   const togSec=id=>{
     if(id==="hero"||id==="social_proof")return;
-    setForm(p=>({...p,sections:p.sections.includes(id)?p.sections.filter(s=>s!==id):[...p.sections,id]}));
+    setForm(p=>{
+      const next={...p,sections:p.sections.includes(id)?p.sections.filter(s=>s!==id):[...p.sections,id]};
+      try{localStorage.setItem("sf_form",JSON.stringify(next));}catch{}
+      return next;
+    });
   };
   const ready=form.name.trim()&&form.industry.trim()&&form.description.trim();
 
@@ -2569,7 +2590,7 @@ export default function Sitefliq() {
       <div style={{flex:1,display:"grid",gridTemplateColumns:"360px 1fr",overflow:"hidden"}}>
         {/* Left */}
         <div style={{borderRight:"1px solid #e5e7eb",overflow:"hidden",display:"flex",flexDirection:"column",background:"white"}}>
-          {screen==="builder"&&<BuilderPanel form={form} up={up} togSec={togSec} ready={ready} onNext={()=>{ if(user && credits>0){ setScreen("generating"); } else { setScreen("pricing_wall"); } }} credits={credits} user={user}/>}
+          {screen==="builder"&&<BuilderPanel form={form} up={up} togSec={togSec} ready={ready} onNext={()=>{ if(user && credits>0){ goScreen("generating"); } else { goScreen("pricing_wall"); } }} credits={credits} user={user}/>}
           {screen==="generating"&&(
             <div style={{padding:"22px",display:"flex",flexDirection:"column",gap:9,height:"100%",overflowY:"auto",background:"white"}}>
               <div style={{fontSize:12,fontWeight:700,color:"#374151",marginBottom:4}}>Building your page…</div>
@@ -2580,13 +2601,13 @@ export default function Sitefliq() {
               ))}
             </div>
           )}
-          {screen==="result"&&<ResultScreen html={resHtml} form={form} onReset={()=>{localStorage.removeItem("sf_html");localStorage.removeItem("sf_screen");setScreen("builder");}}/>}
+          {screen==="result"&&<ResultScreen html={resHtml} form={form} onReset={()=>{localStorage.removeItem("sf_html");localStorage.removeItem("sf_form");localStorage.setItem("sf_screen","builder");setForm(DEFAULT_FORM);setScreen("builder");}}/>}
         </div>
 
         {/* Right */}
         <div style={{overflow:"hidden",display:"flex",flexDirection:"column"}}>
           {screen==="builder"&&<LivePreview form={form}/>}
-          {screen==="generating"&&<GeneratingScreen form={form} onDone={async h=>{await sb.deductCredit();await refreshCredits();setResHtml(h);localStorage.setItem("sf_html",h);localStorage.setItem("sf_screen","result");setScreen("result");}} onError={e=>{setGenErr(e);setScreen("builder");}}/>}
+          {screen==="generating"&&<GeneratingScreen form={form} onDone={async h=>{await sb.deductCredit();await refreshCredits();setResHtml(h);localStorage.setItem("sf_html",h);localStorage.setItem("sf_screen","result");setScreen("result");}} onError={e=>{setGenErr(e);goScreen("builder");}}/>}
           {screen==="result"&&(
             <div style={{height:"100%",display:"flex",flexDirection:"column",background:"#f1f5f9"}}>
               <div style={{padding:"10px 16px",background:"white",borderBottom:"1px solid #e5e7eb",display:"flex",alignItems:"center",gap:8}}>
