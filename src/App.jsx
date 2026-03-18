@@ -1659,177 +1659,134 @@ const EXAMPLE_HTML = `<!DOCTYPE html>
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>IronForge Gym | Personal Training NYC | Transform Your Body in 90 Days</title>
-<meta name="description" content="IronForge Gym in Manhattan offers elite personal training, group classes, and nutrition coaching. Results guaranteed or your money back. Book a free session today."/>
-<meta property="og:title" content="IronForge Gym | NYC's #1 Personal Training Studio"/>
-<meta property="og:description" content="Transform your body in 90 days with NYC's most results-driven personal training studio. First session free."/>
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"LocalBusiness","name":"IronForge Gym","description":"Elite personal training and fitness studio in Manhattan, NYC","address":{"@type":"PostalAddress","streetAddress":"247 W 35th Street","addressLocality":"New York","addressRegion":"NY","postalCode":"10001"},"telephone":"+12125550182","aggregateRating":{"@type":"AggregateRating","ratingValue":"4.9","reviewCount":"428"}}</script>
+<title>Peak Ridge Roofing | Roof Repair & Replacement | Austin, TX</title>
+<meta name="description" content="Peak Ridge Roofing in Austin TX — expert roof repair, replacement and storm damage restoration. Licensed & insured. Free estimates. Call (512) 555-0198."/>
+<meta property="og:title" content="Peak Ridge Roofing | Austin's Most Trusted Roofers"/>
+<meta property="og:description" content="Professional roof repair and replacement in Austin TX. Storm damage specialists. Free same-day estimates. Licensed, bonded & insured since 2008."/>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"RoofingContractor","name":"Peak Ridge Roofing","description":"Professional roofing contractor in Austin TX specializing in roof repair, replacement and storm damage restoration","address":{"@type":"PostalAddress","streetAddress":"4821 Burnet Road","addressLocality":"Austin","addressRegion":"TX","postalCode":"78756"},"telephone":"+15125550198","aggregateRating":{"@type":"AggregateRating","ratingValue":"4.9","reviewCount":"312"}}</script>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
-<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-:root{--bg:#0d0d0d;--surface:#141414;--surface2:#1c1c1c;--accent:#e63946;--text:#f5f5f5;--muted:#888;--border:rgba(230,57,70,.12)}
+:root{--bg:#f8f7f4;--surface:#fff;--surface2:#f1ede6;--accent:#c8410a;--text:#1a1a1a;--muted:#6b6b6b;--border:#e2ddd6}
 html{scroll-behavior:smooth}
 body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;overflow-x:hidden}
-
-/* ── ANIMATIONS ── */
-@keyframes fadeUp{from{opacity:0;transform:translateY(32px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(28px)}to{opacity:1;transform:translateY(0)}}
 @keyframes fadeIn{from{opacity:0}to{opacity:1}}
-@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(230,57,70,.4)}50%{box-shadow:0 0 0 14px rgba(230,57,70,0)}}
-@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
-@keyframes scaleIn{from{opacity:0;transform:scale(1.05)}to{opacity:1;transform:scale(1)}}
-@keyframes slideRight{from{opacity:0;transform:translateX(-40px)}to{opacity:1;transform:translateX(0)}}
-
-.reveal{opacity:0;transform:translateY(32px);transition:opacity .7s ease,transform .7s ease}
+@keyframes scaleIn{from{opacity:0;transform:scale(1.04)}to{opacity:1;transform:scale(1)}}
+.reveal{opacity:0;transform:translateY(28px);transition:opacity .7s ease,transform .7s ease}
 .reveal.visible{opacity:1;transform:translateY(0)}
-.reveal-left{opacity:0;transform:translateX(-30px);transition:opacity .7s ease,transform .7s ease}
-.reveal-left.visible{opacity:1;transform:translateX(0)}
-.reveal-scale{opacity:0;transform:scale(0.93);transition:opacity .6s ease,transform .6s ease}
+.reveal-scale{opacity:0;transform:scale(0.95);transition:opacity .6s ease,transform .6s ease}
 .reveal-scale.visible{opacity:1;transform:scale(1)}
-
-/* ── NAV ── */
-nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:22px 56px;display:flex;align-items:center;justify-content:space-between;transition:all .3s}
-nav.scrolled{background:rgba(13,13,13,.95);backdrop-filter:blur(20px);padding:14px 56px;border-bottom:1px solid var(--border);box-shadow:0 4px 30px rgba(0,0,0,.5)}
-.logo{font-family:'Bebas Neue',sans-serif;font-size:28px;letter-spacing:2px;color:var(--text)}
+nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:20px 56px;display:flex;align-items:center;justify-content:space-between;transition:all .3s;background:transparent}
+nav.scrolled{background:rgba(26,26,26,.97);padding:14px 56px;box-shadow:0 2px 20px rgba(0,0,0,.15)}
+.logo{font-family:'Oswald',sans-serif;font-size:24px;font-weight:700;letter-spacing:1px;color:#fff}
 .logo span{color:var(--accent)}
-.nav-links{display:flex;gap:36px;align-items:center}
-.nav-links a{color:var(--muted);text-decoration:none;font-size:14px;font-weight:500;transition:color .2s;letter-spacing:.3px}
-.nav-links a:hover{color:var(--text)}
-.nav-cta{background:var(--accent);color:white;padding:11px 24px;border-radius:6px;font-size:14px;font-weight:700;text-decoration:none;transition:all .2s;animation:pulse 3s infinite;letter-spacing:.5px}
-.nav-cta:hover{transform:scale(1.05);background:#c1121f}
+.nav-links{display:flex;gap:32px;align-items:center}
+.nav-links a{color:rgba(255,255,255,.8);text-decoration:none;font-size:14px;font-weight:500;transition:color .2s}
+.nav-links a:hover{color:#fff}
+.nav-cta{background:var(--accent);color:white!important;padding:11px 22px;border-radius:4px;font-size:13px;font-weight:700;text-decoration:none;transition:all .2s}
+.nav-cta:hover{background:#a33208;transform:translateY(-1px)}
 .hamburger{display:none;flex-direction:column;gap:5px;cursor:pointer;background:none;border:none;padding:4px}
-.hamburger span{display:block;width:24px;height:2px;background:var(--text);transition:all .3s}
-.mobile-menu{display:none;position:fixed;inset:0;background:var(--bg);z-index:99;padding:100px 40px;flex-direction:column;gap:32px}
+.hamburger span{display:block;width:24px;height:2px;background:#fff;transition:all .3s}
+.mobile-menu{display:none;position:fixed;inset:0;background:#1a1a1a;z-index:99;padding:100px 40px;flex-direction:column;gap:28px}
 .mobile-menu.open{display:flex;animation:fadeIn .3s ease}
-.mobile-menu a{font-family:'Bebas Neue',sans-serif;font-size:36px;letter-spacing:2px;color:var(--text);text-decoration:none}
-
-/* ── HERO ── */
+.mobile-menu a{font-family:'Oswald',sans-serif;font-size:32px;color:#fff;text-decoration:none}
 .hero{min-height:100vh;display:flex;align-items:center;padding:120px 56px 80px;position:relative;overflow:hidden}
-.hero-bg{position:absolute;inset:0;background:url('https://images.pexels.com/photos/1552242/pexels-photo-1552242.jpeg?auto=compress&cs=tinysrgb&w=1600') center/cover;filter:brightness(.25);animation:scaleIn 1.5s ease forwards}
-.hero-bg::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(13,13,13,.8) 50%,transparent)}
-.hero-content{position:relative;z-index:2;max-width:680px}
-.hero-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(230,57,70,.15);border:1px solid rgba(230,57,70,.3);border-radius:4px;padding:6px 14px;font-size:11px;color:var(--accent);font-weight:700;letter-spacing:2px;margin-bottom:24px;animation:fadeIn .8s .2s both}
-.hero h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(60px,8vw,110px);line-height:.95;margin-bottom:22px;letter-spacing:2px;animation:fadeUp .9s .1s both}
+.hero-bg{position:absolute;inset:0;background:url('https://images.pexels.com/photos/8159657/pexels-photo-8159657.jpeg?auto=compress&cs=tinysrgb&w=1600') center/cover;filter:brightness(.32);animation:scaleIn 1.5s ease forwards}
+.hero-bg::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(26,26,26,.75) 50%,transparent)}
+.hero-content{position:relative;z-index:2;max-width:660px}
+.hero-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(200,65,10,.2);border:1px solid rgba(200,65,10,.4);border-radius:3px;padding:6px 14px;font-size:11px;color:#f4a07a;font-weight:700;letter-spacing:2px;margin-bottom:22px;animation:fadeIn .8s .2s both}
+.hero h1{font-family:'Oswald',sans-serif;font-size:clamp(52px,7vw,96px);line-height:1;margin-bottom:20px;letter-spacing:1px;color:#fff;animation:fadeUp .9s .1s both;font-weight:700}
 .hero h1 span{color:var(--accent)}
-.hero p{font-size:18px;color:rgba(245,245,245,.7);max-width:480px;margin-bottom:36px;line-height:1.8;animation:fadeUp .9s .2s both}
+.hero p{font-size:17px;color:rgba(255,255,255,.75);max-width:480px;margin-bottom:32px;line-height:1.8;animation:fadeUp .9s .2s both}
 .hero-btns{display:flex;gap:14px;flex-wrap:wrap;animation:fadeUp .9s .3s both}
-.btn-primary{background:var(--accent);color:white;padding:16px 38px;border-radius:6px;font-size:15px;font-weight:700;text-decoration:none;display:inline-flex;align-items:center;gap:8px;transition:all .25s;animation:pulse 3s 1s infinite;letter-spacing:.5px}
-.btn-primary:hover{transform:translateY(-3px) scale(1.04);background:#c1121f;box-shadow:0 12px 36px rgba(230,57,70,.4)}
-.btn-secondary{border:1px solid rgba(245,245,245,.2);color:var(--text);padding:16px 38px;border-radius:6px;font-size:15px;font-weight:500;text-decoration:none;transition:all .25s}
-.btn-secondary:hover{border-color:var(--accent);color:var(--accent);transform:translateY(-3px)}
-.hero-trust{margin-top:28px;font-size:13px;color:var(--muted);animation:fadeIn 1s .5s both}
-.stars{color:var(--accent)}
-
-/* ── STATS ── */
-.stats{background:var(--accent);padding:48px 56px;display:grid;grid-template-columns:repeat(4,1fr)}
-.stat{text-align:center;padding:16px;border-right:1px solid rgba(255,255,255,.2)}
+.btn-primary{background:var(--accent);color:white;padding:16px 34px;border-radius:4px;font-size:15px;font-weight:700;text-decoration:none;display:inline-flex;align-items:center;gap:8px;transition:all .25s}
+.btn-primary:hover{background:#a33208;transform:translateY(-2px);box-shadow:0 8px 28px rgba(200,65,10,.4)}
+.btn-secondary{border:2px solid rgba(255,255,255,.3);color:#fff;padding:16px 34px;border-radius:4px;font-size:15px;font-weight:500;text-decoration:none;transition:all .25s}
+.btn-secondary:hover{border-color:#fff;transform:translateY(-2px)}
+.hero-trust{margin-top:28px;font-size:13px;color:rgba(255,255,255,.6);animation:fadeIn 1s .5s both}
+.trust-badges{display:flex;gap:20px;flex-wrap:wrap;margin-top:32px;animation:fadeUp .9s .4s both}
+.trust-badge{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.15);border-radius:4px;padding:10px 18px;font-size:12px;color:rgba(255,255,255,.85);font-weight:600;display:flex;align-items:center;gap:8px}
+.stats-bar{background:var(--accent);padding:40px 56px;display:grid;grid-template-columns:repeat(4,1fr)}
+.stat{text-align:center;padding:12px;border-right:1px solid rgba(255,255,255,.2)}
 .stat:last-child{border-right:none}
-.stat-num{font-family:'Bebas Neue',sans-serif;font-size:56px;color:white;line-height:1;margin-bottom:4px;letter-spacing:2px}
-.stat-label{font-size:12px;color:rgba(255,255,255,.8);font-weight:600;letter-spacing:1px;text-transform:uppercase}
-
-/* ── PROGRAMS ── */
-.section{padding:100px 56px;max-width:1280px;margin:0 auto}
+.stat-num{font-family:'Oswald',sans-serif;font-size:48px;color:#fff;line-height:1;margin-bottom:4px;font-weight:700}
+.stat-label{font-size:11px;color:rgba(255,255,255,.85);font-weight:600;letter-spacing:1px;text-transform:uppercase}
+.section{padding:96px 56px;max-width:1280px;margin:0 auto}
 .section-label{font-size:11px;color:var(--accent);font-weight:700;letter-spacing:3px;text-transform:uppercase;margin-bottom:10px}
-.section-title{font-family:'Bebas Neue',sans-serif;font-size:clamp(44px,5vw,72px);font-weight:400;line-height:1;margin-bottom:18px;letter-spacing:2px}
+.section-title{font-family:'Oswald',sans-serif;font-size:clamp(40px,4.5vw,64px);font-weight:700;line-height:1.05;margin-bottom:16px;letter-spacing:.5px}
 .section-sub{font-size:16px;color:var(--muted);max-width:520px;line-height:1.8}
-.programs-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:2px;margin-top:52px}
-.program-card{position:relative;overflow:hidden;cursor:pointer}
-.program-card img{width:100%;height:380px;object-fit:cover;display:block;transition:transform .6s ease;filter:brightness(.6)}
-.program-card:hover img{transform:scale(1.06);filter:brightness(.4)}
-.program-overlay{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:flex-end;padding:28px;background:linear-gradient(to top,rgba(0,0,0,.85) 0%,transparent 60%)}
-.program-tag{font-size:10px;color:var(--accent);font-weight:700;letter-spacing:2px;text-transform:uppercase;margin-bottom:6px}
-.program-name{font-family:'Bebas Neue',sans-serif;font-size:28px;letter-spacing:1px;margin-bottom:8px}
-.program-desc{font-size:13px;color:rgba(245,245,245,.75);line-height:1.6;max-height:0;overflow:hidden;transition:max-height .4s ease}
-.program-card:hover .program-desc{max-height:80px}
-
-/* ── ABOUT ── */
-.about-grid{display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:center;padding:100px 56px;max-width:1280px;margin:0 auto}
-.about-img{position:relative}
-.about-img img{width:100%;height:580px;object-fit:cover}
-.about-accent{position:absolute;top:-20px;left:-20px;width:160px;height:160px;border:3px solid var(--accent);z-index:-1;animation:float 4s ease-in-out infinite}
-.about-year{position:absolute;bottom:28px;right:-28px;background:var(--accent);color:white;padding:20px 24px;text-align:center}
-.about-year .num{font-family:'Bebas Neue',sans-serif;font-size:48px;line-height:1;letter-spacing:2px}
-.about-year .lbl{font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase}
-.about h2{font-family:'Bebas Neue',sans-serif;font-size:clamp(44px,4vw,64px);line-height:1;margin-bottom:20px;letter-spacing:2px}
+.services-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-top:52px}
+.service-card{background:var(--surface);border:1px solid var(--border);border-radius:6px;overflow:hidden;transition:all .3s;cursor:pointer}
+.service-card:hover{transform:translateY(-6px);box-shadow:0 16px 40px rgba(0,0,0,.1);border-color:var(--accent)}
+.service-img{width:100%;height:220px;object-fit:cover;display:block;transition:transform .5s}
+.service-card:hover .service-img{transform:scale(1.05)}
+.service-body{padding:24px}
+.service-icon{font-size:28px;margin-bottom:12px}
+.service-name{font-family:'Oswald',sans-serif;font-size:22px;font-weight:600;margin-bottom:8px;letter-spacing:.3px}
+.service-desc{font-size:13px;color:var(--muted);line-height:1.7}
+.about-grid{display:grid;grid-template-columns:1fr 1fr;gap:72px;align-items:center;padding:96px 56px;max-width:1280px;margin:0 auto}
+.about-img-wrap{position:relative}
+.about-img-wrap img{width:100%;height:540px;object-fit:cover;border-radius:4px}
+.about-badge{position:absolute;bottom:-20px;right:-20px;background:var(--accent);color:white;padding:24px 28px;text-align:center;border-radius:4px}
+.about-badge .num{font-family:'Oswald',sans-serif;font-size:44px;line-height:1;font-weight:700}
+.about-badge .lbl{font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;opacity:.9}
+.about h2{font-family:'Oswald',sans-serif;font-size:clamp(40px,4vw,58px);line-height:1.05;margin-bottom:18px;font-weight:700}
 .about p{font-size:15px;color:var(--muted);line-height:1.9;margin-bottom:14px}
-.about-features{display:flex;flex-direction:column;gap:14px;margin-top:28px}
-.feature-row{display:flex;align-items:center;gap:14px;font-size:14px;color:var(--text);font-weight:500}
-.feature-check{width:28px;height:28px;background:var(--accent);border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0}
-
-/* ── TESTIMONIALS ── */
-.testimonials{background:var(--surface);padding:100px 56px;border-top:1px solid #1f1f1f}
-.testi-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:2px;margin-top:52px;max-width:1280px;margin-left:auto;margin-right:auto}
-.testi-card{background:var(--surface2);padding:32px;transition:all .3s;border-left:3px solid transparent}
-.testi-card:hover{border-left-color:var(--accent);transform:translateY(-4px)}
-.testi-stars{color:var(--accent);font-size:14px;margin-bottom:16px}
-.testi-text{font-size:15px;color:var(--text);line-height:1.8;margin-bottom:20px;font-style:italic}
-.testi-author{display:flex;align-items:center;gap:12px}
-.testi-avatar{width:44px;height:44px;border-radius:4px;background:var(--accent);display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:1px;color:white}
-.testi-name{font-size:14px;font-weight:700;letter-spacing:.3px}
+.checklist{display:flex;flex-direction:column;gap:12px;margin-top:24px}
+.check-row{display:flex;align-items:center;gap:12px;font-size:14px;font-weight:500}
+.check-icon{width:26px;height:26px;background:var(--accent);border-radius:3px;display:flex;align-items:center;justify-content:center;font-size:12px;color:white;flex-shrink:0}
+.testi-section{background:var(--surface2);padding:96px 56px;border-top:1px solid var(--border)}
+.testi-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-top:52px;max-width:1280px;margin-left:auto;margin-right:auto}
+.testi-card{background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:28px;transition:all .3s}
+.testi-card:hover{transform:translateY(-4px);box-shadow:0 12px 32px rgba(0,0,0,.08)}
+.testi-stars{color:var(--accent);font-size:14px;margin-bottom:14px}
+.testi-text{font-size:14px;color:var(--text);line-height:1.8;margin-bottom:20px;font-style:italic}
+.testi-author{display:flex;align-items:center;gap:10px}
+.testi-avatar{width:40px;height:40px;border-radius:4px;background:var(--accent);display:flex;align-items:center;justify-content:center;font-family:'Oswald',sans-serif;font-size:16px;color:white;font-weight:600}
+.testi-name{font-size:13px;font-weight:700}
 .testi-role{font-size:12px;color:var(--muted)}
-.testi-result{font-size:11px;color:var(--accent);font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-top:2px}
-
-/* ── PRICING ── */
-.pricing-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:2px;margin-top:52px}
-.price-card{background:var(--surface);padding:36px;transition:all .3s;position:relative;border-top:3px solid transparent}
-.price-card.featured{border-top-color:var(--accent);background:var(--surface2)}
-.price-card:hover{transform:translateY(-6px)}
-.price-badge{display:inline-block;background:var(--accent);color:white;font-size:10px;font-weight:700;padding:4px 10px;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:16px}
-.price-name{font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:2px;color:var(--muted);margin-bottom:12px}
-.price-amount{font-family:'Bebas Neue',sans-serif;font-size:64px;color:var(--text);line-height:1;letter-spacing:2px}
-.price-period{font-size:13px;color:var(--muted);margin-bottom:28px}
-.price-features{list-style:none;display:flex;flex-direction:column;gap:10px;margin-bottom:28px}
-.price-features li{display:flex;align-items:center;gap:10px;font-size:14px;color:var(--muted)}
-.price-features li::before{content:"→";color:var(--accent);font-weight:700}
-.price-btn{display:block;text-align:center;padding:14px;font-size:14px;font-weight:700;text-decoration:none;transition:all .25s;letter-spacing:1px;text-transform:uppercase}
-.price-btn.main{background:var(--accent);color:white}
-.price-btn.main:hover{background:#c1121f;transform:scale(1.03)}
-.price-btn.outline{border:1px solid #333;color:var(--muted)}
-.price-btn.outline:hover{border-color:var(--accent);color:var(--accent)}
-
-/* ── FAQ ── */
-.faq-list{max-width:760px;margin:52px auto 0}
-.faq-item{border-bottom:1px solid #1f1f1f}
-.faq-q{display:flex;justify-content:space-between;align-items:center;padding:22px 0;cursor:pointer;font-size:16px;font-weight:600;transition:color .2s;letter-spacing:.2px}
+.process-section{padding:96px 56px;max-width:1280px;margin:0 auto}
+.process-steps{display:grid;grid-template-columns:repeat(4,1fr);gap:32px;margin-top:52px;position:relative}
+.process-steps::before{content:"";position:absolute;top:28px;left:10%;right:10%;height:2px;background:var(--border);z-index:0}
+.process-step{text-align:center;position:relative;z-index:1}
+.step-num{width:56px;height:56px;background:var(--accent);border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Oswald',sans-serif;font-size:24px;color:white;font-weight:700;margin:0 auto 16px}
+.step-title{font-family:'Oswald',sans-serif;font-size:18px;font-weight:600;margin-bottom:8px;letter-spacing:.3px}
+.step-desc{font-size:13px;color:var(--muted);line-height:1.7}
+.faq-section{padding:96px 56px;max-width:800px;margin:0 auto}
+.faq-item{border-bottom:1px solid var(--border)}
+.faq-q{display:flex;justify-content:space-between;align-items:center;padding:20px 0;cursor:pointer;font-size:15px;font-weight:600;transition:color .2s}
 .faq-q:hover{color:var(--accent)}
-.faq-icon{width:28px;height:28px;border:1px solid #333;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;transition:all .3s;color:var(--muted)}
-.faq-a{display:none;padding:0 0 20px;font-size:14px;color:var(--muted);line-height:1.9}
+.faq-icon{width:28px;height:28px;border:1px solid var(--border);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;transition:all .3s;color:var(--muted)}
+.faq-a{display:none;padding:0 0 18px;font-size:14px;color:var(--muted);line-height:1.9}
 .faq-item.open .faq-icon{background:var(--accent);border-color:var(--accent);color:white;transform:rotate(45deg)}
 .faq-item.open .faq-a{display:block}
-
-/* ── CTA ── */
-.cta-section{padding:120px 56px;text-align:center;position:relative;overflow:hidden}
-.cta-bg{position:absolute;inset:0;background:url('https://images.pexels.com/photos/1552249/pexels-photo-1552249.jpeg?auto=compress&cs=tinysrgb&w=1600') center/cover;filter:brightness(.15)}
+.cta-section{padding:112px 56px;text-align:center;position:relative;overflow:hidden}
+.cta-bg{position:absolute;inset:0;background:url('https://images.pexels.com/photos/8159657/pexels-photo-8159657.jpeg?auto=compress&cs=tinysrgb&w=1600') center/cover;filter:brightness(.2)}
+.cta-bg::after{content:"";position:absolute;inset:0;background:rgba(200,65,10,.15)}
 .cta-content{position:relative;z-index:2}
-.cta-section h2{font-family:'Bebas Neue',sans-serif;font-size:clamp(52px,7vw,96px);line-height:.95;margin-bottom:20px;letter-spacing:3px}
-.cta-section h2 span{color:var(--accent)}
-.cta-section p{font-size:18px;color:rgba(245,245,245,.7);margin-bottom:36px;max-width:480px;margin-left:auto;margin-right:auto;line-height:1.8}
-
-/* ── FOOTER ── */
-footer{background:#080808;border-top:1px solid #1a1a1a;padding:72px 56px 32px}
+.cta-section h2{font-family:'Oswald',sans-serif;font-size:clamp(44px,6vw,80px);line-height:1;margin-bottom:18px;letter-spacing:1px;color:#fff;font-weight:700}
+.cta-section h2 span{color:#f4a07a}
+.cta-section p{font-size:17px;color:rgba(255,255,255,.75);margin-bottom:32px;max-width:480px;margin-left:auto;margin-right:auto;line-height:1.8}
+footer{background:#1a1a1a;padding:64px 56px 28px}
 .footer-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:48px;max-width:1280px;margin:0 auto 48px}
-.footer-brand p{font-size:13px;color:var(--muted);line-height:1.8;margin-top:12px;max-width:260px}
-.footer-col h4{font-size:11px;font-weight:700;letter-spacing:2px;color:var(--accent);text-transform:uppercase;margin-bottom:18px}
-.footer-col a{display:block;font-size:13px;color:var(--muted);text-decoration:none;margin-bottom:10px;transition:color .2s}
-.footer-col a:hover{color:var(--text)}
-.footer-bottom{border-top:1px solid #1a1a1a;padding-top:28px;display:flex;justify-content:space-between;align-items:center;max-width:1280px;margin:0 auto;font-size:12px;color:#444}
-
-/* ── MAP ── */
-.map-section{padding:80px 56px;max-width:1280px;margin:0 auto}
-.map-wrap{border-radius:4px;overflow:hidden;border:1px solid #1f1f1f}
-.map-wrap img{width:100%;display:block;transition:transform .4s;filter:grayscale(.8) contrast(1.1)}
-.map-wrap:hover img{transform:scale(1.02);filter:grayscale(.3)}
-
-/* ── RESPONSIVE ── */
+.footer-brand p{font-size:13px;color:#888;line-height:1.8;margin-top:12px;max-width:260px}
+.footer-col h4{font-size:11px;font-weight:700;letter-spacing:2px;color:var(--accent);text-transform:uppercase;margin-bottom:16px}
+.footer-col a{display:block;font-size:13px;color:#888;text-decoration:none;margin-bottom:9px;transition:color .2s}
+.footer-col a:hover{color:#fff}
+.footer-bottom{border-top:1px solid #2a2a2a;padding-top:24px;display:flex;justify-content:space-between;align-items:center;max-width:1280px;margin:0 auto;font-size:12px;color:#555}
 @media(max-width:768px){
   nav,nav.scrolled{padding:16px 24px}
   .nav-links{display:none}
   .hamburger{display:flex}
-  .stats{grid-template-columns:repeat(2,1fr)}
-  .stat{border-right:none;border-bottom:1px solid rgba(255,255,255,.2)}
-  .programs-grid,.testi-grid,.pricing-grid{grid-template-columns:1fr}
+  .stats-bar{grid-template-columns:repeat(2,1fr)}
+  .stat{border-right:none;border-bottom:1px solid rgba(255,255,255,.15)}
+  .services-grid,.testi-grid{grid-template-columns:1fr}
+  .process-steps{grid-template-columns:repeat(2,1fr)}
+  .process-steps::before{display:none}
   .about-grid{grid-template-columns:1fr;gap:40px;padding:72px 24px}
-  .section,.map-section,.testimonials,.cta-section{padding:72px 24px}
+  .section,.testi-section,.process-section,.faq-section,.cta-section{padding:72px 24px}
   .footer-grid{grid-template-columns:1fr 1fr}
   .hero{padding:120px 24px 80px}
 }
@@ -1839,13 +1796,13 @@ footer{background:#080808;border-top:1px solid #1a1a1a;padding:72px 56px 32px}
 
 <!-- NAV -->
 <nav id="nav">
-  <div class="logo">Iron<span>Forge</span></div>
+  <div class="logo">Peak<span>Ridge</span></div>
   <div class="nav-links">
-    <a href="#programs">Programs</a>
+    <a href="#services">Services</a>
     <a href="#about">About</a>
-    <a href="#pricing">Pricing</a>
+    <a href="#process">How It Works</a>
     <a href="#faq">FAQ</a>
-    <a href="#contact" class="nav-cta">FREE SESSION</a>
+    <a href="#contact" class="nav-cta">FREE ESTIMATE</a>
   </div>
   <button class="hamburger" id="burger" aria-label="Menu">
     <span></span><span></span><span></span>
@@ -1854,222 +1811,189 @@ footer{background:#080808;border-top:1px solid #1a1a1a;padding:72px 56px 32px}
 
 <!-- MOBILE MENU -->
 <div class="mobile-menu" id="mobileMenu">
-  <a href="#programs" onclick="closeMobile()">Programs</a>
+  <a href="#services" onclick="closeMobile()">Services</a>
   <a href="#about" onclick="closeMobile()">About</a>
-  <a href="#pricing" onclick="closeMobile()">Pricing</a>
+  <a href="#process" onclick="closeMobile()">How It Works</a>
   <a href="#faq" onclick="closeMobile()">FAQ</a>
-  <a href="#contact" onclick="closeMobile()" style="color:var(--accent)">Free Session →</a>
+  <a href="#contact" onclick="closeMobile()" style="color:var(--accent)">Free Estimate →</a>
 </div>
 
 <!-- HERO -->
 <section class="hero" id="home">
   <div class="hero-bg"></div>
   <div class="hero-content">
-    <div class="hero-badge">⚡ NYC'S #1 RESULTS-DRIVEN GYM</div>
-    <h1>BUILD YOUR<br/><span>STRONGEST</span><br/>BODY YET.</h1>
-    <p>Elite personal training, group classes & nutrition coaching in the heart of Manhattan. Results guaranteed in 90 days or your money back.</p>
+    <div class="hero-badge">🏆 AUSTIN'S MOST TRUSTED ROOFER SINCE 2008</div>
+    <h1>YOUR ROOF.<br/><span>DONE RIGHT.</span><br/>GUARANTEED.</h1>
+    <p>Expert roof repair, full replacements, and storm damage restoration in Austin, TX. Licensed, bonded & insured. Free same-day estimates.</p>
     <div class="hero-btns">
-      <a href="#contact" class="btn-primary">CLAIM FREE SESSION →</a>
-      <a href="#programs" class="btn-secondary">VIEW PROGRAMS</a>
+      <a href="#contact" class="btn-primary">📞 Get Free Estimate</a>
+      <a href="#services" class="btn-secondary">Our Services →</a>
     </div>
-    <div class="hero-trust">
-      <span class="stars">★★★★★</span> &nbsp;4.9/5 from 428 reviews · Open 7 days · Est. 2015
+    <div class="trust-badges">
+      <div class="trust-badge">✓ Licensed & Insured</div>
+      <div class="trust-badge">✓ Lifetime Warranty</div>
+      <div class="trust-badge">✓ Same-Day Response</div>
     </div>
   </div>
 </section>
 
 <!-- STATS -->
-<div class="stats">
-  <div class="stat reveal"><div class="stat-num" data-target="2400">0</div><div class="stat-label">Members Transformed</div></div>
-  <div class="stat reveal"><div class="stat-num" data-target="90">0</div><div class="stat-label">Day Guarantee</div></div>
-  <div class="stat reveal"><div class="stat-num" data-target="12">0</div><div class="stat-label">Expert Trainers</div></div>
-  <div class="stat reveal"><div class="stat-num" data-target="428">0</div><div class="stat-label">5-Star Reviews</div></div>
+<div class="stats-bar">
+  <div class="stat"><div class="stat-num" data-target="1400">0</div><div class="stat-label">Roofs Replaced</div></div>
+  <div class="stat"><div class="stat-num" data-target="16">0</div><div class="stat-label">Years in Austin</div></div>
+  <div class="stat"><div class="stat-num" data-target="312">0</div><div class="stat-label">5-Star Reviews</div></div>
+  <div class="stat"><div class="stat-num" data-target="100">0</div><div class="stat-label">% Satisfaction</div></div>
 </div>
 
-<!-- PROGRAMS -->
-<section class="section" id="programs">
-  <div class="section-label reveal">Our Programs</div>
-  <h2 class="section-title reveal">TRAIN WITH PURPOSE</h2>
-  <p class="section-sub reveal">Every program is built around real results — not just showing up. We track your progress every single week.</p>
-  <div class="programs-grid">
-    <div class="program-card reveal-scale">
-      <img src="https://images.pexels.com/photos/1552242/pexels-photo-1552242.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Personal Training" loading="lazy"/>
-      <div class="program-overlay">
-        <div class="program-tag">1-on-1 · 60 min</div>
-        <div class="program-name">PERSONAL TRAINING</div>
-        <div class="program-desc">Fully customized workouts built around your goals, schedule, and fitness level. Your dedicated trainer is with you every rep.</div>
+<!-- SERVICES -->
+<div class="section" id="services">
+  <div class="section-label">What We Do</div>
+  <h2 class="section-title reveal">Complete Roofing Solutions</h2>
+  <p class="section-sub reveal">From minor repairs to full replacements — we handle every roofing job in Austin and surrounding areas.</p>
+  <div class="services-grid">
+    <div class="service-card reveal-scale">
+      <img src="https://images.pexels.com/photos/8159657/pexels-photo-8159657.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Roof Replacement Austin" class="service-img"/>
+      <div class="service-body">
+        <div class="service-icon">🏠</div>
+        <div class="service-name">Full Roof Replacement</div>
+        <div class="service-desc">Complete tear-off and replacement using premium shingles, metal, or tile. Built to last 30+ years in Texas weather.</div>
       </div>
     </div>
-    <div class="program-card reveal-scale">
-      <img src="https://images.pexels.com/photos/1552249/pexels-photo-1552249.jpeg?auto=compress&cs=tinysrgb&w=600" alt="HIIT Classes" loading="lazy"/>
-      <div class="program-overlay">
-        <div class="program-tag">Group · 45 min</div>
-        <div class="program-name">HIIT & STRENGTH</div>
-        <div class="program-desc">High-intensity interval training combined with strength work. Burns up to 800 calories per session. Max 12 per class.</div>
+    <div class="service-card reveal-scale">
+      <img src="https://images.pexels.com/photos/7218524/pexels-photo-7218524.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Roof Repair Austin" class="service-img"/>
+      <div class="service-body">
+        <div class="service-icon">🔧</div>
+        <div class="service-name">Roof Repair</div>
+        <div class="service-desc">Leaks, missing shingles, damaged flashing — we fix it fast and right the first time. No job too small.</div>
       </div>
     </div>
-    <div class="program-card reveal-scale">
-      <img src="https://images.pexels.com/photos/3253501/pexels-photo-3253501.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Nutrition Coaching" loading="lazy"/>
-      <div class="program-overlay">
-        <div class="program-tag">Online + In-Person</div>
-        <div class="program-name">NUTRITION COACHING</div>
-        <div class="program-desc">Custom meal plans, weekly check-ins, and macro tracking. Because abs are made in the kitchen, not just the gym.</div>
+    <div class="service-card reveal-scale">
+      <img src="https://images.pexels.com/photos/1446948/pexels-photo-1446948.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Storm Damage Roofing Austin" class="service-img"/>
+      <div class="service-body">
+        <div class="service-icon">⛈️</div>
+        <div class="service-name">Storm Damage Restoration</div>
+        <div class="service-desc">Hail, wind, fallen trees — we work directly with your insurance and handle the entire claim process for you.</div>
       </div>
     </div>
   </div>
-</section>
+</div>
 
 <!-- ABOUT -->
 <div class="about-grid" id="about">
-  <div class="about-img reveal-left">
-    <img src="https://images.pexels.com/photos/1552252/pexels-photo-1552252.jpeg?auto=compress&cs=tinysrgb&w=800" alt="IronForge Gym NYC"/>
-    <div class="about-accent"></div>
-    <div class="about-year">
-      <div class="num">9+</div>
-      <div class="lbl">Years Strong</div>
+  <div class="about-img-wrap reveal">
+    <img src="https://images.pexels.com/photos/8159657/pexels-photo-8159657.jpeg?auto=compress&cs=tinysrgb&w=800" alt="Peak Ridge Roofing Austin TX"/>
+    <div class="about-badge">
+      <div class="num">16</div>
+      <div class="lbl">Years Serving Austin</div>
     </div>
   </div>
   <div class="reveal">
-    <div class="section-label">Our Story</div>
-    <h2 class="section-title">WE DON'T DO AVERAGE.</h2>
-    <p>IronForge was founded in 2015 with one mission: build a gym where every single member gets real, measurable results. No fluff, no gimmicks — just elite coaching and a community that holds you accountable.</p>
-    <p>Located in the heart of Midtown Manhattan, we've helped over 2,400 New Yorkers lose weight, build muscle, and completely transform how they feel about their bodies.</p>
-    <div class="about-features">
-      <div class="feature-row"><div class="feature-check">✓</div>90-day transformation guarantee — results or full refund</div>
-      <div class="feature-row"><div class="feature-check">✓</div>NASM & NSCA certified trainers only</div>
-      <div class="feature-row"><div class="feature-check">✓</div>State-of-the-art 8,000 sq ft facility</div>
-      <div class="feature-row"><div class="feature-check">✓</div>Open 5am–11pm, 7 days a week</div>
+    <div class="section-label">About Us</div>
+    <h2>Austin-Born. Neighbor-Trusted.</h2>
+    <p>Peak Ridge Roofing was started in 2008 by brothers Mike and Danny Castillo right here in Austin. We started with one truck and a commitment to treating every roof like it was our own family's home.</p>
+    <p>Today we're a team of 18 certified roofers serving all of greater Austin — from Cedar Park to Kyle. We're not a fly-by-night company or a storm chaser. We live here, work here, and stand behind every job we do.</p>
+    <div class="checklist">
+      <div class="check-row"><div class="check-icon">✓</div>Licensed Texas Roofing Contractor (TASO Certified)</div>
+      <div class="check-row"><div class="check-icon">✓</div>$2M liability insurance — you're fully protected</div>
+      <div class="check-row"><div class="check-icon">✓</div>Lifetime workmanship warranty on all replacements</div>
+      <div class="check-row"><div class="check-icon">✓</div>Insurance claim specialists — we handle the paperwork</div>
+      <div class="check-row"><div class="check-icon">✓</div>GAF Master Elite Certified installer</div>
     </div>
   </div>
 </div>
 
 <!-- TESTIMONIALS -->
-<section class="testimonials" id="testimonials">
+<div class="testi-section" id="reviews">
   <div style="max-width:1280px;margin:0 auto">
-    <div class="section-label reveal">Results</div>
-    <h2 class="section-title reveal">REAL PEOPLE. REAL RESULTS.</h2>
+    <div class="section-label">Reviews</div>
+    <h2 class="section-title reveal">What Austin Homeowners Say</h2>
     <div class="testi-grid">
       <div class="testi-card reveal-scale">
         <div class="testi-stars">★★★★★</div>
-        <div class="testi-text">"I lost 34 lbs in 90 days and genuinely feel like a different person. My trainer Jake pushed me harder than I've ever been pushed while still making every session fun. Best investment I've ever made."</div>
-        <div class="testi-author">
-          <div class="testi-avatar">MR</div>
-          <div><div class="testi-name">Marcus R.</div><div class="testi-role">Member since 2023</div><div class="testi-result">↓ 34 lbs in 90 days</div></div>
-        </div>
+        <div class="testi-text">"After the hail storm in April our roof was destroyed. Peak Ridge came out the next morning, gave us a free estimate, handled everything with State Farm, and had our new roof on in two days. Unbelievable service."</div>
+        <div class="testi-author"><div class="testi-avatar">JM</div><div><div class="testi-name">Jennifer M.</div><div class="testi-role">Round Rock, TX</div></div></div>
       </div>
       <div class="testi-card reveal-scale">
         <div class="testi-stars">★★★★★</div>
-        <div class="testi-text">"As a busy NYC professional I needed a gym that works with my schedule. IronForge opens at 5am and the trainers actually remember your name. I've tried 6 gyms in Manhattan — this is the only one that stuck."</div>
-        <div class="testi-author">
-          <div class="testi-avatar">SC</div>
-          <div><div class="testi-name">Sarah C.</div><div class="testi-role">Member since 2022</div><div class="testi-result">↑ 18 lbs muscle gained</div></div>
-        </div>
+        <div class="testi-text">"Three other roofers quoted me $18,000 for a replacement. Peak Ridge came in at $11,400 with better shingles and a lifetime warranty. I've referred them to four neighbors already."</div>
+        <div class="testi-author"><div class="testi-avatar">TR</div><div><div class="testi-name">Tom R.</div><div class="testi-role">South Austin, TX</div></div></div>
       </div>
       <div class="testi-card reveal-scale">
         <div class="testi-stars">★★★★★</div>
-        <div class="testi-text">"The 90-day guarantee is real — I almost asked for my money back after week 3 and they doubled down with extra sessions. I ended up losing 28 lbs. The accountability here is unlike anything else."</div>
-        <div class="testi-author">
-          <div class="testi-avatar">DK</div>
-          <div><div class="testi-name">Derek K.</div><div class="testi-role">Member since 2024</div><div class="testi-result">↓ 28 lbs in 11 weeks</div></div>
-        </div>
+        <div class="testi-text">"Had a bad leak above my bedroom for two years. Two companies couldn't find it. Peak Ridge found it in 20 minutes, fixed it in an hour, and charged less than I expected. These guys are the real deal."</div>
+        <div class="testi-author"><div class="testi-avatar">SC</div><div><div class="testi-name">Sandra C.</div><div class="testi-role">Cedar Park, TX</div></div></div>
       </div>
     </div>
   </div>
-</section>
+</div>
 
-<!-- PRICING -->
-<section class="section" id="pricing">
-  <div class="section-label reveal">Pricing</div>
-  <h2 class="section-title reveal">STRAIGHT TALK ON PRICE.</h2>
-  <p class="section-sub reveal">No hidden fees, no lock-in contracts. Cancel anytime. Your first session is always free.</p>
-  <div class="pricing-grid">
-    <div class="price-card reveal-scale">
-      <div class="price-name">Drop-In Pass</div>
-      <div class="price-amount">$35</div>
-      <div class="price-period">single class</div>
-      <ul class="price-features">
-        <li>Any group class</li>
-        <li>All equipment access</li>
-        <li>Locker room included</li>
-      </ul>
-      <a href="#contact" class="price-btn outline">BOOK A CLASS</a>
+<!-- PROCESS -->
+<div class="process-section" id="process">
+  <div class="section-label">How It Works</div>
+  <h2 class="section-title reveal">From Call to Complete in 4 Steps</h2>
+  <div class="process-steps">
+    <div class="process-step reveal-scale">
+      <div class="step-num">1</div>
+      <div class="step-title">Free Estimate</div>
+      <div class="step-desc">Call or fill out our form. We'll be at your home within 24 hours for a full inspection — no charge, no obligation.</div>
     </div>
-    <div class="price-card featured reveal-scale">
-      <div class="price-badge">MOST POPULAR</div>
-      <div class="price-name">Unlimited Monthly</div>
-      <div class="price-amount">$149</div>
-      <div class="price-period">per month · cancel anytime</div>
-      <ul class="price-features">
-        <li>Unlimited group classes</li>
-        <li>2 PT sessions/month</li>
-        <li>Nutrition check-in</li>
-        <li>Guest pass included</li>
-        <li>90-day guarantee</li>
-      </ul>
-      <a href="#contact" class="price-btn main">START FREE TRIAL</a>
+    <div class="process-step reveal-scale">
+      <div class="step-num">2</div>
+      <div class="step-title">Insurance Claim</div>
+      <div class="step-desc">If it's storm damage, we work directly with your insurance adjuster and handle all the paperwork on your behalf.</div>
     </div>
-    <div class="price-card reveal-scale">
-      <div class="price-name">Elite 1-on-1</div>
-      <div class="price-amount">$299</div>
-      <div class="price-period">per month · 8 sessions</div>
-      <ul class="price-features">
-        <li>8 personal training sessions</li>
-        <li>Custom meal plan</li>
-        <li>Weekly progress tracking</li>
-        <li>Priority scheduling</li>
-        <li>90-day guarantee</li>
-      </ul>
-      <a href="#contact" class="price-btn outline">GET STARTED</a>
+    <div class="process-step reveal-scale">
+      <div class="step-num">3</div>
+      <div class="step-title">We Get to Work</div>
+      <div class="step-desc">Our certified crew arrives on time, protects your property, and completes the job with zero shortcuts.</div>
+    </div>
+    <div class="process-step reveal-scale">
+      <div class="step-num">4</div>
+      <div class="step-title">Final Walkthrough</div>
+      <div class="step-desc">We do a full inspection with you, clean up every scrap, and hand you your warranty documentation.</div>
     </div>
   </div>
-</section>
-
-<!-- MAP -->
-<section class="map-section" id="location">
-  <div class="section-label reveal">Find Us</div>
-  <h2 class="section-title reveal">WE'RE IN MIDTOWN.</h2>
-  <p class="section-sub reveal" style="margin-bottom:32px">247 W 35th Street, New York, NY 10001 · <a href="tel:+12125550182" style="color:var(--accent)">(212) 555-0182</a></p>
-  <a href="https://www.google.com/maps/search/247+W+35th+Street+New+York+NY" target="_blank" class="map-wrap reveal">
-    <img src="https://maps.googleapis.com/maps/api/staticmap?center=247+W+35th+Street+New+York+NY&zoom=15&size=1280x400&scale=2&markers=color:red%7C247+W+35th+Street+New+York+NY&style=feature:all%7Celement:geometry%7Ccolor:0x1c1c1c&style=feature:road%7Celement:geometry%7Ccolor:0x2a2a2a&style=feature:water%7Celement:geometry%7Ccolor:0x0d0d0d&key=AIzaSyDemo" alt="IronForge Gym location map"/>
-  </a>
-</section>
+</div>
 
 <!-- FAQ -->
-<section class="section" id="faq">
-  <div class="section-label reveal">FAQ</div>
-  <h2 class="section-title reveal" style="text-align:center">GOT QUESTIONS?</h2>
-  <div class="faq-list">
-    <div class="faq-item reveal">
-      <div class="faq-q">What is the 90-day guarantee exactly? <div class="faq-icon">+</div></div>
-      <div class="faq-a">If you complete all scheduled sessions, follow your nutrition plan, and don't see measurable results in 90 days, we give you a full refund — no questions asked. We've given out exactly 3 refunds in 9 years. That's how confident we are.</div>
+<div class="faq-section" id="faq">
+  <div class="section-label">FAQ</div>
+  <h2 class="section-title reveal">Common Questions</h2>
+  <div class="faq-list" style="margin-top:32px">
+    <div class="faq-item">
+      <div class="faq-q">How long does a full roof replacement take?<span class="faq-icon">+</span></div>
+      <div class="faq-a">Most full replacements take 1–2 days depending on the size of your roof and the materials chosen. We'll give you an exact timeline in your estimate.</div>
     </div>
-    <div class="faq-item reveal">
-      <div class="faq-q">Do I need experience to join? <div class="faq-icon">+</div></div>
-      <div class="faq-a">Zero experience needed. We work with complete beginners every day. Your first session is an assessment where we learn where you are and build your program from there.</div>
+    <div class="faq-item">
+      <div class="faq-q">Do you work with all insurance companies?<span class="faq-icon">+</span></div>
+      <div class="faq-a">Yes — we work with all major insurers including State Farm, Allstate, USAA, and Farmers. We've processed hundreds of claims and know exactly how to get you the maximum payout.</div>
     </div>
-    <div class="faq-item reveal">
-      <div class="faq-q">How early/late are you open? <div class="faq-icon">+</div></div>
-      <div class="faq-a">Monday–Friday 5am–11pm. Saturday 7am–9pm. Sunday 8am–8pm. We're built for busy New Yorkers — no excuses about hours.</div>
+    <div class="faq-item">
+      <div class="faq-q">What roofing materials do you offer?<span class="faq-icon">+</span></div>
+      <div class="faq-a">We install asphalt shingles (including GAF Timberline), metal roofing, tile, and flat roofing systems. We'll recommend the best option for your home and budget.</div>
     </div>
-    <div class="faq-item reveal">
-      <div class="faq-q">Can I cancel my membership anytime? <div class="faq-icon">+</div></div>
-      <div class="faq-a">Yes — no lock-in contracts, ever. Cancel with 30 days notice at any time. We keep members because of results, not contracts.</div>
+    <div class="faq-item">
+      <div class="faq-q">Is your work guaranteed?<span class="faq-icon">+</span></div>
+      <div class="faq-a">Every replacement comes with a lifetime workmanship warranty from us plus the manufacturer's material warranty (up to 50 years depending on the shingle). You're fully covered.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">How much does a new roof cost in Austin?<span class="faq-icon">+</span></div>
+      <div class="faq-a">An average Austin home (2,000 sq ft) typically runs $8,000–$14,000 depending on pitch, materials, and condition. We'll give you an exact quote at no charge — call us today.</div>
     </div>
   </div>
-</section>
+</div>
 
 <!-- CTA -->
 <section class="cta-section" id="contact">
   <div class="cta-bg"></div>
   <div class="cta-content">
-    <div class="section-label reveal">Get Started</div>
-    <h2 class="reveal">YOUR FIRST<br/><span>SESSION IS FREE.</span></h2>
-    <p class="reveal">No commitment. No credit card. Just show up and let us show you what IronForge can do for you.</p>
-    <div class="reveal" style="display:flex;gap:14px;justify-content:center;flex-wrap:wrap">
-      <a href="tel:+12125550182" class="btn-primary">📞 CALL TO BOOK FREE SESSION</a>
-      <a href="mailto:hello@ironforgegym.com" class="btn-secondary">EMAIL US</a>
+    <h2 class="reveal">GET YOUR <span>FREE</span><br/>ESTIMATE TODAY</h2>
+    <p class="reveal">No pressure. No obligation. Just an honest assessment from Austin's most trusted roofing team.</p>
+    <div style="display:flex;gap:14px;justify-content:center;flex-wrap:wrap" class="reveal">
+      <a href="tel:5125550198" class="btn-primary" style="font-size:16px">📞 (512) 555-0198</a>
+      <a href="mailto:info@peakridgeroofing.com" class="btn-secondary" style="color:#fff;border-color:rgba(255,255,255,.4)">Email Us →</a>
     </div>
-    <p class="reveal" style="margin-top:20px;font-size:13px;color:var(--muted)">📍 247 W 35th St, New York, NY · Mon–Fri 5am–11pm · Sat–Sun 7am–9pm</p>
+    <p style="margin-top:20px;font-size:13px;color:rgba(255,255,255,.5)" class="reveal">Mon–Fri 7am–6pm · Sat 8am–4pm · Emergency line 24/7</p>
   </div>
 </section>
 
@@ -2077,46 +2001,41 @@ footer{background:#080808;border-top:1px solid #1a1a1a;padding:72px 56px 32px}
 <footer>
   <div class="footer-grid">
     <div class="footer-brand">
-      <div class="logo" style="font-size:22px">Iron<span>Forge</span></div>
-      <p>NYC's most results-driven personal training studio. Transforming bodies and lives since 2015.</p>
+      <div class="logo" style="color:#fff">Peak<span style="color:var(--accent)">Ridge</span></div>
+      <p>Austin's trusted roofing contractor since 2008. Licensed, bonded, insured, and backed by a lifetime warranty.</p>
     </div>
     <div class="footer-col">
-      <h4>Programs</h4>
-      <a href="#programs">Personal Training</a>
-      <a href="#programs">HIIT & Strength</a>
-      <a href="#programs">Nutrition Coaching</a>
-      <a href="#programs">Group Classes</a>
+      <h4>Services</h4>
+      <a href="#services">Roof Replacement</a>
+      <a href="#services">Roof Repair</a>
+      <a href="#services">Storm Damage</a>
+      <a href="#services">Insurance Claims</a>
     </div>
     <div class="footer-col">
-      <h4>Studio</h4>
-      <a href="#about">Our Story</a>
-      <a href="#pricing">Pricing</a>
+      <h4>Company</h4>
+      <a href="#about">About Us</a>
+      <a href="#reviews">Reviews</a>
+      <a href="#process">How It Works</a>
       <a href="#faq">FAQ</a>
-      <a href="#contact">Contact</a>
     </div>
     <div class="footer-col">
       <h4>Contact</h4>
-      <a href="tel:+12125550182">(212) 555-0182</a>
-      <a href="mailto:hello@ironforgegym.com">hello@ironforgegym.com</a>
-      <a href="#location">247 W 35th St, NYC</a>
+      <a href="tel:5125550198">(512) 555-0198</a>
+      <a href="mailto:info@peakridgeroofing.com">info@peakridgeroofing.com</a>
+      <a href="#contact">4821 Burnet Rd, Austin TX</a>
     </div>
   </div>
   <div class="footer-bottom">
-    <span>© 2026 IronForge Gym. All rights reserved.</span>
+    <span>© 2026 Peak Ridge Roofing. All rights reserved.</span>
     <span>Built with Sitefliq AI ⚡</span>
   </div>
 </footer>
 
 <script>
-// ── NAV SCROLL ──
 const nav = document.getElementById('nav');
 window.addEventListener('scroll', () => nav.classList.toggle('scrolled', window.scrollY > 80));
-
-// ── MOBILE MENU ──
 document.getElementById('burger').addEventListener('click', () => document.getElementById('mobileMenu').classList.toggle('open'));
 function closeMobile() { document.getElementById('mobileMenu').classList.remove('open'); }
-
-// ── SCROLL REVEAL ──
 const observer = new IntersectionObserver(entries => {
   entries.forEach(entry => {
     if(entry.isIntersecting) {
@@ -2126,16 +2045,10 @@ const observer = new IntersectionObserver(entries => {
     }
   });
 }, {threshold: 0.15});
-document.querySelectorAll('.reveal, .reveal-left, .reveal-scale').forEach(el => observer.observe(el));
-
-// Stagger grid children
-document.querySelectorAll('.programs-grid, .testi-grid, .pricing-grid').forEach(grid => {
-  grid.querySelectorAll('.reveal-scale').forEach((card, i) => {
-    card.style.transitionDelay = (i * 0.1) + 's';
-  });
+document.querySelectorAll('.reveal, .reveal-scale').forEach(el => observer.observe(el));
+document.querySelectorAll('.services-grid, .testi-grid, .process-steps').forEach(grid => {
+  grid.querySelectorAll('.reveal-scale').forEach((card, i) => { card.style.transitionDelay = (i * 0.1) + 's'; });
 });
-
-// ── COUNTER ANIMATION ──
 function animateCounter(el) {
   if(el.dataset.animated) return;
   el.dataset.animated = true;
@@ -2155,8 +2068,6 @@ document.querySelectorAll('[data-target]').forEach(el => {
     if(entries[0].isIntersecting) animateCounter(el);
   }, {threshold: 0.5}).observe(el);
 });
-
-// ── FAQ ──
 document.querySelectorAll('.faq-q').forEach(q => {
   q.addEventListener('click', () => {
     const item = q.parentElement;
@@ -2165,8 +2076,6 @@ document.querySelectorAll('.faq-q').forEach(q => {
     if(!wasOpen) item.classList.add('open');
   });
 });
-
-// ── SMOOTH SCROLL ──
 document.querySelectorAll('a[href^="#"]').forEach(a => {
   a.addEventListener('click', e => {
     const target = document.querySelector(a.getAttribute('href'));
@@ -2175,8 +2084,7 @@ document.querySelectorAll('a[href^="#"]').forEach(a => {
 });
 </script>
 </body>
-</html>
-`;
+</html>`;
 
 /* ─────────────────────────────────────────────────────────────────────────────
    HELP PAGE
@@ -2371,7 +2279,7 @@ function ExamplePage({onBack,onBuild}) {
       <div style={{background:"#fff7ed",borderBottom:"1px solid #fed7aa",padding:"12px 28px",display:"flex",alignItems:"center",justifyContent:"space-between",flexWrap:"wrap",gap:10}}>
         <div style={{display:"flex",alignItems:"center",gap:10,fontSize:13}}>
           <span style={{fontSize:16}}>✦</span>
-          <span style={{fontWeight:600,color:"#111827"}}>IronForge Gym NYC</span>
+          <span style={{fontWeight:600,color:"#111827"}}>Peak Ridge Roofing — Austin TX</span>
           <span style={{color:"#9ca3af"}}>— Sample page generated by Sitefliq AI</span>
           <span style={{background:"#f97316",color:"white",padding:"2px 8px",borderRadius:4,fontSize:10,fontWeight:700}}>EXAMPLE</span>
         </div>
