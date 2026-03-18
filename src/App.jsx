@@ -1068,7 +1068,9 @@ function GeneratingScreen({form,onDone,onError}) {
     Promise.all(queries.map(q=>fetchImg(q)))
       .then(images=>{
         const validImages = images.filter(Boolean);
+        console.log("Images fetched:", validImages.length, validImages);
         if(!cancelled) setImgStatus(validImages.length>0 ? `Found ${validImages.length} photos ✓`:"Using styled design…");
+        console.log("Calling /api/generate...");
         return fetch("/api/generate",{
           method:"POST",
           headers:{"Content-Type":"application/json"},
@@ -1079,8 +1081,13 @@ function GeneratingScreen({form,onDone,onError}) {
           })
         });
       })
-      .then(r=>{if(!r.ok)throw new Error(`API ${r.status}`);return r.json();})
+      .then(r=>{
+        console.log("Generate response status:", r.status);
+        if(!r.ok)throw new Error(`API ${r.status}`);
+        return r.json();
+      })
       .then(data=>{
+        console.log("Generate data:", data);
         if(cancelled)return;
         clearInterval(iv);setPct(100);
         let raw=(data.content||[]).filter(b=>b.type==="text").map(b=>b.text).join("");
@@ -1092,7 +1099,10 @@ function GeneratingScreen({form,onDone,onError}) {
         if(!html.toLowerCase().includes("<!doctype"))throw new Error("Invalid HTML. Please try again.");
         setTimeout(()=>onDone(html),400);
       })
-      .catch(e=>{if(!cancelled){clearInterval(iv);onError(e.message);}});
+      .catch(e=>{
+        console.error("Generation error:", e);
+        if(!cancelled){clearInterval(iv);onError(e.message);}
+      });
 
     return()=>{cancelled=true;clearInterval(iv);};
   },[]);
