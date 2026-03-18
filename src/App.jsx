@@ -78,6 +78,7 @@ const sb = {
       body: JSON.stringify({email})
     });
   },
+  restoreSession() {
     try {
       const token = localStorage.getItem("sb_token");
       const user = localStorage.getItem("sb_user");
