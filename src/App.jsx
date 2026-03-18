@@ -2551,6 +2551,8 @@ export default function Sitefliq() {
     localStorage.setItem("sf_screen",s);
     setScreen(s);
   };
+
+  const refreshCredits = async () => {
     const c = await sb.getCredits();
     setCredits(c);
     return c;
