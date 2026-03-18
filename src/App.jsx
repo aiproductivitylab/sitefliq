@@ -795,8 +795,7 @@ function BuilderPanel({form,up,togSec,onNext,ready,credits,user}) {
                 else if(isBlue) palette = "slate";
                 else if(isGreen) palette = "forest";
                 else if(isYellow) palette = "gold";
-                else if(isLight) palette = "clean";
-                else palette = "noir";
+                else palette = "clean";
                 up("palette", palette);
                 const desc = (data.description || "").toLowerCase();
                 let vibe = "warm";
