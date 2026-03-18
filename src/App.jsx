@@ -2516,10 +2516,13 @@ export default function Sitefliq() {
       sb.getCredits().then(setCredits);
     }
     // Check for Supabase password recovery token in URL hash
-    const hash = window.location.hash;
-    if(hash.includes("type=recovery") && hash.includes("access_token=")) {
-      const params = new URLSearchParams(hash.replace("#",""));
-      const token = params.get("access_token");
+    const fullHash = window.location.hash;
+    const fullSearch = window.location.search;
+    const combined = fullHash + "&" + fullSearch;
+    if((fullHash + fullSearch).includes("type=recovery") || (fullHash + fullSearch).includes("type=signup")) {
+      const hashParams = new URLSearchParams(fullHash.replace(/^#/,""));
+      const searchParams = new URLSearchParams(fullSearch.replace(/^\?/,""));
+      const token = hashParams.get("access_token") || searchParams.get("access_token");
       if(token) {
         setResetToken(token);
         setShowReset(true);
