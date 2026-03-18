@@ -1047,13 +1047,19 @@ function GeneratingScreen({form,onDone,onError}) {
 
     const fetchImg = (q) =>
       fetch(`/api/images?query=${encodeURIComponent(q)}`)
-        .then(r=>r.json())
-        .then(d=>{
-          if(d.photos&&d.photos.length>0){
-            const pick = d.photos[Math.floor(Math.random()*Math.min(5,d.photos.length))];
-            return pick.src.large2x||pick.src.large;
-          }
-          return null;
+        .then(r=>{
+          if(!r.ok && r.status!==304) return null;
+          return r.text().then(text=>{
+            if(!text) return null;
+            try {
+              const d = JSON.parse(text);
+              if(d.photos&&d.photos.length>0){
+                const pick = d.photos[Math.floor(Math.random()*Math.min(5,d.photos.length))];
+                return pick.src.large2x||pick.src.large;
+              }
+            } catch{}
+            return null;
+          });
         })
         .catch(()=>null);
 
