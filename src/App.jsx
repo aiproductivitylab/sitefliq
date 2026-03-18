@@ -258,7 +258,7 @@ function buildPrompt(f, images=[]) {
   const vib = VIBES.find(v=>v.id===f.vibe)||VIBES[0];
   const secs = f.sections.filter(s=>s!=="hero"&&s!=="social_proof");
   // Images are section-targeted: [hero, about, gallery1, gallery2, service1, service2]
-  const [heroImg, aboutImg, galleryImg1, galleryImg2, svcImg1, svcImg2] = images;
+  const [heroImg, aboutImg, galleryImg1, galleryImg2, galleryImg3, galleryImg4, svcImg1, svcImg2] = images;
   const hasImages = images.length > 0;
   // Fallbacks so every slot has something
   const img = (i) => images[i] || images[0] || null;
