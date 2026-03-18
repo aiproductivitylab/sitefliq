@@ -78,6 +78,14 @@ const sb = {
       body: JSON.stringify({email})
     });
   },
+  async updatePassword(token, newPassword) {
+    const r = await this.req("/auth/v1/user", {
+      method: "PUT",
+      body: JSON.stringify({password: newPassword}),
+      headers: {"Authorization": `Bearer ${token}`}
+    });
+    return r;
+  },
   restoreSession() {
     try {
       const token = localStorage.getItem("sb_token");
@@ -1212,6 +1220,58 @@ function ResultScreen({html,form,onReset}) {
 /* ─────────────────────────────────────────────────────────────────────────────
    AUTH COMPONENTS
 ───────────────────────────────────────────────────────────────────────────── */
+function ResetPasswordModal({token, onDone}) {
+  const [password,setPassword]=useState("");
+  const [confirm,setConfirm]=useState("");
+  const [loading,setLoading]=useState(false);
+  const [err,setErr]=useState("");
+  const [done,setDone]=useState(false);
+
+  const handle=async()=>{
+    if(password.length<6){setErr("Password must be at least 6 characters.");return;}
+    if(password!==confirm){setErr("Passwords don't match.");return;}
+    setLoading(true);setErr("");
+    const r=await sb.updatePassword(token,password);
+    if(r.ok){setDone(true);setTimeout(onDone,2000);}
+    else{setErr("Failed to update password. Please request a new reset link.");}
+    setLoading(false);
+  };
+
+  const inp={width:"100%",padding:"10px 12px",border:"1px solid #e5e7eb",borderRadius:8,fontSize:14,outline:"none",boxSizing:"border-box"};
+
+  return (
+    <div style={{position:"fixed",inset:0,background:"rgba(0,0,0,0.5)",display:"flex",alignItems:"center",justifyContent:"center",zIndex:9999,fontFamily:"'Geist',sans-serif"}}>
+      <div style={{background:"white",borderRadius:16,padding:36,width:"100%",maxWidth:400,position:"relative"}}>
+        <div style={{textAlign:"center",marginBottom:24}}>
+          <div style={{fontSize:28,fontWeight:800,color:"#111827",marginBottom:4}}>Set New Password</div>
+          <p style={{fontSize:13,color:"#6b7280"}}>Choose a strong password for your account</p>
+        </div>
+        {done?(
+          <div style={{background:"#f0fdf4",border:"1px solid #bbf7d0",borderRadius:8,padding:"16px",textAlign:"center",fontSize:14,color:"#16a34a",fontWeight:600}}>
+            ✓ Password updated! Redirecting…
+          </div>
+        ):(
+          <form onSubmit={e=>{e.preventDefault();handle();}}>
+            {err&&<div style={{background:"#fef2f2",border:"1px solid #fecaca",borderRadius:8,padding:"10px 14px",fontSize:13,color:"#dc2626",marginBottom:16}}>{err}</div>}
+            <div style={{marginBottom:14}}>
+              <label style={{fontSize:12,fontWeight:600,color:"#374151",display:"block",marginBottom:5}}>NEW PASSWORD</label>
+              <input value={password} onChange={e=>setPassword(e.target.value)} type="password" autoComplete="new-password" placeholder="Min. 6 characters" style={inp}/>
+            </div>
+            <div style={{marginBottom:20}}>
+              <label style={{fontSize:12,fontWeight:600,color:"#374151",display:"block",marginBottom:5}}>CONFIRM PASSWORD</label>
+              <input value={confirm} onChange={e=>setConfirm(e.target.value)} type="password" autoComplete="new-password" placeholder="Repeat password" style={inp}/>
+            </div>
+            <button type="submit" disabled={loading||!password||!confirm}
+              style={{width:"100%",padding:"13px",background:loading||!password||!confirm?"#e5e7eb":"#f97316",color:loading||!password||!confirm?"#9ca3af":"white",border:"none",borderRadius:10,fontSize:15,fontWeight:700,cursor:"pointer",transition:"background .15s"}}>
+              {loading?"Updating…":"Set New Password →"}
+            </button>
+          </form>
+        )}
+      </div>
+    </div>
+  );
+}
+
 function AuthModal({mode="signin", onSuccess, onClose}) {
   const [tab, setTab] = useState(mode);
   const [email, setEmail] = useState("");
@@ -2439,11 +2499,25 @@ export default function Sitefliq() {
     };
   },[]);
 
+  const [showReset,setShowReset]=useState(false);
+  const [resetToken,setResetToken]=useState(null);
+
   // Restore session on mount
   useEffect(()=>{
     if(sb.restoreSession()){
       setUser(sb._user);
       sb.getCredits().then(setCredits);
+    }
+    // Check for Supabase password recovery token in URL hash
+    const hash = window.location.hash;
+    if(hash.includes("type=recovery") && hash.includes("access_token=")) {
+      const params = new URLSearchParams(hash.replace("#",""));
+      const token = params.get("access_token");
+      if(token) {
+        setResetToken(token);
+        setShowReset(true);
+        window.history.replaceState({},document.title,window.location.pathname);
+      }
     }
     // Check for paddle payment success
     const params = new URLSearchParams(window.location.search);
@@ -2527,6 +2601,7 @@ export default function Sitefliq() {
   if(legalScreen==="terms") return <TermsPage onHome={()=>setLegalScreen(null)}/>;
   if(legalScreen==="privacy") return <PrivacyPage onHome={()=>setLegalScreen(null)}/>;
   if(legalScreen==="refund") return <RefundPage onHome={()=>setLegalScreen(null)}/>;
+  if(showReset) return <ResetPasswordModal token={resetToken} onDone={()=>{setShowReset(false);setResetToken(null);setScreen("home");}}/>;
   if(screen==="home") return <><HomePage onBuild={()=>setScreen("builder")} onPricing={()=>setScreen("pricing_standalone")} onExample={()=>setScreen("example")} onHelp={()=>setScreen("help")} user={user} credits={credits} onSignIn={()=>{setAuthMode("signin");setShowAuth(true);}} onSignOut={handleSignOut}/>{showAuth&&<AuthModal mode={authMode} onSuccess={()=>{setUser(sb._user);sb.getCredits().then(setCredits);setShowAuth(false);}} onClose={()=>setShowAuth(false)}/>}</>;
   if(screen==="help") return <HelpPage onHome={()=>setScreen("home")}/>;
   if(screen==="example") return <ExamplePage onBack={()=>setScreen("home")} onBuild={()=>setScreen("builder")}/>;
