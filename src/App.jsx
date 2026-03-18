@@ -264,21 +264,9 @@ function buildPrompt(f, images=[]) {
   const img = (i) => images[i] || images[0] || null;
 
   // Build maps HTML as a plain string to avoid nested backtick issues
-  const mapsHtml = f.location ? [
-    'Address: "' + f.location + '" — you MUST include ALL THREE of these in the contact section:',
-    '',
-    '1. CLICKABLE MAP IMAGE — a static map image wrapped in a link. Use this exact code:',
-    '<a href="https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(f.location) + '" target="_blank" rel="noopener" style="display:block;border-radius:12px;overflow:hidden;margin-bottom:12px;position:relative;text-decoration:none">',
-    '  <img src="https://maps.googleapis.com/maps/api/staticmap?center=' + encodeURIComponent(f.location) + '&zoom=15&size=800x300&scale=2&maptype=roadmap&markers=color:red%7C' + encodeURIComponent(f.location) + '&key=' + GOOGLE_KEY + '" alt="Map of ' + f.location + '" style="width:100%;height:200px;object-fit:cover;display:block;border-radius:12px"/>',
-    '  <div style="position:absolute;bottom:10px;right:10px;background:white;border-radius:6px;padding:5px 10px;font-size:12px;font-weight:600;color:#374151;box-shadow:0 2px 8px rgba(0,0,0,.15)">View on Google Maps →</div>',
-    '</a>',
-    '',
-    '2. STREET VIEW LINK:',
-    '<a href="https://www.google.com/maps/@?api=1&map_action=pano&query=' + encodeURIComponent(f.location) + '" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:7px;padding:9px 16px;border-radius:8px;background:#f8fafc;border:1px solid #e2e8f0;font-size:13px;font-weight:600;color:#374151;text-decoration:none;margin-bottom:16px">View Street View</a>',
-    '',
-    '3. PLAIN TEXT ADDRESS:',
-    '<a href="https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(f.location) + '" target="_blank" rel="noopener" style="display:flex;align-items:center;gap:8px;color:inherit;text-decoration:none;font-size:14px">📍 ' + f.location + '</a>'
-  ].join("\n") : "No address — omit map entirely.";
+  const mapsHtml = f.location ? 
+    "Include in contact section: 1) Static map image: <a href=\"https://www.google.com/maps/search/?api=1&query="+encodeURIComponent(f.location)+"\" target=\"_blank\"><img src=\"https://maps.googleapis.com/maps/api/staticmap?center="+encodeURIComponent(f.location)+"&zoom=15&size=800x300&scale=2&markers=color:red%7C"+encodeURIComponent(f.location)+"&key="+GOOGLE_KEY+"\" style=\"width:100%;height:200px;object-fit:cover;border-radius:12px\"/></a> 2) Plain text address: "+f.location 
+    : "No address provided.";
 
   // Build prompt as array to avoid nested backtick build errors
   const photosSection = hasImages ? [
@@ -335,7 +323,7 @@ function buildPrompt(f, images=[]) {
     "Phone: "+(f.phone||""),
     "Email: "+(f.email||""),
     "CTA: "+(f.cta||"Get Started Today"),
-    f.logo ? "LOGO: Use this exact img tag in header (height:48px) and footer (height:36px): <img src=\"LOGO_PLACEHOLDER\" alt=\""+f.name+" logo\" style=\"height:48px;object-fit:contain\">  — replace LOGO_PLACEHOLDER with the actual src at runtime." : "LOGO: No logo provided — use a styled text logo with the business name in the accent colour instead.",
+    f.logo ? "LOGO: Embed exactly this in header and footer: <img src=\"__LOGO__\" alt=\""+f.name+"\" style=\"height:44px;object-fit:contain\">" : "LOGO: Text logo using business name in accent colour.",
     "",
     "DESIGN:",
     "Palette bg:"+pal.bg+" surface:"+pal.surface+" accent:"+pal.accent+" text:"+pal.text,
@@ -356,27 +344,9 @@ function buildPrompt(f, images=[]) {
     "GOOGLE MAPS:",
     mapsHtml,
     "",
-    "ANIMATIONS — REQUIRED:",
-    "1. On page load: fade-up each section as it enters viewport using IntersectionObserver with CSS classes",
-    "2. Hero: headline animates in with a typewriter or slide-up effect on load",
-    "3. Stats counter: count up from 0 to final value over 2s when section scrolls into view",
-    "4. CTA buttons: subtle pulse/glow animation on hover + scale(1.04) transform",
-    "5. Cards/service boxes: lift up on hover with box-shadow and translateY(-6px)",
-    "6. Nav: smooth scroll to sections, highlight active nav item on scroll",
-    "7. Sticky header: add backdrop-blur and subtle shadow after scrolling 80px",
-    "8. Images: fade in with a slight zoom effect when they load",
-    "9. Mobile menu: slide down smoothly with CSS transition",
-    "10. Use CSS @keyframes for all animations — no external libraries",
+    "ANIMATIONS: fade-up on scroll (IntersectionObserver), hero slide-in, stats count-up, CTA pulse, card hover lift, sticky header blur, smooth scroll nav.",
     "",
-    "RULES:",
-    "1. CSS in <style>, JS in <script> at bottom. One Google Fonts @import only.",
-    "2. Real niche-specific copy. Zero lorem ipsum.",
-    "3. Conversion: urgency, social proof, 5+ CTAs, trust signals throughout.",
-    "4. One H1 with keyword, descriptive H2s, semantic HTML.",
-    "5. Working JS accordion for FAQ. Working hamburger menu. Mobile-first responsive.",
-    "6. All images must use object-fit:cover with appropriate container heights.",
-    "7. Hero image overlay: always add a dark semi-transparent overlay so text is readable.",
-    "8. If address provided, ALWAYS include the static map image (clickable), street view link, and plain text address.",
+    "RULES: CSS in <style>, JS in <script> at end. Real niche copy, no lorem ipsum. 5+ CTAs. Working FAQ accordion and hamburger menu. Mobile-first responsive. All images object-fit:cover. Hero image needs dark overlay for readable text.",
     "",
     "OUTPUT: Raw HTML only. Start with <!DOCTYPE html>. End with </html>. Nothing else."
   ].join("\n");
@@ -1097,7 +1067,7 @@ function GeneratingScreen({form,onDone,onError}) {
         const end=html.lastIndexOf("</html>");
         if(end!==-1)html=html.slice(0,end+7);
         // Replace logo placeholder with actual logo if provided
-        if(form.logo) html=html.replace(/LOGO_PLACEHOLDER/g, form.logo);
+        if(form.logo) html=html.replace(/__LOGO__/g, form.logo);
         if(!html.toLowerCase().includes("<!doctype"))throw new Error("Invalid HTML. Please try again.");
         setTimeout(()=>onDone(html),400);
       })
