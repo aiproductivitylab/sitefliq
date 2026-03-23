@@ -2715,9 +2715,10 @@ export default function Sitefliq() {
               </div>
               <iframe
                 srcDoc={resHtml}
-                style={{flex:1,width:"100%",border:"none",display:"block"}}
+                style={{flex:1,width:"100%",border:"none",display:"block",overflow:"auto"}}
                 title="Page Preview"
                 sandbox="allow-scripts allow-same-origin"
+                scrolling="yes"
               />
             </div>
           )}
