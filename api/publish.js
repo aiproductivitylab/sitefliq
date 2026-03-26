@@ -11,6 +11,40 @@ export default async function handler(req, res) {
   const projectName = `sf-${slug}-${Date.now().toString(36)}`;
 
   try {
+    // First create the project with protection disabled
+    const projectRes = await fetch('https://api.vercel.com/v10/projects', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        name: projectName,
+        framework: null,
+        ssoProtection: null,
+        passwordProtection: null,
+      }),
+    });
+
+    const project = await projectRes.json();
+    const projectId = project.id;
+
+    // Disable deployment protection on the project
+    if (projectId) {
+      await fetch(`https://api.vercel.com/v9/projects/${projectId}`, {
+        method: 'PATCH',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          ssoProtection: null,
+          passwordProtection: null,
+        }),
+      });
+    }
+
+    // Deploy to the project
     const deployRes = await fetch('https://api.vercel.com/v13/deployments', {
       method: 'POST',
       headers: {
@@ -32,8 +66,6 @@ export default async function handler(req, res) {
       return res.status(500).json({ error: data.error?.message || 'Deploy failed' });
     }
 
-    // Return immediately with the URL — don't wait for deployment to be ready
-    // The deployment will complete in the background
     const url = data.url ? `https://${data.url}` : null;
     return res.status(200).json({ url, ready: false, id: data.id });
 
