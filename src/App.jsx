@@ -198,43 +198,54 @@ const PLANS = [
 // hero, about, gallery1, gallery2, service1, service2
 function getSectionKeywords(industry) {
   const map = {
-    "Yoga & Fitness":       ["yoga class studio sunlight","yoga instructor teaching","yoga studio interior","woman meditating yoga","yoga pose flexibility","group yoga class"],
-    "Pilates & Barre":      ["pilates reformer studio","pilates instructor class","barre workout studio","pilates exercise woman","pilates equipment studio","group pilates class"],
-    "Gym & CrossFit":       ["modern gym interior wide","personal trainer coaching","crossfit gym workout","weight lifting gym","gym equipment modern","athletes gym training"],
-    "Personal Training":    ["personal trainer client outdoor","fitness trainer coaching","outdoor workout training","personal training session","athlete training park","fitness coaching session"],
-    "Beauty & Hair Salon":  ["luxury hair salon interior","hairstylist cutting hair","hair salon modern interior","hair styling professional","salon chair mirror","hair color treatment"],
-    "Nail Studio & Spa":    ["nail salon luxury interior","nail technician manicure","spa treatment hands","nail art close up","nail salon modern","manicure pedicure spa"],
-    "Barbershop":           ["barber shop interior vintage","barber cutting hair","barbershop chair mirror","barber shave razor","barbershop modern","barber tools scissors"],
-    "Restaurant & Café":    ["restaurant interior elegant lighting","chef cooking kitchen","restaurant table setting","fine dining food presentation","restaurant atmosphere candles","waiter serving food"],
-    "Coffee Shop & Bakery": ["coffee shop cozy interior","barista making coffee","bakery fresh bread pastries","coffee latte art close up","coffee shop morning light","bakery interior warm"],
-    "Photography":          ["photography studio professional lighting","photographer camera shoot","photography studio setup","camera lens close up","photo shoot behind scenes","photographer portrait session"],
-    "Videography":          ["video production studio","videographer filming camera","video camera professional","film production set","videography outdoor shoot","video editing studio"],
-    "Real Estate Agency":   ["modern luxury home exterior","bright living room interior","luxury kitchen modern","real estate home interior","house architecture modern","luxury property exterior"],
-    "Life Coaching":        ["life coaching professional office","coach client meeting","coaching conversation office","professional woman coaching","business coaching session","motivational coaching"],
-    "Business Consulting":  ["modern office professional interior","business meeting boardroom","business consulting team","professional office desk","corporate team meeting","business strategy planning"],
-    "Healthcare & Wellness":["modern medical clinic interior","doctor patient consultation","healthcare professional clinic","medical office bright","wellness clinic modern","health professional smiling"],
-    "Dental Practice":      ["modern dental clinic interior","dentist patient chair","dental office professional","dental equipment modern","dentist smiling professional","dental clinic bright"],
-    "Clothing Boutique":    ["fashion boutique interior modern","clothing rack boutique","fashion store interior","clothes shopping boutique","retail fashion store","boutique window display"],
-    "Online Store":         ["ecommerce product photography flat lay","product packaging modern","online shopping products","product display minimal","ecommerce flat lay lifestyle","product photography studio"],
-    "Education & Tutoring": ["classroom modern bright students","teacher student tutoring","education learning classroom","student studying desk","tutoring session table","school classroom light"],
-    "Tech Startup":         ["modern tech office startup","developers coding computers","tech startup office team","open plan office modern","coding laptop coffee","tech team collaboration"],
-    "Law Firm":             ["law office professional interior","lawyer desk books","law firm conference room","legal professional office","attorney meeting client","law library books"],
-    "Accounting":           ["professional office finance desk","accountant working laptop","business finance office","professional meeting finance","accounting desk documents","financial planning office"],
-    "Event Planning":       ["elegant event venue decoration","event planning flowers decor","wedding reception elegant","event styling flowers","gala dinner table setting","event decoration luxury"],
-    "Catering":             ["catering food elegant display","chef catering event","catering buffet spread","food catering professional","catering kitchen team","gourmet catering food"],
-    "Interior Design":      ["interior design modern living room","interior designer space","luxury home interior design","modern interior architecture","interior design bedroom luxury","designer home open plan"],
-    "Cleaning Services":    ["clean modern home interior","professional cleaner working","spotless kitchen clean","cleaning service professional","clean bright home","professional cleaning team"],
-    "Landscaping":          ["lush green lawn garden","professional gardener working","beautiful flower garden path","garden landscaping design","garden hedge trimming","manicured lawn outdoor"],
-    "Automotive":           ["mechanic repairing car engine","car workshop professional","auto mechanic under car","car repair garage","automotive technician working","car service professional"],
-    "Construction":         ["construction site professional workers","modern building architecture","construction workers building","architect blueprint planning","new building construction","professional builder site"],
-    "Plumbing":             ["plumber fixing pipe under sink","plumber working bathroom","plumbing repair professional","plumber tools pipes","bathroom plumbing installation","plumber working kitchen"],
-    "Electrical":           ["electrician wiring panel","electrical contractor working","electrician fixing wires","electrical installation professional","electrician tools equipment","electrical work professional"],
-    "Roofing":              ["roofer working roof tiles","roofing contractor team","roof replacement installation","roofer safety harness","roofing shingles installation","roof repair professional"],
-    "HVAC":                 ["hvac technician air conditioning","hvac installation professional","air conditioning unit installation","hvac repair technician","heating cooling system","hvac professional tools"],
-    "Pest Control":         ["pest control technician spraying","pest control professional","exterminator working house","pest inspection professional","pest control equipment","exterminator protective gear"],
-    "Cleaning Services":    ["professional cleaner working home","cleaning service team","spotless kitchen clean","maid service professional","commercial cleaning team","clean bright home"],
-    "Landscaping":          ["professional landscaper mowing lawn","beautiful garden landscaping","garden design lush green","landscaper planting flowers","manicured garden hedge","outdoor landscaping team"],
-    "Other":                ["professional business office interior","business team meeting","professional workspace modern","business people working","modern office collaboration","professional team workspace"],
+    // FITNESS
+    "Yoga & Fitness":       ["woman yoga pose studio sunlight","yoga class group instructor","yoga studio interior calm","woman meditating floor","yoga flexibility stretch","yoga instructor teaching students"],
+    "Pilates & Barre":      ["pilates reformer machine studio","pilates class instructor women","barre workout ballet studio","pilates exercise core woman","pilates equipment studio bright","group pilates class women"],
+    "Gym & CrossFit":       ["crossfit gym athlete barbell","gym weight room equipment","personal trainer coaching client","crossfit workout athletes","modern gym interior wide","powerlifting gym athlete"],
+    "Personal Training":    ["personal trainer coaching client gym","fitness trainer outdoor workout","one on one training session","personal training weights","trainer motivating client","fitness coaching session"],
+    // BEAUTY
+    "Beauty & Hair Salon":  ["hairstylist cutting hair salon","luxury hair salon interior modern","hair color treatment professional","salon mirror styling chair","hairdresser blonde highlights","hair salon modern interior bright"],
+    "Nail Studio & Spa":    ["nail technician manicure close up","luxury nail salon interior","spa hands manicure treatment","nail art professional close up","nail salon modern bright","pedicure spa treatment feet"],
+    "Barbershop":           ["barber cutting hair clippers","barbershop interior vintage leather","barber straight razor shave","barbershop chair mirror professional","barber tools scissors comb","classic barbershop neon sign"],
+    // FOOD
+    "Restaurant & Café":    ["elegant restaurant interior lighting candles","chef plating food kitchen","restaurant table setting fine dining","food presentation gourmet plate","waiter serving restaurant","restaurant atmosphere dinner"],
+    "Coffee Shop & Bakery": ["barista latte art espresso machine","cozy coffee shop interior morning","fresh bakery pastries bread display","coffee cup close up foam art","coffee shop wooden tables","baker kneading dough bakery"],
+    // CREATIVE
+    "Photography":          ["photographer camera portrait studio","professional photo studio lighting","photographer outdoor shoot model","camera lens close up bokeh","photo shoot behind scenes","professional photographer equipment"],
+    "Videography":          ["videographer filming camera shoulder","video production studio professional","filmmaker outdoor shoot camera","video camera close up professional","film production set crew","video editing suite screens"],
+    // PROPERTY
+    "Real Estate Agency":   ["modern luxury home exterior architecture","bright open plan living room","luxury kitchen marble island","real estate house front driveway","home interior natural light","luxury property pool exterior"],
+    // PROFESSIONAL SERVICES
+    "Life Coaching":        ["life coach professional meeting office","coaching conversation smiling woman","coach client session bright office","professional woman coaching whiteboard","business coaching motivational","coaching session confident people"],
+    "Business Consulting":  ["business meeting boardroom professionals","consultant presenting strategy","corporate team discussion office","business consulting whiteboard","professional office meeting table","executive team planning strategy"],
+    "Healthcare & Wellness":["doctor patient consultation clinic","modern medical clinic interior","healthcare professional smiling","medical office bright clean","wellness clinic reception","health professional equipment"],
+    "Dental Practice":      ["dentist patient chair treatment","modern dental clinic interior","dentist smiling professional white","dental equipment tools close up","dental clinic bright clean","dentist examining patient"],
+    // RETAIL
+    "Clothing Boutique":    ["clothing boutique interior modern racks","fashion store window display","boutique clothes rack bright","fashion retail interior minimal","clothing store shopping woman","boutique interior elegant lighting"],
+    "Online Store":         ["product photography flat lay minimal","ecommerce packaging modern clean","product display lifestyle photography","online shopping product close up","product photography studio white","flat lay product photography"],
+    // EDUCATION
+    "Education & Tutoring": ["teacher student tutoring table","classroom students learning bright","tutoring session one on one","student studying desk books","education learning modern classroom","tutor helping student homework"],
+    // TECH
+    "Tech Startup":         ["developers coding laptops office","modern tech startup open office","software team collaboration meeting","coding screens multiple monitors","tech office modern bright","startup team working together"],
+    // LEGAL & FINANCE
+    "Law Firm":             ["lawyer professional office desk books","law firm conference room table","attorney client meeting professional","legal books library office","lawyer suit professional confident","law office interior dark wood"],
+    "Accounting":           ["accountant laptop calculator desk","financial advisor client meeting","accounting office professional","business finance spreadsheet laptop","financial planning documents desk","accountant professional office"],
+    // EVENTS
+    "Event Planning":       ["elegant wedding reception flowers","event venue decoration flowers luxury","wedding table setting floral","gala dinner elegant decoration","event styling flowers candles","luxury event venue interior"],
+    "Catering":             ["catering food buffet elegant spread","chef catering event plating","gourmet catering food display","catering team serving event","food catering professional presentation","catering kitchen team cooking"],
+    // HOME SERVICES
+    "Interior Design":      ["luxury interior design living room","interior designer space modern","designer home open plan bright","modern bedroom interior design","interior design kitchen luxury","designer living space minimal"],
+    "Cleaning Services":    ["professional cleaner mop floor","cleaning service team uniform","spotless kitchen sparkling clean","cleaner wiping surface professional","cleaning team commercial building","domestic cleaner working bright"],
+    "Landscaping":          ["professional landscaper mowing lawn","beautiful garden landscaping design","gardener planting flowers beds","manicured lawn hedge trimming","garden design lush green","landscaping team outdoor work"],
+    // TRADES
+    "Automotive":           ["mechanic repairing car engine lift","auto technician under car garage","car repair workshop professional","mechanic diagnostic computer car","auto service garage inspection","car mechanic tools professional"],
+    "Plumbing":             ["plumber fixing pipe under sink","plumber working bathroom pipes","plumbing repair tools professional","plumber installing bathroom fitting","pipe repair plumbing work","plumber kitchen sink repair"],
+    "Electrical":           ["electrician wiring electrical panel","electrician installing outlet wall","electrical contractor tools professional","electrician safety equipment working","electrical wiring installation","electrician working ceiling light"],
+    "Roofing":              ["roofer installing roof tiles shingles","roofing contractor team working","roof replacement installation professional","roofer safety harness roof","new roof installation shingles","roofing work aerial view"],
+    "HVAC":                 ["hvac technician air conditioning unit","hvac installation professional tools","air conditioning repair technician","hvac system ductwork installation","heating cooling technician","hvac professional outdoor unit"],
+    "Pest Control":         ["pest control technician spraying house","exterminator professional uniform","pest inspection professional tools","pest control equipment sprayer","exterminator working residential","pest control team professional"],
+    "Construction":         ["construction workers building site","building construction progress aerial","construction team workers hard hats","architect blueprint site planning","new building construction frame","construction professional site manager"],
+    "Other":                ["professional business team meeting","modern office workspace bright","business professional working desk","team collaboration modern office","professional workspace minimal","business people working together"],
   };
   return map[industry] || map["Other"];
 }
