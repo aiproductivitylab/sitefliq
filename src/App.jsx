@@ -957,18 +957,17 @@ function BuilderPanel({ form, up, togSec, onNext, ready, credits, user, onBuyCre
                     onFocus={e => e.target.style.borderColor="#f97316"}
                     onBlur={e => e.target.style.borderColor="#e5e7eb"}
                   />
-                  <input
-                    value={form.pricingTiers?.[i]?.price || ""}
-                    onChange={e => {
-                      const tiers = [...(form.pricingTiers || [{},{},{}])];
-                      tiers[i] = { ...tiers[i], price: e.target.value };
-                      up("pricingTiers", tiers);
-                    }}
-                    placeholder="Price e.g. $99"
-                    style={{ padding:"7px 10px", border:"1px solid #e5e7eb", borderRadius:6, fontSize:12, fontFamily:"inherit", outline:"none" }}
-                    onFocus={e => e.target.style.borderColor="#f97316"}
-                    onBlur={e => e.target.style.borderColor="#e5e7eb"}
-                  />
+                  <div style={{ display:"flex", gap:4 }}>
+  <select value={form.pricingCurrency||"$"} onChange={e=>up("pricingCurrency",e.target.value)}
+    style={{ padding:"7px 6px", border:"1px solid #e5e7eb", borderRadius:6, fontSize:12, fontFamily:"inherit", outline:"none", background:"white", cursor:"pointer" }}
+    onFocus={e=>e.target.style.borderColor="#f97316"} onBlur={e=>e.target.style.borderColor="#e5e7eb"}>
+    {["$","£","€","R","A$","C$","AED","SGD"].map(c=><option key={c}>{c}</option>)}
+  </select>
+  <input value={form.pricingTiers?.[i]?.price||""} onChange={e=>{const t=[...(form.pricingTiers||[{},{},{}])];t[i]={...t[i],price:e.target.value};up("pricingTiers",t);}}
+    placeholder="e.g. 99"
+    style={{ flex:1, padding:"7px 10px", border:"1px solid #e5e7eb", borderRadius:6, fontSize:12, fontFamily:"inherit", outline:"none" }}
+    onFocus={e=>e.target.style.borderColor="#f97316"} onBlur={e=>e.target.style.borderColor="#e5e7eb"}/>
+</div>
                 </div>
                 <input
                   value={form.pricingTiers?.[i]?.description || ""}
