@@ -199,7 +199,7 @@ function buildPrompt(f, images = []) {
 "- Spacing: every section must have padding:96px 80px. Cards must have gap:28px.",
 "- Nav: sticky, with backdrop-filter:blur(20px), transparent initially then solid background on scroll via JS.",
 "- Hero: MUST be min-height:100vh with a full background image, dark overlay (rgba 0,0,0,0.55), large bold H1 (clamp 56px to 96px), subtext, and 2 CTA buttons.",
-"- Colors: strictly follow the palette provided. Accent color for CTAs, borders, highlights. No default blue browser colors.",
+"- Colors: strictly follow the palette provided. Accent color for CTAs, borders, highlights. No default blue browser colors. CRITICAL — never use accent color as both background AND text color on the same element. If the accent color is used as a button/banner background, the text on it MUST be either white (#ffffff) or dark (#111827) — whichever has higher contrast. Yellow/light accent backgrounds must always use dark text. Dark accent backgrounds must always use white text.",
 "- Mobile: all grids collapse to 1 column on mobile (max-width:768px).",
 "- Footer: dark background (#111 or similar), 4-column grid with logo, 3 link columns.",
 "",
