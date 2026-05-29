@@ -143,12 +143,12 @@ function buildPrompt(f, images = []) {
   const secsPrompt = secs.map((s, i) => {
     const n = i + 5;
     const m = {
-      services:     `${n}. SERVICES: 6 cards in 3-col grid, icon, name, description, price, hover glow${hasImages?" — image texture in card bg":""}`,
+      services:     `${n}. SERVICES: CRITICAL — generate EXACTLY 6 service cards in a 3-column grid. Each card MUST have: a relevant emoji icon, a service name, a 2-sentence description, and a price range. Do NOT leave this section empty. Use real services for ${f.industry}.
       about:        `${n}. ABOUT: 2-col layout${img(1)?`, left col real image (${img(1)}), right col story + 4 stats`:`, story left, 4 stats right`}`,
       benefits:     `${n}. BENEFITS: 6-item grid, icon+title+desc, niche-specific`,
-      testimonials: `${n}. TESTIMONIALS: 3 realistic reviews, name+location+stars+quote`,
+      testimonials: `${n}. TESTIMONIALS: CRITICAL — generate EXACTLY 3 customer review cards. Each MUST have: a 5-star rating display, a quote of at least 2 sentences, a customer name, and a location. Do NOT leave this section empty.
       pricing:      `${n}. PRICING: 3 tiers, feature lists, Most Popular badge`,
-      gallery:      `${n}. GALLERY: 6-item CSS grid${hasImages?` using: ${[img(0),img(1),img(2),img(3),img(4),img(5)].filter(Boolean).join(", ")}`:" — gradient placeholders"} — object-fit:cover, caption on hover`,
+      gallery:      `${n}. GALLERY: CRITICAL — generate EXACTLY 6 gallery items in a CSS grid. Each item MUST be a div with a background image or colored gradient placeholder, a hover overlay with a caption, and fixed height of 250px. Do NOT leave this section empty.
       faq:          `${n}. FAQ: 5 accordion items with JS click-to-expand`,
       booking:      `${n}. BOOKING: full form name/email/phone/service/date/message`,
       contact:      `${n}. CONTACT: split layout, info left, form right`,
