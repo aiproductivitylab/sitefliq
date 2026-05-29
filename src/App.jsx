@@ -883,25 +883,158 @@ function BuilderPanel({ form, up, togSec, onNext, ready, credits, user, onBuyCre
         )}
 
         {tab === "sections" && (
-          <div>
-            <p style={{ fontSize:12, color:"#6b7280", marginBottom:12, lineHeight:1.5 }}>Choose sections to include. Hero & Social Proof always included.</p>
-            <div style={{ display:"flex", flexDirection:"column", gap:5 }}>
-              {SECTIONS.map(s => (
-                <div key={s.id} onClick={() => !s.locked && togSec(s.id)}
-                  style={{ padding:"8px 11px", borderRadius:8, cursor:s.locked?"default":"pointer", display:"flex", alignItems:"center", gap:9, border:form.sections.includes(s.id)?"1.5px solid #f97316":"1.5px solid #e5e7eb", background:form.sections.includes(s.id)?"#fff7ed":"white", transition:"all .15s" }}>
-                  <span style={{ fontSize:14, width:18, textAlign:"center", flexShrink:0 }}>{s.icon}</span>
-                  <span style={{ flex:1, fontSize:12, fontWeight:500, color:form.sections.includes(s.id)?"#ea580c":"#374151" }}>{s.label}</span>
-                  {s.locked
-                    ? <span style={{ fontSize:9, color:"#d1d5db", background:"#f9fafb", padding:"2px 6px", borderRadius:4, border:"1px solid #e5e7eb" }}>Always on</span>
-                    : <div style={{ width:15, height:15, borderRadius:4, border:`2px solid ${form.sections.includes(s.id)?"#f97316":"#d1d5db"}`, background:form.sections.includes(s.id)?"#f97316":"transparent", display:"flex", alignItems:"center", justifyContent:"center", fontSize:9, color:"white", fontWeight:900, flexShrink:0 }}>
-                        {form.sections.includes(s.id) && "✓"}
-                      </div>
-                  }
+  <div style={{ display:"flex", flexDirection:"column", gap:8 }}>
+    <p style={{ fontSize:12, color:"#6b7280", marginBottom:4, lineHeight:1.5 }}>Choose sections to include. Hero & Social Proof always included.</p>
+    {SECTIONS.map(s => (
+      <div key={s.id}>
+        {/* Section toggle row */}
+        <div onClick={() => !s.locked && togSec(s.id)}
+          style={{ padding:"8px 11px", borderRadius:8, cursor:s.locked?"default":"pointer", display:"flex", alignItems:"center", gap:9, border:form.sections.includes(s.id)?"1.5px solid #f97316":"1.5px solid #e5e7eb", background:form.sections.includes(s.id)?"#fff7ed":"white", transition:"all .15s" }}>
+          <span style={{ fontSize:14, width:18, textAlign:"center", flexShrink:0 }}>{s.icon}</span>
+          <span style={{ flex:1, fontSize:12, fontWeight:500, color:form.sections.includes(s.id)?"#ea580c":"#374151" }}>{s.label}</span>
+          {s.locked
+            ? <span style={{ fontSize:9, color:"#d1d5db", background:"#f9fafb", padding:"2px 6px", borderRadius:4, border:"1px solid #e5e7eb" }}>Always on</span>
+            : <div style={{ width:15, height:15, borderRadius:4, border:`2px solid ${form.sections.includes(s.id)?"#f97316":"#d1d5db"}`, background:form.sections.includes(s.id)?"#f97316":"transparent", display:"flex", alignItems:"center", justifyContent:"center", fontSize:9, color:"white", fontWeight:900, flexShrink:0 }}>
+                {form.sections.includes(s.id) && "✓"}
+              </div>
+          }
+        </div>
+
+        {/* SERVICES inputs */}
+        {s.id === "services" && form.sections.includes("services") && (
+          <div style={{ background:"#fafaf9", border:"1px solid #f3f4f6", borderRadius:8, padding:"12px", marginTop:4 }}>
+            <div style={{ fontSize:11, fontWeight:700, color:"#374151", marginBottom:8, textTransform:"uppercase", letterSpacing:.5 }}>Your Services (optional)</div>
+            <div style={{ fontSize:11, color:"#9ca3af", marginBottom:10 }}>Add up to 6 services. Leave blank to let AI generate them.</div>
+            {[0,1,2,3,4,5].map(i => (
+              <div key={i} style={{ display:"grid", gridTemplateColumns:"2fr 1fr", gap:6, marginBottom:6 }}>
+                <input
+                  value={form.services?.[i]?.name || ""}
+                  onChange={e => {
+                    const services = [...(form.services || [{},{},{},{},{},{}])];
+                    services[i] = { ...services[i], name: e.target.value };
+                    up("services", services);
+                  }}
+                  placeholder={`Service ${i+1} name`}
+                  style={{ padding:"7px 10px", border:"1px solid #e5e7eb", borderRadius:6, fontSize:12, fontFamily:"inherit", outline:"none" }}
+                  onFocus={e => e.target.style.borderColor="#f97316"}
+                  onBlur={e => e.target.style.borderColor="#e5e7eb"}
+                />
+                <input
+                  value={form.services?.[i]?.price || ""}
+                  onChange={e => {
+                    const services = [...(form.services || [{},{},{},{},{},{}])];
+                    services[i] = { ...services[i], price: e.target.value };
+                    up("services", services);
+                  }}
+                  placeholder="Price e.g. $99"
+                  style={{ padding:"7px 10px", border:"1px solid #e5e7eb", borderRadius:6, fontSize:12, fontFamily:"inherit", outline:"none" }}
+                  onFocus={e => e.target.style.borderColor="#f97316"}
+                  onBlur={e => e.target.style.borderColor="#e5e7eb"}
+                />
+              </div>
+            ))}
+          </div>
+        )}
+
+        {/* PRICING inputs */}
+        {s.id === "pricing" && form.sections.includes("pricing") && (
+          <div style={{ background:"#fafaf9", border:"1px solid #f3f4f6", borderRadius:8, padding:"12px", marginTop:4 }}>
+            <div style={{ fontSize:11, fontWeight:700, color:"#374151", marginBottom:8, textTransform:"uppercase", letterSpacing:.5 }}>Pricing Tiers <span style={{ color:"#f97316" }}>*</span></div>
+            <div style={{ fontSize:11, color:"#9ca3af", marginBottom:10 }}>Add at least 1 pricing tier or remove the Pricing section.</div>
+            {[0,1,2].map(i => (
+              <div key={i} style={{ background:"white", border:"1px solid #e5e7eb", borderRadius:8, padding:"10px", marginBottom:8 }}>
+                <div style={{ fontSize:11, fontWeight:600, color:"#374151", marginBottom:6 }}>Tier {i+1}{i===0?" (Basic)":i===1?" (Standard — recommended)":"  (Premium)"}</div>
+                <div style={{ display:"grid", gridTemplateColumns:"2fr 1fr", gap:6, marginBottom:6 }}>
+                  <input
+                    value={form.pricingTiers?.[i]?.name || ""}
+                    onChange={e => {
+                      const tiers = [...(form.pricingTiers || [{},{},{}])];
+                      tiers[i] = { ...tiers[i], name: e.target.value };
+                      up("pricingTiers", tiers);
+                    }}
+                    placeholder={`Tier name e.g. ${i===0?"Basic":i===1?"Standard":"Premium"}`}
+                    style={{ padding:"7px 10px", border:"1px solid #e5e7eb", borderRadius:6, fontSize:12, fontFamily:"inherit", outline:"none" }}
+                    onFocus={e => e.target.style.borderColor="#f97316"}
+                    onBlur={e => e.target.style.borderColor="#e5e7eb"}
+                  />
+                  <input
+                    value={form.pricingTiers?.[i]?.price || ""}
+                    onChange={e => {
+                      const tiers = [...(form.pricingTiers || [{},{},{}])];
+                      tiers[i] = { ...tiers[i], price: e.target.value };
+                      up("pricingTiers", tiers);
+                    }}
+                    placeholder="Price e.g. $99"
+                    style={{ padding:"7px 10px", border:"1px solid #e5e7eb", borderRadius:6, fontSize:12, fontFamily:"inherit", outline:"none" }}
+                    onFocus={e => e.target.style.borderColor="#f97316"}
+                    onBlur={e => e.target.style.borderColor="#e5e7eb"}
+                  />
+                </div>
+                <input
+                  value={form.pricingTiers?.[i]?.description || ""}
+                  onChange={e => {
+                    const tiers = [...(form.pricingTiers || [{},{},{}])];
+                    tiers[i] = { ...tiers[i], description: e.target.value };
+                    up("pricingTiers", tiers);
+                  }}
+                  placeholder="What's included e.g. Basic inspection, 30-day warranty"
+                  style={{ width:"100%", padding:"7px 10px", border:"1px solid #e5e7eb", borderRadius:6, fontSize:12, fontFamily:"inherit", outline:"none", boxSizing:"border-box" }}
+                  onFocus={e => e.target.style.borderColor="#f97316"}
+                  onBlur={e => e.target.style.borderColor="#e5e7eb"}
+                />
+              </div>
+            ))}
+          </div>
+        )}
+
+        {/* GALLERY inputs */}
+        {s.id === "gallery" && form.sections.includes("gallery") && (
+          <div style={{ background:"#fafaf9", border:"1px solid #f3f4f6", borderRadius:8, padding:"12px", marginTop:4 }}>
+            <div style={{ fontSize:11, fontWeight:700, color:"#374151", marginBottom:8, textTransform:"uppercase", letterSpacing:.5 }}>Gallery Images (optional)</div>
+            <div style={{ fontSize:11, color:"#9ca3af", marginBottom:10 }}>Upload your own photos. Leave blank to use AI-sourced industry photos.</div>
+            <div style={{ display:"grid", gridTemplateColumns:"repeat(3,1fr)", gap:8 }}>
+              {[0,1,2,3,4,5].map(i => (
+                <div key={i}>
+                  {form.galleryImages?.[i] ? (
+                    <div style={{ position:"relative", borderRadius:8, overflow:"hidden", height:72 }}>
+                      <img src={form.galleryImages[i]} alt="" style={{ width:"100%", height:"100%", objectFit:"cover" }}/>
+                      <button
+                        onClick={() => {
+                          const imgs = [...(form.galleryImages || [])];
+                          imgs[i] = null;
+                          up("galleryImages", imgs.filter(Boolean).length ? imgs : null);
+                        }}
+                        style={{ position:"absolute", top:3, right:3, width:18, height:18, background:"rgba(0,0,0,.6)", color:"white", border:"none", borderRadius:"50%", fontSize:10, cursor:"pointer", display:"flex", alignItems:"center", justifyContent:"center" }}>×</button>
+                    </div>
+                  ) : (
+                    <label style={{ display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center", height:72, border:"1.5px dashed #e5e7eb", borderRadius:8, cursor:"pointer", background:"white", fontSize:10, color:"#9ca3af", gap:4 }}
+                      onMouseEnter={e => e.currentTarget.style.borderColor="#f97316"}
+                      onMouseLeave={e => e.currentTarget.style.borderColor="#e5e7eb"}>
+                      <span style={{ fontSize:18 }}>+</span>
+                      Photo {i+1}
+                      <input type="file" accept="image/*" style={{ display:"none" }} onChange={e => {
+                        const file = e.target.files[0];
+                        if (!file) return;
+                        if (file.size > 2000000) { toast("Image must be under 2MB", "error"); return; }
+                        const reader = new FileReader();
+                        reader.onload = ev => {
+                          const imgs = [...(form.galleryImages || [null,null,null,null,null,null])];
+                          imgs[i] = ev.target.result;
+                          up("galleryImages", imgs);
+                        };
+                        reader.readAsDataURL(file);
+                      }}/>
+                    </label>
+                  )}
                 </div>
               ))}
             </div>
           </div>
         )}
+      </div>
+    ))}
+  </div>
+)}
       </div>
 
       {/* CTA */}
@@ -2042,6 +2175,9 @@ const DEFAULT_FORM = {
   location:"", phone:"", email:"", cta:"Get Started Today",
   palette:"noir", vibe:"bold", logo:"", importedColours:[],
   sections:["hero","social_proof","services","about","testimonials","contact"],
+  services:[{},{},{},{},{},{}],
+  pricingTiers:[{},{},{}],
+  galleryImages:[null,null,null,null,null,null],
 };
 
 /* ─────────────────────────────────────────────────────────────────────────────
