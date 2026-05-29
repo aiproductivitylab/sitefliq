@@ -185,7 +185,7 @@ function buildPrompt(f, images = []) {
     "3. Hero: MUST be min-height:100vh, position:relative, background image with overlay. Hero content must be position:relative z-index:2 centered with padding:0 80px. H1 font-size:clamp(56px,7vw,96px) font-family from imported Google Font font-weight:800 color:#ffffff line-height:1.05 margin-bottom:20px. Subheadline font-size:20px color:rgba(255,255,255,0.85) max-width:600px margin-bottom:36px. Two CTA buttons side by side. Trust line with stars below. ALL TEXT MUST BE VISIBLE — ensure z-index:2 on all text elements.", + (img(0) ? " — use hero background image with dark overlay" : " — CSS gradient"),
     "4. Social proof bar: 4 animated counter stats (JS count-up from 0 on scroll)",
     secsPrompt,
-    "- Footer: logo, tagline, 3 link columns, social icons, copyright 2026",
+    "- Footer: dark background (#111827), logo top-left, tagline, 3 link columns (Services, Company, Contact), copyright 2026. DO NOT add any social media icons or social links unless the user has explicitly provided social media handles. No Twitter, Facebook, Instagram, LinkedIn icons unless provided in the business description.",
     "",
     "GOOGLE MAPS:",
     mapsHtml,
