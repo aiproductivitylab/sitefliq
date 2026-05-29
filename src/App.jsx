@@ -388,7 +388,7 @@ function PreviewFrame({ html, businessName }) {
           srcDoc={html}
           style={{ width:mode==="mobile"?"375px":"100%", height:mode==="mobile"?667:"100%", border:mode==="mobile"?"none":"none", display:"block", borderRadius:mode==="mobile"?12:0, boxShadow:mode==="mobile"?"0 8px 32px rgba(0,0,0,.2)":"none" }}
           title="Page Preview"
-          sandbox="allow-scripts allow-same-origin"
+          sandbox="allow-scripts"
           scrolling="yes"
         />
       </div>
