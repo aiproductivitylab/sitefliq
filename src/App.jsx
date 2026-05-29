@@ -147,7 +147,7 @@ function buildPrompt(f, images = []) {
   about:        `${n}. ABOUT: 2-col layout${img(1) ? ", left col real image ("+img(1)+"), right col story + 4 stats" : ", story left, 4 stats right"}`,
   benefits:     `${n}. BENEFITS: 6-item grid, icon+title+desc, niche-specific`,
   testimonials: `${n}. TESTIMONIALS: CRITICAL — generate EXACTLY 3 customer review cards. Each MUST have: a 5-star rating display, a quote of at least 2 sentences, a customer name, and a location. Do NOT leave this section empty.`,
-  pricing:      `${n}. PRICING: 3 tiers, feature lists, Most Popular badge`,
+ pricing:      `${n}. PRICING: 3 tiers in a grid, feature lists, Most Popular badge on middle tier. Currency symbol: ${f.pricingCurrency||"$"}. ${f.pricingTiers?.filter(t=>t.name||t.price).length ? "Use these exact pricing tiers: " + f.pricingTiers.filter(t=>t.name||t.price).map(t=>`${t.name||"Tier"} at ${f.pricingCurrency||"$"}${t.price||"TBD"} — ${t.description||""}`).join(" | ") : "Generate realistic pricing tiers for "+f.industry+"."}`,
   gallery:      `${n}. GALLERY: CRITICAL — generate EXACTLY 6 gallery items in a CSS grid. Each item MUST be a div with a background image or colored gradient placeholder, a hover overlay with a caption, and fixed height of 250px. Do NOT leave this section empty.`,
   faq:          `${n}. FAQ: 5 accordion items with JS click-to-expand`,
   booking:      `${n}. BOOKING: full form name/email/phone/service/date/message`,
@@ -2175,7 +2175,7 @@ const DEFAULT_FORM = {
   palette:"noir", vibe:"bold", logo:"", importedColours:[],
   sections:["hero","social_proof","services","about","testimonials","contact"],
   services:[{},{},{},{},{},{}],
-  pricingTiers:[{},{},{}],
+  pricingTiers:[{},{},{}],pricingCurrency:"$",
   galleryImages:[null,null,null,null,null,null],
 };
 
