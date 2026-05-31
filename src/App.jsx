@@ -151,7 +151,7 @@ function buildPrompt(f, images = []) {
   gallery:      `${n}. GALLERY: CRITICAL — generate EXACTLY 6 gallery items in a CSS grid. Each item MUST be a div with a background image or colored gradient placeholder, a hover overlay with a caption, and fixed height of 250px. Do NOT leave this section empty.`,
   faq:          `${n}. FAQ: 5 accordion items with JS click-to-expand`,
   booking:      `${n}. BOOKING: full form name/email/phone/service/date/message`,
-  contact:      `${n}. CONTACT: split layout, info left, form right`,
+  contact: `${n}. CONTACT: split layout, info left, form right. The form must have: Name, Email, Phone, Service (dropdown with relevant services), Message fields, and a Submit button. The form must submit via fetch POST to '/api/send-contact' with JSON body containing: name, email, phone, service, message, businessEmail: '${f.email||""}', businessName: '${f.name||""}'. On success show a green thank you message. On error show a red error message. Use vanilla JS for the fetch call, no libraries.`,
   cta:          `${n}. CTA BANNER: full-width urgent headline + big button${img(2) ? " — background image with dark overlay" : ""}`,
 };
     return m[s] || `${n}. ${s.toUpperCase()}`;
