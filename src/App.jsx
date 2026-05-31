@@ -175,7 +175,7 @@ function buildPrompt(f, images = []) {
     `Palette bg:${pal.bg} surface:${pal.surface} accent:${pal.accent} text:${pal.text}`,
     f.importedColours?.length ? `BRAND COLOURS from existing site — use as primary palette: ${f.importedColours.join(", ")}` : "",
     `Vibe: ${vib.label} — ${vib.desc}`,
-    "Font: ONE distinctive Google Font pair (NOT Inter/Roboto — something memorable for this vibe)",
+    "Font: Import TWO Google Fonts via a single @import in the <style> tag. Use one display/heading font (choose from: Oswald, Playfair Display, Montserrat, Raleway, Bebas Neue, Cormorant Garant) and one body font (choose from: DM Sans, Plus Jakarta Sans, Nunito, Lato, Source Sans 3). Apply the heading font to ALL h1, h2, h3, section titles, nav logo, and stat numbers. Apply the body font to body, p, input, button, select. Font sizes: h1 minimum 56px, h2 minimum 36px. Both fonts MUST be loaded from Google Fonts and visibly applied — do not fall back to system fonts.",
     "",
     photosSection,
     "",
