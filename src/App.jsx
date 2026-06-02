@@ -165,7 +165,7 @@ function buildPrompt(f, images = []) {
     `Industry: ${f.industry}`,
     `Tagline: ${f.tagline || "Quality you can trust"}`,
     `Description: ${f.description}`,
-    `Location: ${f.location || ""}`,
+    f.location ? `Location: ${f.location} — use THIS EXACT location everywhere (copy, contact section, schema). Never use any other city, state or country.` : `Location: NONE PROVIDED — do NOT invent or mention any city, state, region or country anywhere on the page. Keep all location wording generic like "your area" or "locally". Do NOT add a map. Never write "Austin" or any placeholder city.`,
     `Phone: ${f.phone || ""}`,
     `Email: ${f.email || ""}`,
     `CTA: ${f.cta || "Get Started Today"}`,
