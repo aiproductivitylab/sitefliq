@@ -162,6 +162,20 @@ function buildPrompt(f, images = []) {
     return m[s] || `${n}. ${s.toUpperCase()}`;
   }).join("\n");
 
+  const localSeo = f.location
+    ? [
+        `LOCAL SEO — CRITICAL (location provided: ${f.location}):`,
+        `- Add a schema.org LocalBusiness JSON-LD block in <head> using the business name "${f.name}" and the address from the location above${f.phone ? ` plus telephone "${f.phone}"` : " (NO phone was given — omit the telephone property)"}. Do NOT invent extra address lines, postal codes, geo-coordinates, opening hours, ratings or review counts.`,
+        `- Include the city/area from "${f.location}" in the <title> tag, the hero H1, and the meta description.`,
+        `- Begin the hero with ONE answer-first sentence (plain text an AI assistant can quote verbatim) stating what the business does, for whom, and where — e.g. "${f.name} is a ${f.industry} serving ${f.location}." Place it as the first visible line of the hero (lead sub-headline), not buried lower down.`,
+      ].join("\n")
+    : [
+        "LOCAL SEO — CRITICAL (NO location provided):",
+        `- Add a schema.org LocalBusiness JSON-LD block in <head> using the business name "${f.name}" only${f.phone ? `, with telephone "${f.phone}"` : ""}. Do NOT include any address, city, region, postal code or geo-coordinates, and never invent one.`,
+        "- Keep the <title>, hero H1 and meta description location-free — do NOT insert any city/area or placeholder city.",
+        `- Begin the hero with ONE answer-first sentence (plain text an AI assistant can quote verbatim) stating what the business does and for whom — e.g. "${f.name} is a ${f.industry} that ..." Keep it location-free. Place it as the first visible line of the hero, not buried lower down.`,
+      ].join("\n");
+
   return [
     "You are a senior CRO expert and world-class web designer. Build a complete, production-ready, single-file HTML landing page.",
     "",
@@ -211,6 +225,8 @@ function buildPrompt(f, images = []) {
     "CONTRAST RULE — CRITICAL: never put accent-colour text on an accent-colour background. Light/yellow backgrounds always get dark text (#111827); dark backgrounds always get white text (#ffffff). Every piece of text must be clearly readable.",
     "",
     "ACCURACY — CRITICAL: Do NOT invent specific factual claims about this business. Never state an exact warranty length, years in business, founding year, number of jobs/projects/customers served, ratings or review counts, awards, licences, certifications, insurance status, or specific guarantees UNLESS the user explicitly provided them in the business description or the service/pricing inputs. When a section needs filler for visual structure, use soft qualitative value phrasing that is not a verifiable factual claim (e.g. 'Trusted local service', 'Quality you can count on', 'Fast, friendly response') — never a fabricated number or specific promise. Keep the services and pricing the user entered EXACTLY as written: do not change names, prices, or descriptions, and do not add specifics they did not give.",
+    "",
+    localSeo,
     "",
     "ANIMATIONS — add these, all vanilla CSS/JS, no libraries:",
     "- Scroll reveal: elements start opacity:0 translateY(24px), add .in-view class via IntersectionObserver (threshold .15) to fade+slide in over .6s. Stagger grid children by 80ms.",
