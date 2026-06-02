@@ -1677,7 +1677,60 @@ const COMPARISONS = {
     ctaHeading: "Skip the builder. Get the page.",
   },
 };
-const INDUSTRY_PAGES = {}; // populated in batch 2
+const INDUSTRY_PAGES = {
+  "for-plumbers": {
+    eyebrow: "For Plumbers", h1: "AI Website Builder for Plumbers",
+    metaTitle: "AI Website Builder for Plumbers — Landing Page in 60s | Sitefliq",
+    metaDesc: "AI website builder for plumbers. Generate a fast, mobile-ready landing page with click-to-call and local SEO in 60 seconds. No coding needed.",
+    intro: "Sitefliq is an AI website builder for plumbers: describe your services and service area, and it generates a fast, mobile-ready landing page with click-to-call buttons, your services, and local SEO in about a minute — no design or coding needed.",
+    benefits: [
+      { icon:"🚿", title:"Built for plumbing jobs", desc:"Service sections for repairs, installs, drain cleaning and emergencies — written in plumbing language, not generic filler." },
+      { icon:"📞", title:"Click-to-call everywhere", desc:"Prominent call and quote buttons so a customer with a burst pipe can reach you in one tap." },
+      { icon:"📍", title:"Local SEO baked in", desc:"Your town in the title, headings and LocalBusiness schema so you show up for 'plumber near me' searches." },
+      { icon:"⚡", title:"Live the same day", desc:"Generate, download the HTML, and host it free on Netlify — online in minutes, not weeks." },
+    ],
+    ctaHeading: "Get your plumbing page online today.",
+  },
+  "for-electricians": {
+    eyebrow: "For Electricians", h1: "AI Website Builder for Electricians",
+    metaTitle: "AI Website Builder for Electricians — Landing Page in 60s | Sitefliq",
+    metaDesc: "AI website builder for electricians. Get a professional landing page with your services, contact buttons and local SEO in about 60 seconds.",
+    intro: "Sitefliq is an AI website builder for electricians: tell it what you do and where you work, and it builds a professional landing page with your services, trust-building copy, and local SEO in about 60 seconds.",
+    benefits: [
+      { icon:"💡", title:"Electrical services, done right", desc:"Sections for rewiring, panel upgrades, lighting, fault-finding and emergency call-outs in proper trade language." },
+      { icon:"📞", title:"One-tap contact", desc:"Call and quote buttons throughout so homeowners and contractors can reach you instantly." },
+      { icon:"📍", title:"Found locally", desc:"Your area in the title, H1 and schema so you rank for local electrician searches." },
+      { icon:"⚡", title:"Online in minutes", desc:"Download the page and host it anywhere — no monthly platform fees." },
+    ],
+    ctaHeading: "Power up your online presence.",
+  },
+  "for-gyms": {
+    eyebrow: "For Gyms", h1: "AI Website Builder for Gyms & Fitness Studios",
+    metaTitle: "AI Website Builder for Gyms — Landing Page in 60s | Sitefliq",
+    metaDesc: "AI website builder for gyms and fitness studios. Generate a high-energy landing page with classes, social proof and join CTAs in 60 seconds.",
+    intro: "Sitefliq is an AI website builder for gyms and fitness studios: describe your classes, coaches and vibe, and it generates a high-energy landing page with your offerings, social proof and a clear join CTA in about a minute.",
+    benefits: [
+      { icon:"🏋️", title:"Built for fitness", desc:"Sections for classes, memberships, personal training and your timetable — in motivating, on-brand copy." },
+      { icon:"🔥", title:"Bold, energetic design", desc:"Big type and strong imagery that match a gym's energy, fully mobile-ready." },
+      { icon:"📍", title:"Local discovery", desc:"Your city in the title and schema so nearby members find you when they search." },
+      { icon:"📅", title:"Drive sign-ups", desc:"Clear join and free-trial CTAs throughout to turn visitors into members." },
+    ],
+    ctaHeading: "Fill your classes — start free.",
+  },
+  "for-salons": {
+    eyebrow: "For Salons", h1: "AI Website Builder for Salons & Spas",
+    metaTitle: "AI Website Builder for Salons — Landing Page in 60s | Sitefliq",
+    metaDesc: "AI website builder for salons and spas. Build an elegant landing page with your treatments, gallery and booking CTA in about 60 seconds.",
+    intro: "Sitefliq is an AI website builder for salons and spas: describe your treatments and style, and it builds an elegant landing page with your services, gallery and booking CTA in about 60 seconds.",
+    benefits: [
+      { icon:"💇", title:"Made for beauty", desc:"Sections for hair, nails, skincare and spa treatments with elegant, polished copy." },
+      { icon:"🖼️", title:"Show your work", desc:"A built-in gallery to showcase styles and results that win new clients." },
+      { icon:"📍", title:"Local clients find you", desc:"Your town in the title, headings and schema so you appear for nearby salon searches." },
+      { icon:"📅", title:"Easy to book", desc:"Prominent booking and contact buttons so clients reserve in a tap." },
+    ],
+    ctaHeading: "Look the part online too.",
+  },
+};
 const MARKETING_PAGES = { ...COMPARISONS, ...INDUSTRY_PAGES };
 
 const mktTh = { padding:"12px 16px", textAlign:"left", fontSize:12, fontWeight:800, textTransform:"uppercase", letterSpacing:.5, color:"#111827" };
@@ -1949,6 +2002,11 @@ function HomePage({ onBuild, onPricing, onExample, onHelp, onMarketing, user, cr
         <span style={{ fontWeight:600, color:"#6b7280" }}>Compare:</span>
         {[["vs-durable","Durable"],["vs-carrd","Carrd"],["vs-wix","Wix"]].map(([sl,lbl]) => (
           <a key={sl} href={`/${sl}`} onClick={(e) => { e.preventDefault(); onMarketing(sl); }} style={{ cursor:"pointer", textDecoration:"underline", color:"#9ca3af" }}>vs {lbl}</a>
+        ))}
+        <span style={{ color:"#d1d5db" }}>·</span>
+        <span style={{ fontWeight:600, color:"#6b7280" }}>Solutions:</span>
+        {[["for-plumbers","Plumbers"],["for-electricians","Electricians"],["for-gyms","Gyms"],["for-salons","Salons"]].map(([sl,lbl]) => (
+          <a key={sl} href={`/${sl}`} onClick={(e) => { e.preventDefault(); onMarketing(sl); }} style={{ cursor:"pointer", textDecoration:"underline", color:"#9ca3af" }}>{lbl}</a>
         ))}
         <span>hello@sitefliq.com</span>
       </div>
