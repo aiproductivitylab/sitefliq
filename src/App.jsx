@@ -1236,14 +1236,22 @@ function GeneratingScreen({ form, onDone, onError }) {
           method: "POST",
           headers: { "Content-Type":"application/json" },
           body: JSON.stringify({
-            model: "claude-sonnet-4-20250514",
+            model: "claude-sonnet-4-6",
             max_tokens: 16000,
             messages: [{ role:"user", content:buildPrompt(form, valid) }],
           }),
         });
       })
       .then(async r => {
-        if (!r.ok) throw new Error(`API ${r.status}`);
+        if (!r.ok) {
+          let detail = "";
+          try {
+            const raw = await r.text();
+            try { const e = JSON.parse(raw); detail = e?.error?.message || e?.error?.type || raw; }
+            catch { detail = raw; }
+          } catch {}
+          throw new Error(`API ${r.status}${detail ? `: ${detail}` : ""}`);
+        }
         const reader = r.body.getReader();
         const decoder = new TextDecoder();
         let fullText = "";
@@ -1278,6 +1286,7 @@ function GeneratingScreen({ form, onDone, onError }) {
         setTimeout(() => onDone(html), 400);
       })
       .catch(e => {
+        console.error("Generation failed:", e);
         if (!cancelled) { clearInterval(iv); onError(e.message); }
       });
 
