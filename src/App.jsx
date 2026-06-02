@@ -1628,9 +1628,159 @@ function ResetPasswordModal({ token, onDone }) {
 }
 
 /* ─────────────────────────────────────────────────────────────────────────────
+   MARKETING / SEO PAGES (comparisons + industries) — path-routed
+───────────────────────────────────────────────────────────────────────────── */
+const COMPARISONS = {
+  "vs-durable": {
+    eyebrow: "Comparison", h1: "Sitefliq vs Durable", competitor: "Durable",
+    metaTitle: "Sitefliq vs Durable — AI Landing Page Builder Compared | Sitefliq",
+    metaDesc: "Sitefliq vs Durable: how the two AI website builders compare on pricing, code ownership, SEO and setup. See which one fits your business.",
+    intro: "Sitefliq and Durable are both AI website builders, but they solve different problems. Sitefliq generates a single, self-contained, SEO-optimised landing page that you fully own and can host anywhere for a one-time credit — while Durable builds a multi-page site that lives on its own monthly subscription platform.",
+    rows: [
+      ["Pricing", "One-time credits from $19 — no subscription", "Monthly subscription"],
+      ["What you get", "One high-converting landing page", "A multi-page hosted website"],
+      ["Code ownership", "Download the full HTML and host anywhere", "Site stays on Durable's platform"],
+      ["SEO", "Meta tags + LocalBusiness schema built in", "Platform-managed basics"],
+      ["Setup", "~60 seconds from a short description", "A few minutes of guided setup"],
+      ["Best for", "Local businesses & freelancers who need one strong page", "Owners who want an all-in-one hosted site"],
+    ],
+    ctaHeading: "Build a page you actually own.",
+  },
+  "vs-carrd": {
+    eyebrow: "Comparison", h1: "Sitefliq vs Carrd", competitor: "Carrd",
+    metaTitle: "Sitefliq vs Carrd — AI Landing Page Builder Compared | Sitefliq",
+    metaDesc: "Sitefliq vs Carrd: AI-written copy and instant design versus a manual one-page editor. Compare pricing, SEO and hosting to pick the right tool.",
+    intro: "Sitefliq and Carrd both make one-page sites, but the workflow is the opposite. With Sitefliq you describe your business and AI writes the conversion copy and builds the page in about a minute; with Carrd you lay out and write everything yourself in a manual editor.",
+    rows: [
+      ["Pricing", "One-time credits from $19 — no subscription", "Annual subscription for Pro features"],
+      ["How it's built", "Describe your business; AI writes copy & builds it", "Manual drag-and-arrange editor"],
+      ["Copywriting", "AI writes niche-specific conversion copy", "You write all the copy yourself"],
+      ["Hosting", "Download the HTML — host on Netlify or anywhere", "Hosted on Carrd"],
+      ["SEO", "Meta tags + LocalBusiness schema generated", "Basic meta controls"],
+      ["Best for", "Owners who want the copy & design done for them", "Hands-on users building simple one-pagers"],
+    ],
+    ctaHeading: "Let AI write and build it for you.",
+  },
+  "vs-wix": {
+    eyebrow: "Comparison", h1: "Sitefliq vs Wix", competitor: "Wix",
+    metaTitle: "Sitefliq vs Wix — AI Landing Page Builder Compared | Sitefliq",
+    metaDesc: "Sitefliq vs Wix: a fast, lightweight AI landing page you own versus a full hosted website builder. Compare pricing, speed, SEO and ownership.",
+    intro: "Sitefliq and Wix sit at different ends of the spectrum. Sitefliq generates one fast, lightweight landing page from a short description and hands you the code to host anywhere; Wix is a full drag-and-drop platform for building larger, feature-rich websites hosted on a monthly plan.",
+    rows: [
+      ["Pricing", "One-time credits from $19", "Monthly subscription (ads on free tier)"],
+      ["How it's built", "AI generates a finished page in ~60s", "You build it in a drag-and-drop editor"],
+      ["Output", "One lightweight, self-contained HTML file", "A heavier hosted multi-page site"],
+      ["Code ownership", "Own and download the code", "Site stays on the Wix platform"],
+      ["SEO", "Clean SEO markup + schema out of the box", "Configurable, but heavier pages"],
+      ["Best for", "A fast, focused landing page", "Large, feature-rich websites"],
+    ],
+    ctaHeading: "Skip the builder. Get the page.",
+  },
+};
+const INDUSTRY_PAGES = {}; // populated in batch 2
+const MARKETING_PAGES = { ...COMPARISONS, ...INDUSTRY_PAGES };
+
+const mktTh = { padding:"12px 16px", textAlign:"left", fontSize:12, fontWeight:800, textTransform:"uppercase", letterSpacing:.5, color:"#111827" };
+const mktTd = { padding:"12px 16px", textAlign:"left", verticalAlign:"top", lineHeight:1.5, fontSize:14 };
+
+function MarketingPage({ slug, onHome, onBuild }) {
+  const page = MARKETING_PAGES[slug];
+
+  useEffect(() => {
+    if (!page) return;
+    const prevTitle = document.title;
+    const descEl = document.querySelector('meta[name="description"]');
+    const canon = document.querySelector('link[rel="canonical"]');
+    const prevDesc = descEl?.getAttribute("content");
+    const prevCanon = canon?.getAttribute("href");
+    document.title = page.metaTitle;
+    if (descEl) descEl.setAttribute("content", page.metaDesc);
+    if (canon) canon.setAttribute("href", `https://sitefliq.com/${slug}`);
+    window.scrollTo(0, 0);
+    return () => {
+      document.title = prevTitle;
+      if (descEl && prevDesc != null) descEl.setAttribute("content", prevDesc);
+      if (canon && prevCanon != null) canon.setAttribute("href", prevCanon);
+    };
+  }, [slug, page]);
+
+  if (!page) { onHome?.(); return null; }
+
+  return (
+    <div style={{ minHeight:"100vh", background:"#fafaf9", color:"#111827", fontFamily:"'Geist',sans-serif" }}>
+      <GS/>
+      <ToastContainer/>
+      <nav style={{ position:"sticky", top:0, zIndex:100, height:56, display:"flex", alignItems:"center", justifyContent:"space-between", padding:"0 clamp(20px,5vw,48px)", background:"rgba(250,250,249,.92)", backdropFilter:"blur(20px)", borderBottom:"1px solid #e5e7eb" }}>
+        <div onClick={onHome} style={{ display:"flex", alignItems:"center", gap:8, cursor:"pointer" }}>
+          <div style={{ width:28, height:28, background:"#f97316", borderRadius:7, display:"flex", alignItems:"center", justifyContent:"center", fontSize:13, color:"white", fontWeight:800 }}>S</div>
+          <span style={{ fontSize:18, fontWeight:800, color:"#111827" }}>Sitefliq</span>
+        </div>
+        <button onClick={onBuild} style={{ padding:"8px 20px", background:"#f97316", border:"none", borderRadius:8, fontSize:13, cursor:"pointer", color:"white", fontFamily:"inherit", fontWeight:700 }}>Start Building →</button>
+      </nav>
+
+      <div style={{ maxWidth:860, margin:"0 auto", padding:"clamp(48px,8vw,88px) clamp(20px,5vw,40px) 32px" }}>
+        <div style={{ fontSize:11, fontWeight:700, color:"#f97316", letterSpacing:2, textTransform:"uppercase", marginBottom:14 }}>{page.eyebrow}</div>
+        <h1 style={{ fontSize:"clamp(30px,5vw,52px)", fontWeight:800, lineHeight:1.1, marginBottom:20, letterSpacing:"-1px" }}>{page.h1}</h1>
+        <p style={{ fontSize:17, color:"#374151", lineHeight:1.8, marginBottom:28 }}>{page.intro}</p>
+        <button onClick={onBuild} style={{ padding:"13px 30px", background:"#f97316", color:"white", border:"none", borderRadius:10, fontSize:15, fontWeight:700, cursor:"pointer", fontFamily:"inherit", boxShadow:"0 4px 20px #f9731640" }}>Start Building for Free →</button>
+      </div>
+
+      {page.rows && (
+        <div style={{ maxWidth:860, margin:"0 auto", padding:"0 clamp(20px,5vw,40px) 16px" }}>
+          <div style={{ overflowX:"auto", border:"1px solid #e5e7eb", borderRadius:14, background:"white", boxShadow:"0 1px 3px rgba(0,0,0,.04)" }}>
+            <table style={{ width:"100%", borderCollapse:"collapse" }}>
+              <thead>
+                <tr style={{ background:"#fff7ed" }}>
+                  <th style={mktTh}>&nbsp;</th>
+                  <th style={{ ...mktTh, color:"#f97316" }}>Sitefliq</th>
+                  <th style={mktTh}>{page.competitor}</th>
+                </tr>
+              </thead>
+              <tbody>
+                {page.rows.map((r, i) => (
+                  <tr key={i} style={{ borderTop:"1px solid #f3f4f6" }}>
+                    <td style={{ ...mktTd, fontWeight:700, color:"#111827" }}>{r[0]}</td>
+                    <td style={{ ...mktTd, color:"#111827", background:"#fffaf5" }}>{r[1]}</td>
+                    <td style={{ ...mktTd, color:"#6b7280" }}>{r[2]}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
+
+      {page.benefits && (
+        <div style={{ maxWidth:860, margin:"0 auto", padding:"8px clamp(20px,5vw,40px) 16px", display:"grid", gridTemplateColumns:"repeat(auto-fit,minmax(240px,1fr))", gap:14 }}>
+          {page.benefits.map((b, i) => (
+            <div key={i} style={{ background:"white", border:"1px solid #f3f4f6", borderRadius:12, padding:"18px 20px", boxShadow:"0 1px 3px rgba(0,0,0,.04)" }}>
+              <div style={{ fontSize:22, marginBottom:8 }}>{b.icon}</div>
+              <div style={{ fontSize:14, fontWeight:700, marginBottom:5 }}>{b.title}</div>
+              <div style={{ fontSize:13, color:"#6b7280", lineHeight:1.6 }}>{b.desc}</div>
+            </div>
+          ))}
+        </div>
+      )}
+
+      <div style={{ textAlign:"center", padding:"clamp(40px,7vw,72px) clamp(20px,5vw,40px)" }}>
+        <h2 style={{ fontSize:"clamp(24px,4vw,38px)", fontWeight:800, marginBottom:16, fontFamily:"'Instrument Serif',serif", fontStyle:"italic" }}>{page.ctaHeading}</h2>
+        <button onClick={onBuild} style={{ padding:"15px 40px", background:"#f97316", color:"white", border:"none", borderRadius:10, fontSize:16, fontWeight:700, cursor:"pointer", fontFamily:"inherit", boxShadow:"0 4px 20px #f9731640" }}>Build My Page →</button>
+        <div style={{ marginTop:12, fontSize:12, color:"#9ca3af" }}>See your page before you pay · No credit card to preview</div>
+      </div>
+
+      <div style={{ textAlign:"center", padding:"16px 40px", borderTop:"1px solid #f3f4f6", fontSize:11, color:"#9ca3af", background:"white", display:"flex", alignItems:"center", justifyContent:"center", gap:20, flexWrap:"wrap" }}>
+        <span>© 2026 Sitefliq</span>
+        <a href="/" onClick={(e) => { e.preventDefault(); onHome(); }} style={{ color:"#9ca3af", textDecoration:"underline", cursor:"pointer" }}>Home</a>
+        <span>hello@sitefliq.com</span>
+      </div>
+    </div>
+  );
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
    HOME PAGE
 ───────────────────────────────────────────────────────────────────────────── */
-function HomePage({ onBuild, onPricing, onExample, onHelp, user, credits, onSignIn, onSignOut }) {
+function HomePage({ onBuild, onPricing, onExample, onHelp, onMarketing, user, credits, onSignIn, onSignOut }) {
   const [showExitIntent, setShowExitIntent] = useState(false);
 
   useEffect(() => {
@@ -1795,6 +1945,11 @@ function HomePage({ onBuild, onPricing, onExample, onHelp, user, credits, onSign
         <a href="#terms" style={{ cursor:"pointer", textDecoration:"underline", color:"#9ca3af" }}>Terms</a>
         <a href="#privacy" style={{ cursor:"pointer", textDecoration:"underline", color:"#9ca3af" }}>Privacy</a>
         <a href="#refund" style={{ cursor:"pointer", textDecoration:"underline", color:"#9ca3af" }}>Refund Policy</a>
+        <span style={{ color:"#d1d5db" }}>·</span>
+        <span style={{ fontWeight:600, color:"#6b7280" }}>Compare:</span>
+        {[["vs-durable","Durable"],["vs-carrd","Carrd"],["vs-wix","Wix"]].map(([sl,lbl]) => (
+          <a key={sl} href={`/${sl}`} onClick={(e) => { e.preventDefault(); onMarketing(sl); }} style={{ cursor:"pointer", textDecoration:"underline", color:"#9ca3af" }}>vs {lbl}</a>
+        ))}
         <span>hello@sitefliq.com</span>
       </div>
     </div>
@@ -2273,6 +2428,8 @@ export default function Sitefliq() {
   const setShowAuth = useAppStore(s => s.setShowAuth);
   const legalScreen = useAppStore(s => s.legalScreen);
   const setLegalScreen = useAppStore(s => s.setLegalScreen);
+  const marketingPage = useAppStore(s => s.marketingPage);
+  const setMarketingPage = useAppStore(s => s.setMarketingPage);
   const showReset   = useAppStore(s => s.showReset);
   const resetToken  = useAppStore(s => s.resetToken);
   const setResetFlow = useAppStore(s => s.setResetFlow);
@@ -2313,6 +2470,28 @@ export default function Sitefliq() {
     return () => window.removeEventListener("hashchange", routeHash);
   }, []);
 
+  // Path-based marketing/SEO page routing (/vs-durable, /for-plumbers, …)
+  useEffect(() => {
+    const syncPath = () => {
+      const slug = window.location.pathname.replace(/^\//, "");
+      setMarketingPage(MARKETING_PAGES[slug] ? slug : null);
+    };
+    syncPath();
+    window.addEventListener("popstate", syncPath);
+    return () => window.removeEventListener("popstate", syncPath);
+  }, []);
+
+  const goMarketing = (slug) => {
+    window.history.pushState({}, "", `/${slug}`);
+    setMarketingPage(slug);
+    window.scrollTo(0, 0);
+  };
+  const exitMarketing = (next) => {
+    window.history.pushState({}, "", "/");
+    setMarketingPage(null);
+    setScreen(next);
+  };
+
   // Handle purchase via Paddle
   const handlePurchase = (plan) => {
     if (!user) { setShowAuth(true, "signup"); return; }
@@ -2337,6 +2516,9 @@ export default function Sitefliq() {
   if (legalScreen === "privacy") return <PrivacyPage onHome={() => { setLegalScreen(null); window.location.hash=""; }}/>;
   if (legalScreen === "refund")  return <RefundPage  onHome={() => { setLegalScreen(null); window.location.hash=""; }}/>;
 
+  // Marketing / SEO pages (path-routed)
+  if (marketingPage) return <MarketingPage slug={marketingPage} onHome={() => exitMarketing("home")} onBuild={() => exitMarketing("builder")}/>;
+
   // Reset password modal
   if (showReset) return <ResetPasswordModal token={resetToken} onDone={() => { clearResetFlow(); setScreen("home"); }}/>;
 
@@ -2350,6 +2532,7 @@ export default function Sitefliq() {
         onPricing={() => setScreen("pricing_standalone")}
         onExample={() => setScreen("example")}
         onHelp={() => setScreen("help")}
+        onMarketing={goMarketing}
         user={user} credits={credits}
         onSignIn={() => setShowAuth(true, "signin")}
         onSignOut={handleSignOut}

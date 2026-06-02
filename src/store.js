@@ -122,6 +122,8 @@ export const useAppStore = create(
       setShowAuth: (show, mode="signin") => set({ showAuth: show, authMode: mode }),
       legalScreen: null,
       setLegalScreen: (s) => set({ legalScreen: s }),
+      marketingPage: null,
+      setMarketingPage: (p) => set({ marketingPage: p }),
       resetToken: null,
       showReset: false,
       setResetFlow: (token) => set({ resetToken: token, showReset: true }),
