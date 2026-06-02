@@ -121,7 +121,12 @@ function getSectionKeywords(industry) {
 function buildPrompt(f, images = []) {
   const pal = PALETTES.find(p => p.id === f.palette) || PALETTES[0];
   const vib = VIBES.find(v => v.id === f.vibe) || VIBES[0];
-  const secs = f.sections.filter(s => s !== "hero" && s !== "social_proof");
+  // Pricing only appears when the user explicitly selected it AND filled in tier data.
+  const hasPricingData = f.pricingTiers?.some(t => t && (t.name || t.price));
+  const secs = f.sections.filter(s =>
+    s !== "hero" && s !== "social_proof" &&
+    !(s === "pricing" && !hasPricingData)
+  );
   const img = (i) => images[i] || images[0] || null;
 
   const mapsHtml = f.location
@@ -185,6 +190,8 @@ function buildPrompt(f, images = []) {
     "- Everything else: heading 'Montserrat' (700+800), body 'DM Sans'",
     "Apply heading font to h1,h2,h3,nav logo,stat numbers. Apply body font to body,p,button,input,select,a.",
     "",
+    photosSection,
+    "",
     "DESIGN TOKENS — put these :root variables at the top of <style> and use them everywhere:",
     ":root{--space-1:8px;--space-2:16px;--space-3:24px;--space-4:32px;--space-6:48px;--space-8:64px;--space-10:80px;--radius-sm:8px;--radius-md:12px;--radius-lg:16px;--radius-pill:999px;--shadow-sm:0 1px 2px rgba(0,0,0,.07),0 2px 4px rgba(0,0,0,.07);--shadow-md:0 1px 2px rgba(0,0,0,.06),0 4px 8px rgba(0,0,0,.07),0 12px 24px rgba(0,0,0,.07);--shadow-lg:0 2px 4px rgba(0,0,0,.06),0 8px 16px rgba(0,0,0,.08),0 24px 48px rgba(0,0,0,.10);--container:1200px}",
     "",
@@ -208,6 +215,18 @@ function buildPrompt(f, images = []) {
     "- Stat counters: count up from 0 to target over 2s using requestAnimationFrame when scrolled into view. Add font-variant-numeric:tabular-nums.",
     "- Sticky nav: transparent over hero, after 80px scroll add solid background + backdrop-filter blur + subtle shadow.",
     "- Wrap all motion in @media(prefers-reduced-motion:no-preference).",
+    "",
+    "SECTIONS — build EXACTLY these, in this order, and NOTHING else:",
+    "1. Full SEO <head>: title, meta description, keywords, OG tags, Twitter card, canonical, schema.org LocalBusiness JSON-LD.",
+    "2. Sticky header: logo/name left, nav right, mobile hamburger.",
+    "3. Hero: min-height:100vh, position:relative, content z-index:2 centred." + (img(0) ? " Use the provided hero image as a full-bleed background with a dark overlay." : " Use a CSS gradient background."),
+    "4. Social proof bar: 4 animated counter stats (JS count-up from 0 on scroll).",
+    secsPrompt,
+    "- Footer: dark background, logo, tagline, 3 link columns (Services, Company, Contact), copyright 2026. Do NOT add social media icons or links unless handles were provided in the business description.",
+    "CRITICAL: Do NOT add any section that is not listed above. In particular, do NOT include a pricing, plans, packages or membership-tiers section unless it appears explicitly in the list above.",
+    "",
+    "GOOGLE MAPS:",
+    mapsHtml,
     "",
     "RULES: CSS in <style>, JS in <script> at end. Real niche-specific copy, no lorem ipsum. 5+ CTAs throughout. Working FAQ accordion and mobile hamburger menu. All images object-fit:cover with defined heights.",
     "",
