@@ -363,21 +363,44 @@ function ExitIntentPopup({ onClose, onBuild }) {
    MOBILE / DESKTOP PREVIEW TOGGLE (result screen)
 ───────────────────────────────────────────────────────────────────────────── */
 function PreviewFrame({ html, businessName }) {
+  const iframeRef = useRef(null);
+  const [ready, setReady] = useState(false);
+
+  // Set up the shell ONCE — never change srcDoc again
+  const SHELL = `<!doctype html><html><head><meta charset="utf-8">
+    <style>*{box-sizing:border-box}body{margin:0}</style>
+    </head><body><div id="sf-root"></div></body></html>`;
+
+  // Write HTML into the iframe without reloading it
+  useEffect(() => {
+    const iframe = iframeRef.current;
+    if (!iframe || !ready || !html) return;
+    try {
+      const win = iframe.contentWindow;
+      const doc = iframe.contentDocument;
+      const root = doc?.getElementById("sf-root");
+      if (!root) return;
+      const sx = win.scrollX, sy = win.scrollY;
+      root.innerHTML = html;
+      win.scrollTo(sx, sy);
+    } catch(e) {
+      console.warn("iframe write error:", e);
+    }
+  }, [html, ready]);
+
   const [mode, setMode] = useState("desktop");
   return (
     <div style={{ height:"100%", display:"flex", flexDirection:"column", background:"#f1f5f9" }}>
-      {/* Browser chrome */}
       <div style={{ padding:"10px 16px", background:"white", borderBottom:"1px solid #e5e7eb", display:"flex", alignItems:"center", gap:8 }}>
         <div style={{ display:"flex", gap:5 }}>
           {["#ef4444","#f59e0b","#22c55e"].map(c => <div key={c} style={{ width:10, height:10, borderRadius:"50%", background:c }}/>)}
         </div>
         <div style={{ flex:1, background:"#f3f4f6", borderRadius:6, padding:"4px 12px", fontSize:11, color:"#9ca3af", marginLeft:8 }}>
-          {businessName.toLowerCase().replace(/\s+/g,"-")}.netlify.app
+          {(businessName||"preview").toLowerCase().replace(/\s+/g,"-")}.netlify.app
         </div>
-        {/* Preview toggle */}
         <div style={{ display:"flex", gap:2, background:"#f3f4f6", borderRadius:7, padding:3 }}>
-          {[["desktop","🖥","Desktop"],["mobile","📱","Mobile"]].map(([m, ic, label]) => (
-            <button key={m} onClick={() => setMode(m)} style={{ padding:"4px 10px", fontSize:11, background:mode===m?"white":"transparent", border:"none", borderRadius:5, cursor:"pointer", fontWeight:mode===m?700:400, color:mode===m?"#111827":"#6b7280", transition:"all .15s" }}>
+          {[["desktop","🖥","Desktop"],["mobile","📱","Mobile"]].map(([m,ic,label]) => (
+            <button key={m} onClick={() => setMode(m)} style={{ padding:"4px 10px", fontSize:11, background:mode===m?"white":"transparent", border:"none", borderRadius:5, cursor:"pointer", fontWeight:mode===m?700:400, color:mode===m?"#111827":"#6b7280" }}>
               {ic} {label}
             </button>
           ))}
@@ -385,11 +408,12 @@ function PreviewFrame({ html, businessName }) {
       </div>
       <div style={{ flex:1, display:"flex", justifyContent:"center", overflow:"auto", padding:mode==="mobile"?"16px 0":0, background:mode==="mobile"?"#e5e7eb":"transparent" }}>
         <iframe
-          srcDoc={html}
-          style={{ width:mode==="mobile"?"375px":"100%", height:mode==="mobile"?667:"100%", border:mode==="mobile"?"none":"none", display:"block", borderRadius:mode==="mobile"?12:0, boxShadow:mode==="mobile"?"0 8px 32px rgba(0,0,0,.2)":"none" }}
+          ref={iframeRef}
+          srcDoc={SHELL}
+          onLoad={() => setReady(true)}
+          style={{ width:mode==="mobile"?"375px":"100%", height:mode==="mobile"?667:"100%", border:"none", display:"block", borderRadius:mode==="mobile"?12:0, boxShadow:mode==="mobile"?"0 8px 32px rgba(0,0,0,.2)":"none" }}
           title="Page Preview"
-          sandbox="allow-scripts"
-          scrolling="yes"
+          sandbox="allow-scripts allow-same-origin"
         />
       </div>
     </div>
