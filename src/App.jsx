@@ -181,7 +181,7 @@ function buildPrompt(f, images = []) {
     f.importedColours?.length ? `BRAND COLOURS from existing site — use as primary palette: ${f.importedColours.join(", ")}` : "",
     `Vibe: ${vib.label} — ${vib.desc}`,
     "",
-    "FONTS — load TWO Google Fonts with one @import. Pick a pairing that matches the industry:",
+    "FONTS — load TWO Google Fonts with a SINGLE <link rel=\"stylesheet\"> tag in <head>. Do NOT use @import — an @import placed outside a stylesheet leaks onto the page as visible text. Pick a pairing that matches the industry:",
     "- Trades (plumbing/roofing/electrical/construction/HVAC): heading 'Oswald' or 'Anton', body 'DM Sans' or 'Roboto Slab'",
     "- Fitness/gym: heading 'Oswald', body 'Montserrat'",
     "- Beauty/salon/spa/nails: heading 'Playfair Display' or 'Cormorant Garamond', body 'Lato'",
@@ -189,10 +189,11 @@ function buildPrompt(f, images = []) {
     "- Professional (law/accounting/consulting/tech/real estate): heading 'Montserrat' (700), body 'Inter' or 'DM Sans'",
     "- Everything else: heading 'Montserrat' (700+800), body 'DM Sans'",
     "Apply heading font to h1,h2,h3,nav logo,stat numbers. Apply body font to body,p,button,input,select,a.",
+    "Example: <link href=\"https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700&family=DM+Sans:wght@400;500;700&display=swap\" rel=\"stylesheet\"> inside <head>. In the URL, family names use + for spaces and are never wrapped in quotes.",
     "",
     photosSection,
     "",
-    "DESIGN TOKENS — put these :root variables at the top of <style> and use them everywhere:",
+    "DESIGN TOKENS — define these :root variables inside <style> and use them everywhere:",
     ":root{--space-1:8px;--space-2:16px;--space-3:24px;--space-4:32px;--space-6:48px;--space-8:64px;--space-10:80px;--radius-sm:8px;--radius-md:12px;--radius-lg:16px;--radius-pill:999px;--shadow-sm:0 1px 2px rgba(0,0,0,.07),0 2px 4px rgba(0,0,0,.07);--shadow-md:0 1px 2px rgba(0,0,0,.06),0 4px 8px rgba(0,0,0,.07),0 12px 24px rgba(0,0,0,.07);--shadow-lg:0 2px 4px rgba(0,0,0,.06),0 8px 16px rgba(0,0,0,.08),0 24px 48px rgba(0,0,0,.10);--container:1200px}",
     "",
     "LAYOUT RULES — these are mandatory:",
@@ -228,7 +229,7 @@ function buildPrompt(f, images = []) {
     "GOOGLE MAPS:",
     mapsHtml,
     "",
-    "RULES: CSS in <style>, JS in <script> at end. Real niche-specific copy, no lorem ipsum. 5+ CTAs throughout. Working FAQ accordion and mobile hamburger menu. All images object-fit:cover with defined heights.",
+    "RULES: ALL CSS goes inside a <style> tag and fonts via <link> in <head> — never output an @import or any raw CSS outside a <style>/<link>, or it will render as visible text on the page. JS in <script> at end of <body>. Real niche-specific copy, no lorem ipsum. 5+ CTAs throughout. Working FAQ accordion and mobile hamburger menu. All images object-fit:cover with defined heights.",
     "",
 "OUTPUT: Raw HTML only. Start with <!DOCTYPE html>. End with </html>. Nothing else.",
   ].join("\n");
@@ -389,29 +390,24 @@ function ExitIntentPopup({ onClose, onBuild }) {
 ───────────────────────────────────────────────────────────────────────────── */
 function PreviewFrame({ html, businessName }) {
   const iframeRef = useRef(null);
-  const [ready, setReady] = useState(false);
+  const writtenHtml = useRef(null);
 
-  // Set up the shell ONCE — never change srcDoc again
-  const SHELL = `<!doctype html><html><head><meta charset="utf-8">
-    <style>*{box-sizing:border-box}body{margin:0}</style>
-    </head><body><div id="sf-root"></div></body></html>`;
-
-  // Write HTML into the iframe without reloading it
+  // Render the generated page as a REAL document (via srcdoc) so its own
+  // <script> tags execute — stat counters and the scroll-reveal
+  // IntersectionObserver. innerHTML does NOT run inserted scripts, which is
+  // why those previously appeared frozen/empty.
+  //
+  // The writtenHtml guard means we load the iframe ONLY when the page content
+  // actually changes — never on a re-render or when the user clicks inside the
+  // preview. That is what prevents the scroll-to-top-on-input-click reload
+  // (the bug commit 170775a was solving): the frame is written exactly once
+  // per generated page and never touched again.
   useEffect(() => {
     const iframe = iframeRef.current;
-    if (!iframe || !ready || !html) return;
-    try {
-      const win = iframe.contentWindow;
-      const doc = iframe.contentDocument;
-      const root = doc?.getElementById("sf-root");
-      if (!root) return;
-      const sx = win.scrollX, sy = win.scrollY;
-      root.innerHTML = html;
-      win.scrollTo(sx, sy);
-    } catch(e) {
-      console.warn("iframe write error:", e);
-    }
-  }, [html, ready]);
+    if (!iframe || !html || writtenHtml.current === html) return;
+    writtenHtml.current = html;
+    iframe.srcdoc = html;
+  }, [html]);
 
   const [mode, setMode] = useState("desktop");
   return (
@@ -434,8 +430,6 @@ function PreviewFrame({ html, businessName }) {
       <div style={{ flex:1, display:"flex", justifyContent:"center", overflow:"auto", padding:mode==="mobile"?"16px 0":0, background:mode==="mobile"?"#e5e7eb":"transparent" }}>
         <iframe
           ref={iframeRef}
-          srcDoc={SHELL}
-          onLoad={() => setReady(true)}
           style={{ width:mode==="mobile"?"375px":"100%", height:mode==="mobile"?667:"100%", border:"none", display:"block", borderRadius:mode==="mobile"?12:0, boxShadow:mode==="mobile"?"0 8px 32px rgba(0,0,0,.2)":"none" }}
           title="Page Preview"
           sandbox="allow-scripts allow-same-origin"
