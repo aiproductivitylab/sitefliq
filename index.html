@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
     <!-- Primary SEO -->
-    <title>Sitefliq — AI Landing Page Builder | Build in 60 Seconds</title>
+    <title>AI Landing Page Builder — Build SEO Pages in 60s | Sitefliq</title>
     <meta name="description" content="Build a professional, SEO-optimised landing page in 60 seconds with AI. No design skills needed. Perfect for small businesses, freelancers, and agencies." />
     <meta name="keywords" content="AI landing page builder, landing page generator, small business website, AI website builder, quick landing page, landing page creator" />
     <meta name="author" content="Sitefliq" />
@@ -14,7 +14,7 @@
     <!-- Open Graph (Facebook, LinkedIn) -->
     <meta property="og:type" content="website" />
     <meta property="og:url" content="https://sitefliq.com/" />
-    <meta property="og:title" content="Sitefliq — AI Landing Page Builder" />
+    <meta property="og:title" content="AI Landing Page Builder in 60 Seconds | Sitefliq" />
     <meta property="og:description" content="Build a professional landing page in 60 seconds with AI. No design skills needed. Perfect for small businesses and freelancers." />
     <meta property="og:image" content="https://sitefliq.com/og-image.png" />
     <meta property="og:site_name" content="Sitefliq" />
@@ -22,32 +22,48 @@
     <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:url" content="https://sitefliq.com/" />
-    <meta name="twitter:title" content="Sitefliq — AI Landing Page Builder" />
+    <meta name="twitter:title" content="AI Landing Page Builder in 60 Seconds | Sitefliq" />
     <meta name="twitter:description" content="Build a professional landing page in 60 seconds with AI. No design skills needed." />
     <meta name="twitter:image" content="https://sitefliq.com/og-image.png" />
 
-    <!-- Schema.org structured data -->
+    <!-- Schema.org: SoftwareApplication with credit-pack offers -->
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
       "@type": "SoftwareApplication",
       "name": "Sitefliq",
       "url": "https://sitefliq.com",
-      "description": "AI-powered landing page builder. Create professional, SEO-optimised landing pages in 60 seconds.",
+      "description": "AI-powered landing page builder. Create professional, SEO-optimised landing pages in 60 seconds — no design or coding skills needed.",
       "applicationCategory": "BusinessApplication",
       "operatingSystem": "Web",
-      "offers": {
-        "@type": "AggregateOffer",
-        "lowPrice": "19",
-        "highPrice": "99",
-        "priceCurrency": "USD"
-      },
+      "offers": [
+        { "@type": "Offer", "name": "Starter — 3 page credits", "price": "19", "priceCurrency": "USD", "url": "https://sitefliq.com/" },
+        { "@type": "Offer", "name": "Pro — 10 page credits", "price": "49", "priceCurrency": "USD", "url": "https://sitefliq.com/" },
+        { "@type": "Offer", "name": "Agency — 25 page credits", "price": "99", "priceCurrency": "USD", "url": "https://sitefliq.com/" }
+      ],
       "publisher": {
         "@type": "Organization",
         "name": "Sitefliq",
         "url": "https://sitefliq.com",
         "email": "hello@sitefliq.com"
       }
+    }
+    </script>
+
+    <!-- Schema.org: FAQPage (help-centre questions) -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "mainEntity": [
+        { "@type": "Question", "name": "My page didn't generate — what happened?", "acceptedAnswer": { "@type": "Answer", "text": "Usually a network timeout or very short description. Try again with a longer business description (3–5 sentences). If you see 'API 401' contact us immediately." } },
+        { "@type": "Question", "name": "I paid but nothing happened", "acceptedAnswer": { "@type": "Answer", "text": "After paying, return to Sitefliq and click 'I've Paid — Generate My Page'. If credits aren't showing, email us your payment receipt and we'll sort it within the hour." } },
+        { "@type": "Question", "name": "The images don't match my business", "acceptedAnswer": { "@type": "Answer", "text": "Make sure you select the correct industry from the dropdown — this controls which photos are sourced." } },
+        { "@type": "Question", "name": "How do I host my downloaded HTML file?", "acceptedAnswer": { "@type": "Answer", "text": "Go to netlify.com, create a free account, and drag-and-drop your HTML file onto the dashboard. Your site goes live instantly at a free URL." } },
+        { "@type": "Question", "name": "Do my credits expire?", "acceptedAnswer": { "@type": "Answer", "text": "Never. Credits are yours to use whenever you're ready — no time pressure, no subscription." } },
+        { "@type": "Question", "name": "Can I edit the page after downloading?", "acceptedAnswer": { "@type": "Answer", "text": "Yes — open the file in VS Code or any text editor and edit the text between HTML tags directly." } },
+        { "@type": "Question", "name": "What does 'No Sitefliq branding' mean?", "acceptedAnswer": { "@type": "Answer", "text": "Starter pages include a small 'Built with Sitefliq' link in the footer. Pro and Agency plans remove this completely." } }
+      ]
     }
     </script>
 

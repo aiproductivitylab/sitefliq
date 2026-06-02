@@ -1,0 +1,5 @@
+# https://sitefliq.com robots.txt
+User-agent: *
+Allow: /
+
+Sitemap: https://sitefliq.com/sitemap.xml
