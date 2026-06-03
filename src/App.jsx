@@ -2028,7 +2028,7 @@ function TermsPage({ onHome }) {
       <LS title="3. Accounts"><p>You must be 18+ to use this Service. You are responsible for maintaining the confidentiality of your account credentials.</p></LS>
       <LS title="4. Credits & Payments"><p>Credits are non-refundable once used, never expire, and are non-transferable. All prices are in USD. Payments are processed by Paddle.com, our Merchant of Record.</p></LS>
       <LS title="5. Refund Policy"><p>We offer a full 14-day money-back guarantee on all purchases. Contact hello@sitefliq.com within 14 days for a no-questions-asked refund processed within 5–10 business days.</p></LS>
-      <LS title="6. AI-Generated Content"><p>AI content may not always be accurate. You are responsible for reviewing and verifying all content before publishing. You own the generated HTML output.</p></LS>
+      <LS title="6. AI-Generated Content"><p>AI content may not always be accurate. You are responsible for reviewing and verifying all content before publishing. You own the generated HTML output. Generated pages may include stock photography sourced from Pexels; such imagery is provided under the Pexels License and your use of it is subject to that licence.</p></LS>
       <LS title="7. Prohibited Uses"><p>You may not use the Service to generate fraudulent, illegal, or harmful content, or content that infringes third-party intellectual property rights.</p></LS>
       <LS title="8. Disclaimer"><p>THE SERVICE IS PROVIDED "AS IS" WITHOUT WARRANTIES OF ANY KIND. YOUR USE IS AT YOUR SOLE RISK.</p></LS>
       <LS title="9. Limitation of Liability"><p>SITEFLIQ SHALL NOT BE LIABLE FOR INDIRECT OR CONSEQUENTIAL DAMAGES. OUR TOTAL LIABILITY SHALL NOT EXCEED YOUR LAST 30 DAYS OF PAYMENTS.</p></LS>
@@ -2044,7 +2044,7 @@ function PrivacyPage({ onHome }) {
       <LS title="1. Introduction"><p>Sitefliq is committed to protecting your privacy. This policy explains how we collect, use, and safeguard your personal information.</p></LS>
       <LS title="2. Information We Collect"><p>We collect: account info (email, password via Supabase), payment info (processed by Paddle — we never store card details), usage data, input data you provide, and standard web log data.</p></LS>
       <LS title="3. How We Use It"><p>To provide the Service, process payments, send transactional emails, respond to support, detect fraud, and comply with legal obligations. We do not sell your data.</p></LS>
-      <LS title="4. Data Sharing"><p>We share data only with: Supabase (auth/database), Paddle (payments), Anthropic (AI generation), and Vercel (hosting). All are subject to their own privacy policies.</p></LS>
+      <LS title="4. Data Sharing"><p>We share data only with: Supabase (auth/database), Paddle (payments), Anthropic (AI generation), Vercel (hosting), Netlify (publishing your generated pages), Pexels (stock image sourcing), and Resend (transactional email). All are subject to their own privacy policies.</p></LS>
       <LS title="5. Security"><p>We use encrypted storage, HTTPS, and row-level security. No method is 100% secure but we take all reasonable precautions.</p></LS>
       <LS title="6. Your Rights"><p>You may access, correct, delete, or export your data at any time. Contact hello@sitefliq.com to exercise these rights.</p></LS>
       <LS title="7. Cookies"><p>We use minimal session cookies for authentication only. No advertising or tracking cookies.</p></LS>
