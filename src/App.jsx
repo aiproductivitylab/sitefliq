@@ -1204,7 +1204,7 @@ function PricingWall({ form, onBack, onPurchase }) {
 /* ─────────────────────────────────────────────────────────────────────────────
    GENERATING SCREEN
 ───────────────────────────────────────────────────────────────────────────── */
-function GeneratingScreen({ form, onDone, onError }) {
+function GeneratingScreen({ form, onDone, onError, onStage }) {
   const [pct, setPct] = useState(0);
   const [stage, setStage] = useState(0);
   const [imgStatus, setImgStatus] = useState("Sourcing photos…");
@@ -1222,10 +1222,15 @@ function GeneratingScreen({ form, onDone, onError }) {
   useEffect(() => {
     let cancelled = false;
     let p = 0;
+    onStage?.(0);
     const iv = setInterval(() => {
       p = Math.min(p + Math.random() * 2.5 + 0.5, 91);
       setPct(Math.floor(p));
-      setStage(Math.min(Math.floor(p / 100 * (stageLabels.length - 1)), stageLabels.length - 1));
+      const st = Math.min(Math.floor(p / 100 * (stageLabels.length - 1)), stageLabels.length - 1);
+      setStage(st);
+      // Left-panel ProgressStepper has 5 steps; clamp so its last step stays
+      // active during the long build wait rather than showing all-complete early.
+      onStage?.(Math.min(st, 4));
     }, 800);
 
     const queries = getSectionKeywords(form.industry);
@@ -1743,7 +1748,7 @@ function MarketingPage({ slug, onHome, onBuild }) {
       <div style={{ textAlign:"center", padding:"16px 40px", borderTop:"1px solid #f3f4f6", fontSize:11, color:"#9ca3af", background:"white", display:"flex", alignItems:"center", justifyContent:"center", gap:20, flexWrap:"wrap" }}>
         <span>© 2026 Sitefliq</span>
         <a href="/" onClick={(e) => { e.preventDefault(); onHome(); }} style={{ color:"#9ca3af", textDecoration:"underline", cursor:"pointer" }}>Home</a>
-        <span>hello@sitefliq.com</span>
+        <a href="mailto:hello@sitefliq.com" style={{ color:"#9ca3af", textDecoration:"none" }}>hello@sitefliq.com</a>
       </div>
     </div>
   );
@@ -1834,7 +1839,7 @@ function HomePage({ onBuild, onPricing, onExample, onHelp, onMarketing, user, cr
 
         {/* Animated stats */}
         <div style={{ display:"flex", gap:40, marginTop:48, animation:"fadeUp .6s .5s ease both" }}>
-          {[{ target:500, suffix:"+", label:"Pages generated", icon:"⚡" }, { target:60, suffix:"s", label:"Average build time", icon:"⏱" }, { target:49, prefix:"$", suffix:"", label:"Per 10 credits", icon:"💰" }].map(s => (
+          {[{ target:60, suffix:"s", label:"Average build time", icon:"⏱" }, { target:49, prefix:"$", suffix:"", label:"Per 10 credits", icon:"💰" }].map(s => (
             <div key={s.label} style={{ textAlign:"center" }}>
               <div style={{ fontSize:18, marginBottom:3 }}>{s.icon}</div>
               <div style={{ fontSize:22, fontWeight:800, color:"#111827" }}>
@@ -1882,27 +1887,6 @@ function HomePage({ onBuild, onPricing, onExample, onHelp, onMarketing, user, cr
         </div>
       </div>
 
-      {/* Reviews */}
-      <div style={{ background:"white", borderTop:"1px solid #f3f4f6", borderBottom:"1px solid #f3f4f6", padding:"60px 40px" }}>
-        <div style={{ maxWidth:920, margin:"0 auto" }}>
-          <h2 style={{ fontSize:32, fontWeight:800, color:"#111827", textAlign:"center", marginBottom:36 }}>Loved by business owners</h2>
-          <div style={{ display:"grid", gridTemplateColumns:"repeat(3,1fr)", gap:16 }}>
-            {[
-              { q:"My yoga studio page was live in 4 minutes. The AI wrote better copy than any agency I've used. Worth every cent.", n:"Ashley M.", r:"Yoga Studio · Austin, TX" },
-              { q:"Was quoted $2,500 by a web designer. Sitefliq did it better for $49. The SEO is already bringing traffic.", n:"James T.", r:"Personal Trainer · Chicago, IL" },
-              { q:"I described my pilates studio and it built me an entire professional website. Downloaded it, uploaded to Netlify — live same day.", n:"Jessica R.", r:"Pilates Studio · Brooklyn, NY" },
-            ].map((t, i) => (
-              <div key={i} style={{ padding:22, borderRadius:14, background:"#fafaf9", border:"1px solid #f3f4f6" }}>
-                <div style={{ color:"#f97316", fontSize:12, marginBottom:10, letterSpacing:2 }}>★★★★★</div>
-                <p style={{ fontSize:13, color:"#374151", lineHeight:1.75, marginBottom:16, fontStyle:"italic" }}>"{t.q}"</p>
-                <div style={{ fontSize:13, fontWeight:600, color:"#111827" }}>{t.n}</div>
-                <div style={{ fontSize:11, color:"#9ca3af" }}>{t.r}</div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-
       {/* CTA */}
       <div style={{ textAlign:"center", padding:"70px 40px 90px" }}>
         <h2 style={{ fontSize:"clamp(28px,4vw,48px)", fontWeight:800, color:"#111827", marginBottom:24 }}>Your landing page is waiting.</h2>
@@ -1928,7 +1912,7 @@ function HomePage({ onBuild, onPricing, onExample, onHelp, onMarketing, user, cr
         {[["for-plumbers","Plumbers"],["for-electricians","Electricians"],["for-gyms","Gyms"],["for-salons","Salons"]].map(([sl,lbl]) => (
           <a key={sl} href={`/${sl}`} onClick={(e) => { e.preventDefault(); onMarketing(sl); }} style={{ cursor:"pointer", textDecoration:"underline", color:"#9ca3af" }}>{lbl}</a>
         ))}
-        <span>hello@sitefliq.com</span>
+        <a href="mailto:hello@sitefliq.com" style={{ color:"#9ca3af", textDecoration:"underline" }}>hello@sitefliq.com</a>
       </div>
     </div>
   );
@@ -2010,7 +1994,7 @@ function PricingPage({ onBuild, onHome, user, credits, onSignIn, onSignOut, onPu
 /* ─────────────────────────────────────────────────────────────────────────────
    LEGAL PAGES
 ───────────────────────────────────────────────────────────────────────────── */
-function LegalPage({ title, onHome, children }) {
+function LegalPage({ title, updated, onHome, children }) {
   return (
     <div style={{ minHeight:"100vh", background:"#fafaf9", fontFamily:"'Geist',sans-serif" }}>
       <GS/>
@@ -2023,7 +2007,7 @@ function LegalPage({ title, onHome, children }) {
       </nav>
       <div style={{ maxWidth:780, margin:"0 auto", padding:"100px 40px 80px" }}>
         <h1 style={{ fontSize:36, fontWeight:800, color:"#111827", marginBottom:8 }}>{title}</h1>
-        <p style={{ fontSize:13, color:"#9ca3af", marginBottom:48 }}>Last updated: March 2026</p>
+        <p style={{ fontSize:13, color:"#9ca3af", marginBottom:48 }}>Last updated: {updated}</p>
         <div style={{ fontSize:15, color:"#374151", lineHeight:1.9 }}>{children}</div>
       </div>
       <footer style={{ borderTop:"1px solid #e5e7eb", padding:"24px 48px", display:"flex", justifyContent:"space-between", alignItems:"center", background:"white" }}>
@@ -2040,7 +2024,7 @@ function LS({ title, children }) {
 
 function TermsPage({ onHome }) {
   return (
-    <LegalPage title="Terms of Service" onHome={onHome}>
+    <LegalPage title="Terms of Service" updated="June 2026" onHome={onHome}>
       <LS title="1. Acceptance"><p>By using Sitefliq at sitefliq.com you agree to these Terms. If you do not agree, please do not use our Service.</p></LS>
       <LS title="2. Service"><p>Sitefliq is an AI-powered landing page generator. Credits are purchased one-time and each credit generates one HTML landing page.</p></LS>
       <LS title="3. Accounts"><p>You must be 18+ to use this Service. You are responsible for maintaining the confidentiality of your account credentials.</p></LS>
@@ -2058,7 +2042,7 @@ function TermsPage({ onHome }) {
 
 function PrivacyPage({ onHome }) {
   return (
-    <LegalPage title="Privacy Policy" onHome={onHome}>
+    <LegalPage title="Privacy Policy" updated="June 2026" onHome={onHome}>
       <LS title="1. Introduction"><p>Sitefliq is committed to protecting your privacy. This policy explains how we collect, use, and safeguard your personal information.</p></LS>
       <LS title="2. Information We Collect"><p>We collect: account info (email, password via Supabase), payment info (processed by Paddle — we never store card details), usage data, input data you provide, and standard web log data.</p></LS>
       <LS title="3. How We Use It"><p>To provide the Service, process payments, send transactional emails, respond to support, detect fraud, and comply with legal obligations. We do not sell your data.</p></LS>
@@ -2073,7 +2057,7 @@ function PrivacyPage({ onHome }) {
 
 function RefundPage({ onHome }) {
   return (
-    <LegalPage title="Refund Policy" onHome={onHome}>
+    <LegalPage title="Refund Policy" updated="March 2026" onHome={onHome}>
       <LS title="14-Day Money-Back Guarantee"><p>You may request a full refund on any Sitefliq purchase within <strong>14 days of the original transaction date</strong>, no questions asked. Simply contact us and we will process your refund promptly.</p></LS>
       <LS title="How It Works"><p>Refunds are processed through Paddle, our payment provider. The full amount will be returned to your original payment method within 5–10 business days.</p></LS>
       <LS title="How to Request"><p>Email <strong>hello@sitefliq.com</strong> with subject "Refund Request" and include your account email and transaction date. We respond within 1 business day.</p></LS>
@@ -2083,7 +2067,7 @@ function RefundPage({ onHome }) {
 
 function AcceptableUsePage({ onHome }) {
   return (
-    <LegalPage title="Acceptable Use Policy" onHome={onHome}>
+    <LegalPage title="Acceptable Use Policy" updated="June 2026" onHome={onHome}>
       <LS title="1. Purpose"><p>This policy explains what you may and may not create with Sitefliq. It applies to everyone who uses the Service and supplements our Terms of Service.</p></LS>
       <LS title="2. Prohibited Content"><p>You may not use Sitefliq to generate, host, or promote websites that are: illegal or that facilitate illegal activity; infringing on the intellectual property, trademark, or privacy rights of others; hateful, harassing, or inciting violence against any person or group; deceptive or misleading, including impersonating a real person or business; or fraudulent, including scams, phishing, malware, or pages designed to obtain money or data under false pretences.</p></LS>
       <LS title="3. Your Responsibility"><p>You are solely responsible for the content you generate and publish. AI output should be reviewed for accuracy and legality before you use it.</p></LS>
@@ -2282,8 +2266,8 @@ function HelpPage({ onHome }) {
   ];
 
   const faqs = [
-    { q:"My page didn't generate — what happened?", a:"Usually a network timeout or very short description. Try again with a longer business description (3–5 sentences). If you see 'API 401' contact us immediately." },
-    { q:"I paid but nothing happened", a:"After paying, return to Sitefliq and click 'I've Paid — Generate My Page'. If credits aren't showing, email us your payment receipt and we'll sort it within the hour." },
+    { q:"My page didn't generate — what happened?", a:"This is usually a brief network hiccup or a very short description. Try again with a longer business description (3–5 sentences). If it keeps failing, email us and we'll look into it right away." },
+    { q:"I paid but my credits haven't appeared", a:"Credits are added automatically right after checkout — your balance in the top bar usually updates within a few seconds. If it doesn't, refresh the page (or sign out and back in) and it'll catch up. Still missing? Email us your payment receipt and we'll sort it within the hour." },
     { q:"The images don't match my business", a:"Make sure you select the correct industry from the dropdown — this controls which photos are sourced." },
     { q:"How do I host my downloaded HTML file?", a:"Go to netlify.com, create a free account, and drag-and-drop your HTML file onto the dashboard. Your site goes live instantly at a free URL." },
     { q:"Do my credits expire?", a:"Never. Credits are yours to use whenever you're ready — no time pressure, no subscription." },
@@ -2427,6 +2411,7 @@ export default function Sitefliq() {
 
   // Paddle hook
   const { openCheckout, isReady: paddleReady } = usePaddle();
+  const [genStage, setGenStage] = useState(0);
 
   const ready = form.name.trim() && form.industry.trim() && form.description.trim();
 
@@ -2502,10 +2487,14 @@ export default function Sitefliq() {
   };
 
   // Legal pages
-  if (legalScreen === "terms")   return <TermsPage   onHome={() => { setLegalScreen(null); window.location.hash=""; }}/>;
-  if (legalScreen === "privacy") return <PrivacyPage onHome={() => { setLegalScreen(null); window.location.hash=""; }}/>;
-  if (legalScreen === "refund")  return <RefundPage  onHome={() => { setLegalScreen(null); window.location.hash=""; }}/>;
-  if (legalScreen === "acceptable-use") return <AcceptableUsePage onHome={() => { setLegalScreen(null); window.location.hash=""; }}/>;
+  const exitLegal = () => {
+    setLegalScreen(null);
+    window.history.replaceState({}, "", window.location.pathname);
+  };
+  if (legalScreen === "terms")   return <TermsPage   onHome={exitLegal}/>;
+  if (legalScreen === "privacy") return <PrivacyPage onHome={exitLegal}/>;
+  if (legalScreen === "refund")  return <RefundPage  onHome={exitLegal}/>;
+  if (legalScreen === "acceptable-use") return <AcceptableUsePage onHome={exitLegal}/>;
 
   // Marketing / SEO pages (path-routed)
   if (marketingPage) return <MarketingPage slug={marketingPage} onHome={() => exitMarketing("home")} onBuild={() => exitMarketing("builder")}/>;
@@ -2626,7 +2615,7 @@ export default function Sitefliq() {
           {screen === "generating" && (
             <div style={{ padding:"22px", display:"flex", flexDirection:"column", height:"100%", overflowY:"auto", background:"white" }}>
               <div style={{ fontSize:12, fontWeight:700, color:"#374151", marginBottom:8 }}>Building your page…</div>
-              <ProgressStepper stage={Math.floor(Math.random() * 3)}/>
+              <ProgressStepper stage={genStage}/>
             </div>
           )}
           {screen === "result" && (
@@ -2649,6 +2638,7 @@ export default function Sitefliq() {
           {screen === "generating" && (
             <GeneratingScreen
               form={form}
+              onStage={setGenStage}
               onDone={async (html) => {
                 await sb.deductCredit();
                 await refreshCredits();
