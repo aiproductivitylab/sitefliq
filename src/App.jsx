@@ -128,29 +128,26 @@ function buildPrompt(f, images = []) {
     s !== "hero" && s !== "social_proof" &&
     !(s === "pricing" && !hasPricingData)
   );
-  const img = (i) => images[i] || images[0] || null;
-
   const mapsHtml = f.location
     ? `Include in contact section: 1) Static map image: <a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(f.location)}" target="_blank"><img src="https://maps.googleapis.com/maps/api/staticmap?center=${encodeURIComponent(f.location)}&zoom=15&size=800x300&scale=2&markers=color:red%7C${encodeURIComponent(f.location)}&key=${GOOGLE_KEY}" style="width:100%;height:200px;object-fit:cover;border-radius:12px"/></a> 2) Plain text address: ${f.location}`
     : "No address provided.";
 
-  const hasImages = images.length > 0;
+  const hasImages = images.some(Boolean);
   const photosSection = hasImages ? [
-    "REAL PHOTOS PROVIDED — use EXACTLY as specified:",
-    `HERO: background-image: url(${img(0)}) — full viewport, cover, dark gradient overlay rgba(0,0,0,0.6)`,
-    `ABOUT SECTION: <img src=${img(1)} style=width:100%;height:100%;object-fit:cover> — full height left column`,
-    "GALLERY: Use all as <img> tags with object-fit:cover:",
-    `  ${img(0)}, ${img(1)}, ${img(2)}, ${img(3)}, ${img(4)}, ${img(5)||img(0)}`,
-    "SERVICE CARDS: Full-bleed image background per card, cycle through all images, dark gradient overlay.",
-    `CTA BANNER: background-image: url(${img(2)||img(0)}) — dark overlay`,
-    "RULES: Use EXACT URLs. Every img tag needs object-fit:cover and defined height. No placeholder.com or picsum.",
-  ].join("\n") : "IMAGES: Use CSS gradients and geometric patterns only.";
+    "REAL PHOTOS PROVIDED — placed via the placeholder tokens below. Each token is swapped for a real image URL AFTER you respond, so treat them as opaque image sources:",
+    "HERO: background-image: url(__IMG_0__) — full viewport, cover, dark gradient overlay rgba(0,0,0,0.6).",
+    "ABOUT SECTION: <img src=\"__IMG_1__\" style=\"width:100%;height:100%;object-fit:cover\"> — full-height left column.",
+    "SERVICE CARDS: give EACH of the 6 cards a full-bleed background image with a dark gradient overlay, assigned in order — card 1 __IMG_2__, card 2 __IMG_3__, card 3 __IMG_4__, card 4 __IMG_5__, card 5 __IMG_0__, card 6 __IMG_1__.",
+    "GALLERY: use all six as <img> tags with object-fit:cover — __IMG_0__, __IMG_1__, __IMG_2__, __IMG_3__, __IMG_4__, __IMG_5__.",
+    "CTA BANNER: background-image: url(__IMG_0__) — dark overlay.",
+    "IMAGE RULES — STRICT: Only ever use the placeholder tokens __IMG_0__ through __IMG_5__ for photos. NEVER write, guess, invent or recall a real image URL — no images.pexels.com, picsum, unsplash, placeholder.com, example.com or any http(s) link. If you need more images than tokens, REUSE the tokens. Reproduce every token EXACTLY, including the leading and trailing double underscores. Every image needs object-fit:cover and a defined height.",
+  ].join("\n") : "IMAGES: Use CSS gradients and geometric patterns only — do NOT use any external image URL.";
 
   const secsPrompt = secs.map((s, i) => {
     const n = i + 5;
    const m = {
   services:     `${n}. SERVICES: CRITICAL — generate EXACTLY 6 service cards in a 3-column grid. Each card MUST have: a relevant emoji icon, a service name, a 2-sentence description, and a price range. Do NOT leave this section empty. Use real services for ${f.industry}.`,
-  about:        `${n}. ABOUT: 2-col layout${img(1) ? ", left col real image ("+img(1)+"), right col story + 4 stats" : ", story left, 4 stats right"}`,
+  about:        `${n}. ABOUT: 2-col layout${hasImages ? ", left column is a full-height real image using __IMG_1__, right column story + 4 stats" : ", story left, 4 stats right"}`,
   benefits:     `${n}. BENEFITS: 6-item grid, icon+title+desc, niche-specific`,
   testimonials: `${n}. TESTIMONIALS: CRITICAL — generate EXACTLY 3 customer review cards. Each MUST have: a 5-star rating display, a quote of at least 2 sentences, a customer name, and a location. Do NOT leave this section empty.`,
  pricing:      `${n}. PRICING: 3 tiers in a grid, feature lists, Most Popular badge on middle tier. Currency symbol: ${f.pricingCurrency||"$"}. ${f.pricingTiers?.filter(t=>t.name||t.price).length ? "Use these exact pricing tiers: " + f.pricingTiers.filter(t=>t.name||t.price).map(t=>`${t.name||"Tier"} at ${f.pricingCurrency||"$"}${t.price||"TBD"} — ${t.description||""}`).join(" | ") : "Generate realistic pricing tiers for "+f.industry+"."}`,
@@ -158,7 +155,7 @@ function buildPrompt(f, images = []) {
   faq:          `${n}. FAQ: 5 accordion items with JS click-to-expand`,
   booking:      `${n}. BOOKING: full form name/email/phone/service/date/message`,
   contact: `${n}. CONTACT: split layout, info left, form right. The form must have: Name, Email, Phone, Service (dropdown with relevant services), Message fields, and a Submit button. The form must submit via fetch POST to 'https://sitefliq.com/api/send-contact' with JSON body: {name, email, phone, service, message, businessEmail: '${f.email||""}', businessName: '${f.name||""}'}. On success show a green thank you message replacing the form. On error show a red error message. Use vanilla JS fetch, no libraries.`,
-  cta:          `${n}. CTA BANNER: full-width urgent headline + big button${img(2) ? " — background image with dark overlay" : ""}`,
+  cta:          `${n}. CTA BANNER: full-width urgent headline + big button${hasImages ? " — background-image url(__IMG_0__) with dark overlay" : ""}`,
 };
     return m[s] || `${n}. ${s.toUpperCase()}`;
   }).join("\n");
@@ -239,7 +236,7 @@ function buildPrompt(f, images = []) {
     "SECTIONS — build EXACTLY these, in this order, and NOTHING else:",
     "1. Full SEO <head>: title, meta description, keywords, OG tags, Twitter card, canonical, schema.org LocalBusiness JSON-LD.",
     "2. Sticky header: logo/name left, nav right, mobile hamburger.",
-    "3. Hero: min-height:100vh, position:relative, content z-index:2 centred." + (img(0) ? " Use the provided hero image as a full-bleed background with a dark overlay." : " Use a CSS gradient background."),
+    "3. Hero: min-height:100vh, position:relative, content z-index:2 centred." + (hasImages ? " Use the provided hero image (__IMG_0__) as a full-bleed background with a dark overlay." : " Use a CSS gradient background."),
     "4. Social proof bar: 4 trust highlights. Use animated count-up number stats ONLY for figures the user actually provided; otherwise use short qualitative value badges with icons (e.g. 'Trusted local service', 'Quality you can count on', 'Fast, friendly response') — never invent statistics, ratings or counts.",
     secsPrompt,
     "- Footer: dark background, logo, tagline, 3 link columns (Services, Company, Contact), copyright 2026. Do NOT add social media icons or links unless handles were provided in the business description.",
@@ -1222,6 +1219,7 @@ function GeneratingScreen({ form, onDone, onError, onStage }) {
   useEffect(() => {
     let cancelled = false;
     let p = 0;
+    let imageSlots = [];
     onStage?.(0);
     const iv = setInterval(() => {
       p = Math.min(p + Math.random() * 2.5 + 0.5, 91);
@@ -1242,7 +1240,9 @@ function GeneratingScreen({ form, onDone, onError, onStage }) {
           try {
             const d = JSON.parse(text);
             if (d.photos?.length) {
-              const pick = d.photos[Math.floor(Math.random() * Math.min(5, d.photos.length))];
+              // Best-of-top-2: Pexels ranks by relevance, so stay near the top
+              // for on-topic results but keep slight variety across regenerations.
+              const pick = d.photos[Math.floor(Math.random() * Math.min(2, d.photos.length))];
               return pick.src.large2x || pick.src.large;
             }
           } catch {}
@@ -1251,16 +1251,22 @@ function GeneratingScreen({ form, onDone, onError, onStage }) {
         .catch(() => null);
 
     Promise.all(queries.map(q => fetchImg(q)))
-      .then(images => {
-        const valid = images.filter(Boolean);
-        if (!cancelled) setImgStatus(valid.length > 0 ? `Found ${valid.length} photos ✓` : "Using styled design…");
+      .then(results => {
+        // Keep slots index-aligned to the keyword order; any slot that failed
+        // falls back to the first successful image, so one Pexels miss never
+        // shifts every section's photo. All-null only when every fetch failed.
+        const firstOk = results.find(Boolean) || null;
+        const slots = Array.from({ length: 6 }, (_, i) => results[i] || firstOk);
+        imageSlots = slots;
+        const okCount = results.filter(Boolean).length;
+        if (!cancelled) setImgStatus(okCount > 0 ? `Found ${okCount} photos ✓` : "Using styled design…");
         return fetch("/api/generate", {
           method: "POST",
           headers: { "Content-Type":"application/json" },
           body: JSON.stringify({
             model: "claude-sonnet-4-6",
             max_tokens: 24000,
-            messages: [{ role:"user", content:buildPrompt(form, valid) }],
+            messages: [{ role:"user", content:buildPrompt(form, slots) }],
           }),
         });
       })
@@ -1322,6 +1328,15 @@ function GeneratingScreen({ form, onDone, onError, onStage }) {
         const end = html.lastIndexOf("</html>");
         if (end !== -1) html = html.slice(0, end + 7);
         if (form.logo) html = html.replace(/__LOGO__/g, form.logo);
+        // Swap image placeholders for the real Pexels URLs we fetched. The AI is
+        // forbidden from emitting URLs, so this is the ONLY place a photo URL
+        // enters the page — making hallucinated/irrelevant images impossible.
+        for (let i = 0; i < 6; i++) {
+          const url = imageSlots[i] || imageSlots.find(Boolean) || "";
+          if (url) html = html.replace(new RegExp(`__IMG_${i}__`, "g"), url);
+        }
+        // Belt-and-suspenders: never ship a literal token if any slipped through.
+        html = html.replace(/__IMG_\d+__/g, "");
         if (!html.toLowerCase().includes("<!doctype")) throw new Error("Invalid HTML received. Please try again.");
         setTimeout(() => onDone(html), 400);
       })
