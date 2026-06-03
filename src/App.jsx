@@ -1899,6 +1899,7 @@ function HomePage({ onBuild, onPricing, onExample, onHelp, onMarketing, user, cr
         <a href="#terms" style={{ cursor:"pointer", textDecoration:"underline", color:"#9ca3af" }}>Terms</a>
         <a href="#privacy" style={{ cursor:"pointer", textDecoration:"underline", color:"#9ca3af" }}>Privacy</a>
         <a href="#refund" style={{ cursor:"pointer", textDecoration:"underline", color:"#9ca3af" }}>Refund Policy</a>
+        <a href="#acceptable-use" style={{ cursor:"pointer", textDecoration:"underline", color:"#9ca3af" }}>Acceptable Use</a>
         <span style={{ color:"#d1d5db" }}>·</span>
         <span style={{ fontWeight:600, color:"#6b7280" }}>Compare:</span>
         {[["vs-durable","Durable"],["vs-carrd","Carrd"],["vs-wix","Wix"]].map(([sl,lbl]) => (
@@ -2058,6 +2059,18 @@ function RefundPage({ onHome }) {
       <LS title="14-Day Money-Back Guarantee"><p>You may request a full refund on any Sitefliq purchase within <strong>14 days of the original transaction date</strong>, no questions asked. Simply contact us and we will process your refund promptly.</p></LS>
       <LS title="How It Works"><p>Refunds are processed through Paddle, our payment provider. The full amount will be returned to your original payment method within 5–10 business days.</p></LS>
       <LS title="How to Request"><p>Email <strong>hello@sitefliq.com</strong> with subject "Refund Request" and include your account email and transaction date. We respond within 1 business day.</p></LS>
+    </LegalPage>
+  );
+}
+
+function AcceptableUsePage({ onHome }) {
+  return (
+    <LegalPage title="Acceptable Use Policy" onHome={onHome}>
+      <LS title="1. Purpose"><p>This policy explains what you may and may not create with Sitefliq. It applies to everyone who uses the Service and supplements our Terms of Service.</p></LS>
+      <LS title="2. Prohibited Content"><p>You may not use Sitefliq to generate, host, or promote websites that are: illegal or that facilitate illegal activity; infringing on the intellectual property, trademark, or privacy rights of others; hateful, harassing, or inciting violence against any person or group; deceptive or misleading, including impersonating a real person or business; or fraudulent, including scams, phishing, malware, or pages designed to obtain money or data under false pretences.</p></LS>
+      <LS title="3. Your Responsibility"><p>You are solely responsible for the content you generate and publish. AI output should be reviewed for accuracy and legality before you use it.</p></LS>
+      <LS title="4. Enforcement"><p>We reserve the right to investigate suspected violations and, at our sole discretion, to remove content and to suspend or permanently terminate any account used to create prohibited websites, without refund.</p></LS>
+      <LS title="5. Reporting"><p>To report misuse, email <strong>hello@sitefliq.com</strong>.</p></LS>
     </LegalPage>
   );
 }
@@ -2422,7 +2435,7 @@ export default function Sitefliq() {
     // Hash-based legal routing
     const routeHash = () => {
       const h = window.location.hash.replace("#", "");
-      if (["terms","privacy","refund"].includes(h)) setLegalScreen(h);
+      if (["terms","privacy","refund","acceptable-use"].includes(h)) setLegalScreen(h);
     };
     routeHash();
     window.addEventListener("hashchange", routeHash);
@@ -2474,6 +2487,7 @@ export default function Sitefliq() {
   if (legalScreen === "terms")   return <TermsPage   onHome={() => { setLegalScreen(null); window.location.hash=""; }}/>;
   if (legalScreen === "privacy") return <PrivacyPage onHome={() => { setLegalScreen(null); window.location.hash=""; }}/>;
   if (legalScreen === "refund")  return <RefundPage  onHome={() => { setLegalScreen(null); window.location.hash=""; }}/>;
+  if (legalScreen === "acceptable-use") return <AcceptableUsePage onHome={() => { setLegalScreen(null); window.location.hash=""; }}/>;
 
   // Marketing / SEO pages (path-routed)
   if (marketingPage) return <MarketingPage slug={marketingPage} onHome={() => exitMarketing("home")} onBuild={() => exitMarketing("builder")}/>;
