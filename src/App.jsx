@@ -1254,7 +1254,7 @@ function GeneratingScreen({ form, onDone, onError }) {
           headers: { "Content-Type":"application/json" },
           body: JSON.stringify({
             model: "claude-sonnet-4-6",
-            max_tokens: 16000,
+            max_tokens: 24000,
             messages: [{ role:"user", content:buildPrompt(form, valid) }],
           }),
         });
@@ -1272,6 +1272,7 @@ function GeneratingScreen({ form, onDone, onError }) {
         const reader = r.body.getReader();
         const decoder = new TextDecoder();
         let fullText = "";
+        let stopReason = null;
         while (true) {
           const { done, value } = await reader.read();
           if (done) break;
@@ -1283,9 +1284,17 @@ function GeneratingScreen({ form, onDone, onError }) {
                 if (parsed.type === "content_block_delta" && parsed.delta?.text) {
                   fullText += parsed.delta.text;
                 }
+                // Anthropic reports the stop reason in the message_delta event
+                if (parsed.type === "message_delta" && parsed.delta?.stop_reason) {
+                  stopReason = parsed.delta.stop_reason;
+                }
               } catch {}
             }
           }
+        }
+        // Hit the token ceiling → HTML is truncated; fail loudly instead of shipping broken markup
+        if (stopReason === "max_tokens") {
+          throw new Error("Your page was too long to finish generating. Please try again — a shorter or simpler description usually fixes it.");
         }
         return { content:[{ type:"text", text:fullText }] };
       })
