@@ -1273,25 +1273,34 @@ function GeneratingScreen({ form, onDone, onError }) {
         const decoder = new TextDecoder();
         let fullText = "";
         let stopReason = null;
+        let buffer = "";
+        const handleLine = (line) => {
+          if (!line.startsWith("data: ")) return;
+          const payload = line.slice(6);
+          if (payload === "[DONE]") return;
+          try {
+            const parsed = JSON.parse(payload);
+            if (parsed.type === "content_block_delta" && parsed.delta?.text) {
+              fullText += parsed.delta.text;
+            }
+            // Anthropic reports the stop reason in the message_delta event
+            if (parsed.type === "message_delta" && parsed.delta?.stop_reason) {
+              stopReason = parsed.delta.stop_reason;
+            }
+          } catch {}
+        };
         while (true) {
           const { done, value } = await reader.read();
           if (done) break;
-          const chunk = decoder.decode(value, { stream:true });
-          for (const line of chunk.split("\n")) {
-            if (line.startsWith("data: ") && line.slice(6) !== "[DONE]") {
-              try {
-                const parsed = JSON.parse(line.slice(6));
-                if (parsed.type === "content_block_delta" && parsed.delta?.text) {
-                  fullText += parsed.delta.text;
-                }
-                // Anthropic reports the stop reason in the message_delta event
-                if (parsed.type === "message_delta" && parsed.delta?.stop_reason) {
-                  stopReason = parsed.delta.stop_reason;
-                }
-              } catch {}
-            }
-          }
+          buffer += decoder.decode(value, { stream:true });
+          // A single SSE line can be split across reads — only process complete
+          // lines and keep the trailing partial in the buffer for the next chunk.
+          const lines = buffer.split("\n");
+          buffer = lines.pop();
+          for (const line of lines) handleLine(line);
         }
+        buffer += decoder.decode();
+        for (const line of buffer.split("\n")) handleLine(line);
         // Hit the token ceiling → HTML is truncated; fail loudly instead of shipping broken markup
         if (stopReason === "max_tokens") {
           throw new Error("Your page was too long to finish generating. Please try again — a shorter or simpler description usually fixes it.");
