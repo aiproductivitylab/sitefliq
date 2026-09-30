@@ -77,38 +77,74 @@ relative to real cost.
 | Full page generation (Sonnet) | **4** | $0.16–0.37 | $0.093 |
 | Chat edit (targeted, Sonnet) | **1** | $0.05–0.07 | $0.07 |
 | One-click rebuild (= a generation) | **4** | $0.16–0.37 | $0.093 |
-| Lead Finder search (up to 20 leads) | **2** | ~$0.35–0.40 (Google) | ~$0.20 |
 | Website quality score (PageSpeed) | **0** (free) | $0.00 | — |
 
 Generation = 4 credits because it genuinely costs ~4–7× a targeted edit — the
-ratio is cost-honest, not arbitrary.
+ratio is cost-honest, not arbitrary. **Lead searches are NOT credit-priced** —
+they're a separate monthly quota per tier (see the tiers table and the margin
+tables below), because their cost is external (Google) and still PROVISIONAL.
 
 ### Subscription tiers (monthly, recurring in Paddle)
 
-Marketed as **"X websites per month"** (1 website = 1 generation = 4 credits),
-with credits as the underlying unit so edits/leads also draw from the same pool.
+Matches sitedrop.ai pricing. Marketed as **"X websites per month"** (1 website =
+1 generation = 4 credits), with credits as the underlying unit so edits also draw
+from the same pool. Lead searches are a **separate** monthly quota (see below).
 
-| Tier | Price | Credits/mo | ≈ "websites/month" (marketing) | Effective $/credit |
-|---|---|---|---|---|
-| **Starter** | $25/mo | 50 | **~12 websites** | $0.50 |
-| **Pro** | $50/mo | 120 | **~30 websites** | $0.42 |
-| **Business** | $100/mo | 300 | **~75 websites** | $0.33 |
+| Tier | Price | Credits/mo | Marketed as | Lead searches/mo (50 results, PROVISIONAL) | $/credit |
+|---|---|---|---|---|---|
+| **Starter** | $25/mo | 100 | **25 websites/month** | 5 | $0.25 |
+| **Pro** | $50/mo | 200 | **50 websites/month** | 25 | $0.25 |
+| **Business** | $100/mo | 500 | **125 websites/month** | 100 | $0.20 |
 
-Each website still leaves credits over for edits (1 each) and lead searches (2
-each); the "X websites" figure is the headline, credits are the honest meter.
+### Margin tables
 
-**Margin check (worst case, heavy user spends the entire allotment):**
+**Confirmed (credits only).** Worst case assumes a user spends *every* credit on
+generations at the max token cost ($0.37); typical assumes all generations at the
+typical cost ($0.16). Spending credits on edits instead only *improves* margin (an
+edit is ~$0.05 for 1 credit vs $0.093/credit for a generation), so all-generations
+is the true floor.
 
-- Business, all 300 on generations: 75 × $0.37 = **$27.75 cost vs $100** → 72% gross margin.
-- Business, all 300 on targeted Sonnet edits: 300 × $0.07 = **$21 cost vs $100** → 79% gross margin.
-- Business, all 150 Lead searches (2 cr each): 150 × $0.40 = **$60 vs $100** → 40% margin (thinnest path — see risk).
+| Tier | Price | Credits | Websites (=cr/4) | Typical cost | Typical margin | Worst cost | Worst margin |
+|---|---|---|---|---|---|---|---|
+| Starter | $25 | 100 | 25 | $4.00 | **84%** | $9.25 | **63%** |
+| Pro | $50 | 200 | 50 | $8.00 | **84%** | $18.50 | **63%** |
+| Business | $100 | 500 | 125 | $20.00 | **80%** | $46.25 | **54%** |
 
-**Why edits don't lose money now:** targeted search/replace keeps edit **output**
-tiny (the expensive half), so a Sonnet edit is ~$0.05 — 1 credit covers it with a
-large margin, no need to drop to a cheaper model. (A full-rewrite edit on Sonnet
-*would* have lost money: 300 × $0.40 = $120 vs $100 — which is exactly why we
-reject it.) The thinnest remaining path is **Lead Finder** (real Google cost per
-search) → gate behind 2 credits, cache by `place_id`, and set a GCP budget alert.
+**Lead searches (PROVISIONAL — must verify before building F5).** Lead searches
+are a separate monthly quota (not drawn from credits): Starter 5 / Pro 25 /
+Business 100, at 50 results each. The real Google Places cost per 50-result search
+is **not yet verified** and depends heavily on implementation:
+
+- Field-masked Text Search (contact fields returned in the search response, ~3
+  paginated requests for 50 results): **~$0.10–0.15/search** — cheap.
+- Place-Details-per-result (one detail call per business): **~$0.85–0.95/search** — expensive.
+
+**Break-even lead cost per search** (the most we can pay before that tier loses
+money, at worst-case credit usage):
+
+| Tier | Budget left for leads (rev − worst credit cost) | ÷ searches | **Break-even / search** |
+|---|---|---|---|
+| Starter | $25 − $9.25 = $15.75 | 5 | **$3.15** |
+| Pro | $50 − $18.50 = $31.50 | 25 | **$1.26** |
+| Business | $100 − $46.25 = $53.75 | 100 | **$0.54** |
+
+**Business is the binding constraint: the verified 50-result Places cost must stay
+under ~$0.54/search**, or a maxed-out Business user loses us money. The cheap
+field-masked approach ($0.10–0.15) clears this comfortably; the expensive
+per-result approach ($0.85–0.95) does NOT — at ~$0.90/search a Business user maxing
+both credits and leads costs ~$136 against $100 revenue. **Before F5 ships: verify
+the real cost, implement field-masked Text Search (not per-result Place Details),
+and cap results, so Business cannot lose money.** This is why the lead limits are
+marked PROVISIONAL.
+
+Combined worst case at the cheap provisional ($0.15/search): Starter ~60% / Pro
+~55% / Business ~39% margin — all safe. At the expensive provisional, Business goes
+negative — hence the gate above.
+
+**Why edits don't lose money:** targeted search/replace keeps edit **output** tiny
+(the expensive half), so a Sonnet edit is ~$0.05 — 1 credit covers it with large
+margin, no cheaper model needed. (A full-rewrite edit on Sonnet *would* have lost
+money: 500 credits × $0.40 = $200 vs $100 — which is exactly why we reject it.)
 
 ### One-time top-up packs (keep existing, rescale to the new unit)
 
@@ -302,9 +338,10 @@ no HTTPS*. This surfaces the best sales targets ("no site" / "slow, not mobile")
 - Cache results by `place_id` to avoid re-paying Google for the same business.
 
 **API routes:**
-- **`POST /api/leads/search`** — body `{ query }`. Server calls Google Places
-  Text Search (+ Place Details for website/phone), debits 2 credits via F2,
-  stores/returns leads. **Never called from the browser directly** (key protection).
+- **`POST /api/leads/search`** — body `{ query }`. Server uses field-masked Google
+  Places Text Search (contact fields in the response; up to 50 results),
+  decrements the user's **monthly lead-search quota** (not credits), stores/returns
+  leads. **Never called from the browser directly** (key protection).
 - **`POST /api/leads/score`** — body `{ website_url }`. Calls PageSpeed Insights
   (free), returns perf + HTTPS + mobile flags. Can run in the same request as
   search or lazily per lead.
@@ -312,20 +349,30 @@ no HTTPS*. This surfaces the best sales targets ("no site" / "slow, not mobile")
   same GCP key with both APIs enabled; keep server-side only — distinct from the
   browser `VITE_GOOGLE_KEY` used for Maps).
 
-**Monthly cost to me (real numbers):**
-- **Google Places API (paid):** Text Search ≈ **$32/1,000 calls** ($0.032 each);
-  Place Details ≈ **$17/1,000** ($0.017 each). One 20-lead search with details ≈
-  $0.032 + 20×$0.017 = **~$0.37**. Google Maps Platform gives a monthly free
-  allotment per SKU (the old flat $200/mo credit was retired in 2025 — **verify
-  current free tiers in the GCP console before launch**).
+**Plan limits (PROVISIONAL):** lead searches are a **separate monthly quota**, not
+credit-priced — Starter **5** / Pro **25** / Business **100** searches/month at
+**50 results each**. These limits are PROVISIONAL and must be confirmed against the
+verified Google cost (see below and the margin tables) before F5 is built, so the
+Business plan can't lose money.
+
+**Monthly cost to me (PROVISIONAL — verify before building):**
+- **Google Places API (paid):** cost per 50-result search is **not yet verified**
+  and depends on implementation. Two paths: **field-masked Text Search** (contact
+  fields in the search response, ~3 paginated requests) ≈ **$0.10–0.15/search**;
+  or **Place-Details-per-result** ≈ **$0.85–0.95/search**. Business break-even is
+  **~$0.54/search** (margin tables), so F5 **must** use the field-masked approach
+  and cap results. Google Maps Platform gives a monthly free allotment per SKU (the
+  flat $200/mo credit was retired in 2025 — **verify current free tiers + exact
+  per-request SKU pricing in the GCP console before building**).
 - **PageSpeed Insights API:** **FREE** — 25,000 requests/day with a key (≈240/min
   rate limit). $0.00.
-- Charging **2 credits/search** (~$0.33–1.00 revenue) covers the ~$0.37 Google cost.
 
 **What could go wrong:**
-- **Cost blowout** — Places is real money per call. Gate behind credits (done),
-  cache by `place_id`, cap results per search (20), and set a **GCP billing budget
-  alert**. A user hammering search is the single biggest cost risk in this plan.
+- **Cost blowout** — Places is real money per call. Gate behind the monthly search
+  quota, cache by `place_id`, cap results per search (50), use field-masked Text
+  Search (not per-result Place Details), and set a **GCP billing budget alert**.
+  Verify the real per-search cost stays under the Business break-even (~$0.54)
+  before shipping. A user hammering search is the single biggest cost risk.
 - **PageSpeed rate limits / timeouts** — 240/min; scoring 20 sites in parallel can
   throttle. Queue/limit concurrency; score lazily on demand.
 - **Field-based billing** — the new Places API charges by the *fields* requested;
@@ -482,7 +529,7 @@ external dependency, right after editing lands.
 Supabase-schema step; gives users persistence and a sales tool.
 
 ### Step 5 — Paddle subscriptions (Starter $25 / Pro $50 / Business $100)
-= **F1**, marketed as **"X websites per month"** (~12 / ~30 / ~75). Create the
+= **F1**, marketed as **"X websites per month"** (25 / 50 / 125). Create the
 Paddle subscription products, extend the webhook (renewal vs top-up), add the
 `subscriptions` table + `/api/portal`, rescale the top-up packs (×4), and migrate
 existing balances. **Test in the Paddle sandbox first.** This is the
@@ -528,6 +575,7 @@ Paddle **subscription** price IDs + `PADDLE_WEBHOOK_SECRET` (already added).
 $25/mo (Pro, when >500 MB / higher usage); Netlify $0 → ~$19/mo (Pro, at scale);
 Resend $0 → $20/mo (only if emailing invoices >3k/mo); PageSpeed **$0**.
 **Variable:** Anthropic per generation (~$0.16–0.37) / edit (~$0.05); Google Places
-~$0.37 per 20-lead search (credit-gated). The two real cost risks to watch:
-**Google Places** and, only if we ever switched edits to full-rewrite,
-**Sonnet edits** — both mitigated above.
+**PROVISIONAL** per 50-result search (separate monthly quota; must be verified
+under the ~$0.54 Business break-even before F5 — see margin tables). The two real
+cost risks to watch: **Google Places** and, only if we ever switched edits to
+full-rewrite, **Sonnet edits** — both mitigated above.
