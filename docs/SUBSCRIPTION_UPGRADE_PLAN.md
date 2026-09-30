@@ -110,6 +110,13 @@ is the true floor.
 | Pro | $50 | 200 | 50 | $8.00 | **84%** | $18.50 | **63%** |
 | Business | $100 | 500 | 125 | $20.00 | **80%** | $46.25 | **54%** |
 
+**AI hero image add-on (Step 3):** an AI-generated hero adds **~$0.10/generation**
+(Nano Banana 2 @2K) to **~$0.13** (Nano Banana Pro @2K). At 4 credits this cuts the
+Business worst-case margin from 54% to ~41%, so the recommendation is to charge it
+as a **+1 credit option** (5-credit generation with AI hero, 4 with Pexels) — full
+model IDs, prices, branding/fallback, and the "full AI imagery" premium are under
+Step 3.
+
 **Lead searches (PROVISIONAL — must verify before building F5).** Lead searches
 are a separate monthly quota (not drawn from credits): Starter 5 / Pro 25 /
 Business 100, at 50 results each. The real Google Places cost per 50-result search
@@ -523,6 +530,95 @@ API, no cost. Deliver the list first; apply the top items as prompt edits and
 eyeball before/after. Slots here because it lifts the core product with zero
 external dependency, right after editing lands.
 
+#### Step 3 add-on — AI hero images (Google Nano Banana / Gemini)  *(plan only, not built)*
+
+**What it does:** Replace the *hero* image only with an AI-generated scene tailored
+to the business, while keeping **Pexels for gallery and section images** (hybrid —
+controls cost and keeps the rest grounded in real photos). The hero is the one
+image that most defines "premium," so it's where AI spend pays off.
+
+**Verified model IDs + per-image price** (from Google's official docs
+`ai.google.dev/gemini-api/docs/image-generation` + `/pricing`, checked
+2026-09-30 — re-verify before building, these move fast):
+
+| Model | ID | 2K price/image | Notes |
+|---|---|---|---|
+| Nano Banana 2 | `gemini-3.1-flash-image` | **$0.101** (1K $0.067, 4K $0.151) | "Generalist workhorse," **excels at text rendering**, up to 14 reference images |
+| Nano Banana Pro | `gemini-3-pro-image` | **$0.134** (1K–2K flat; 4K $0.24) | "Premium," **advanced brand consistency**, reference images incl. style/character |
+| Nano Banana 2 Lite | `gemini-3.1-flash-lite-image` | 1K only, $0.0336 | Cheapest; no 2K, no multi-turn edit |
+| Nano Banana (legacy) | `gemini-2.5-flash-image` | $0.039 | Deprecated — don't use |
+
+No free tier on any of them. (Batch API is 50% off but is async, so it doesn't
+apply to interactive hero generation.)
+
+**NB2 vs Pro at 2K:** NB2 is the cost/quality sweet spot ($0.101, strong text
+rendering); Pro costs +$0.033 ($0.134) and is meaningfully better at **brand
+consistency** — the relevant axis when we bake a logo or the business name into the
+scene. **On logo + text accuracy specifically: neither is pixel-accurate.** Both
+*approximate* a logo and can misspell small text; Pro is closer (it's the
+brand-consistency model and accepts style reference images) but still not exact.
+Conclusion: never trust an AI-baked logo as authoritative — see the fallback.
+
+**Branding (per the brief):** pass the business's uploaded/imported logo
+(`form.logo` — already captured) as a **reference image** plus the business name,
+and prompt the scene to carry branding *naturally* — signage, a vehicle wrap, a
+uniform patch, packaging — rather than a floating logo. Use **Pro** for this
+in-scene-branding path (best fidelity); expect approximation.
+
+**Fallback (this is the default, always-accurate path):** generate a **clean scene
+with no baked-in logo or text**, then overlay the **real logo via HTML/CSS** on top
+of the hero (absolute-positioned, uses the exact uploaded asset) — 100% accurate,
+every time, and cheaper (NB2 clean scene, $0.101). In the builder, offer the user a
+choice: **"Regenerate"** (new scene), **"Brand it in the scene"** (Pro, baked-in —
+may be imperfect), and **"Use clean version"** (scene + CSS logo overlay). Default
+to the clean-overlay version so accuracy is guaranteed unless the user opts in.
+
+**Prompt rules (hard guardrails, consistent with the existing accuracy rule):**
+scenes and **atmosphere only** — environments, spaces, objects, light. **Never**
+generate fake staff, fake customers, or fake "completed work" (e.g. a roofer's
+finished roof that isn't theirs). No posed people presented as this business's team
+or clients. This is an honesty/legal guardrail, not a style preference.
+
+**Storage (required):** AI images are uploaded to a **Supabase Storage** bucket
+(e.g. `hero-images`) and referenced by **URL** in the generated HTML — **never
+embedded as base64** (base64 bloats the page, breaks caching, and blows up the DB
+row / published file size). The generate flow swaps the hero token (`__IMG_0__`)
+for the Storage URL, exactly as it swaps Pexels URLs today.
+
+**API + infra:** new `GEMINI_API_KEY` (server-side only); a server step (in
+`/api/generate` or a small `/api/hero-image`) that calls the Gemini image API,
+uploads the result to Supabase Storage, and returns the public URL. Storage cost:
+a 2K JPEG/PNG ≈ 1–3 MB; 1,000 sites ≈ 1–3 GB → within Supabase free 1 GB only
+briefly, so this is another nudge toward Supabase Pro ($25/mo).
+
+**Cost + credit recommendation:** one AI hero adds **$0.101 (NB2)** to **$0.134
+(Pro)** on top of the ~$0.16–0.37 Anthropic generation:
+
+| Generation variant | Hero source | Typical total | Worst total |
+|---|---|---|---|
+| Base (today) | Pexels | $0.16 | $0.37 |
+| + AI hero (NB2 @2K) | `gemini-3.1-flash-image` | $0.26 | $0.47 |
+| + AI hero (Pro @2K) | `gemini-3-pro-image` | $0.29 | $0.50 |
+| Full AI imagery (6× NB2 @2K) | all AI | $0.77 | $0.98 |
+
+At 4 credits / generation (Step 5 pricing, Business $0.20/credit → $0.80 revenue),
+an AI-hero generation's worst-case margin drops from ~54% (Pexels) to **~41%** —
+still positive but a ~13-point erosion, worst at the Business tier.
+**Recommendation:** make the AI hero a **+1 credit option (generation = 5 credits
+when the AI hero is on; stays 4 with the Pexels hero)** rather than a silent
+default. This (a) restores worst-case margin to ~53% on AI-hero generations, (b)
+keeps the clean "25/50/125 websites per month" headline for the base product, and
+(c) is cost-honest — users pay for the pixels they use. Implement as a builder
+toggle. If you'd rather make AI hero the default look, bump the *base* generation to
+5 credits instead (headline becomes 20/40/100 websites/month).
+
+**Optional "full AI imagery" premium:** generate *all* images (hero + gallery +
+sections, ~6 images) with AI instead of Pexels. Cost ≈ $0.6–1.0/site (6× NB2 @2K),
+so price it as a larger add-on — **~+8 credits** (≈ a full-AI generation at ~12
+credits total) to keep ~50% margin at the Business tier. Offer it as an opt-in
+premium in the builder for agencies that want a fully bespoke look. Verify the
+per-image price again at build time and re-tune the credit add-on.
+
 ### Step 4 — Before/after client preview links + saved projects dashboard
 = **F4 + F9**. Add the `projects` table (with RLS) + `share_token`, the public
 `/api/preview` + `/p/:token` route, and the "My Projects" dashboard. First
@@ -568,8 +664,9 @@ features last, once credits, budgets, and subscriptions are all enforced.
 **Changed:** `api/generate.js` (server-side credit deduction + token verification),
 `api/paddle-webhook.js` (subscription events).
 
-**New env vars (server-side):** `GOOGLE_PLACES_KEY`, `GOOGLE_PAGESPEED_KEY`, new
-Paddle **subscription** price IDs + `PADDLE_WEBHOOK_SECRET` (already added).
+**New env vars (server-side):** `GOOGLE_PLACES_KEY`, `GOOGLE_PAGESPEED_KEY`,
+`GEMINI_API_KEY` (AI hero images, Step 3), new Paddle **subscription** price IDs +
+`PADDLE_WEBHOOK_SECRET` (already added).
 
 **Fixed monthly costs to me (recurring):** Paddle ~5%+$0.50/txn; Supabase $0 →
 $25/mo (Pro, when >500 MB / higher usage); Netlify $0 → ~$19/mo (Pro, at scale);
