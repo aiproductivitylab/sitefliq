@@ -1265,7 +1265,11 @@ function GeneratingScreen({ form, onDone, onError, onStage }) {
         if (!cancelled) setImgStatus(okCount > 0 ? `Found ${okCount} photos ✓` : "Using styled design…");
         return fetch("/api/generate", {
           method: "POST",
-          headers: { "Content-Type":"application/json" },
+          headers: {
+            "Content-Type":"application/json",
+            // Server verifies this token and deducts the credit itself.
+            "Authorization": "Bearer " + (sb._token || ""),
+          },
           body: JSON.stringify({
             model: "claude-sonnet-4-6",
             max_tokens: 24000,
@@ -1274,6 +1278,8 @@ function GeneratingScreen({ form, onDone, onError, onStage }) {
         });
       })
       .then(async r => {
+        // Server ran out of credits for this user → route to the pricing wall.
+        if (r.status === 402) throw new Error("__INSUFFICIENT_CREDITS__");
         if (!r.ok) {
           let detail = "";
           try {
@@ -1427,7 +1433,10 @@ function ResultScreen({ html, form, onReset, onBuyMoreCredits }) {
     try {
       const r = await fetch("/api/publish", {
         method: "POST",
-        headers: { "Content-Type":"application/json" },
+        headers: {
+          "Content-Type":"application/json",
+          "Authorization": "Bearer " + (sb._token || ""),
+        },
         body: JSON.stringify({ html, name:form.name }),
       });
       const d = await r.json();
@@ -2658,13 +2667,22 @@ export default function Sitefliq() {
               form={form}
               onStage={setGenStage}
               onDone={async (html) => {
-                await sb.deductCredit();
+                // The credit was already deducted server-side in /api/generate;
+                // just refresh the balance so the UI reflects it.
                 await refreshCredits();
                 setGeneratedHtml(html);
                 setScreen("result");
                 toast("🎉 Your page is ready!", "success");
               }}
               onError={(err) => {
+                // The server may have auto-refunded (failed/truncated generation),
+                // so refresh the balance regardless of which error this is.
+                refreshCredits();
+                if (err === "__INSUFFICIENT_CREDITS__") {
+                  toast("You're out of credits — choose a plan to continue.", "warning");
+                  setScreen("pricing_wall");
+                  return;
+                }
                 toast(err || "Generation failed — please try again", "error");
                 setScreen("builder");
               }}
