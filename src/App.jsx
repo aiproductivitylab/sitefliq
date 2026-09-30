@@ -1388,6 +1388,119 @@ function GeneratingScreen({ form, onDone, onError, onStage }) {
 }
 
 /* ─────────────────────────────────────────────────────────────────────────────
+   EDIT CHAT — targeted AI edits on the result screen (Step 2)
+───────────────────────────────────────────────────────────────────────────── */
+function EditChat() {
+  const generatedHtml = useAppStore(s => s.generatedHtml);
+  const setGeneratedHtml = useAppStore(s => s.setGeneratedHtml);
+  const refreshCredits = useAppStore(s => s.refreshCredits);
+
+  const [input, setInput] = useState("");
+  const [busy, setBusy] = useState(false);
+  const [transcript, setTranscript] = useState([]); // { instruction, status: 'pending'|'ok'|'fail' }
+  const [undoStack, setUndoStack] = useState([]);    // prior HTML versions (multi-level)
+
+  const mark = (idx, status) => setTranscript(t => t.map((e, i) => i === idx ? { ...e, status } : e));
+
+  const send = async () => {
+    const text = input.trim();
+    if (!text || busy) return;
+    const idx = transcript.length;
+    setTranscript(t => [...t, { instruction: text, status: "pending" }]);
+    setInput("");
+    setBusy(true);
+    try {
+      const r = await fetch("/api/edit", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "Authorization": "Bearer " + (sb._token || "") },
+        body: JSON.stringify({ html: generatedHtml, instruction: text }),
+      });
+      if (r.status === 402) {
+        toast("You're out of credits — buy more to keep editing.", "warning");
+        refreshCredits();
+        mark(idx, "fail");
+        return;
+      }
+      const d = await r.json().catch(() => ({}));
+      if (!r.ok) {
+        // Server preserved the page and refunded the credit on a failed edit.
+        toast(d.message || d.error || "Couldn't apply that edit — try rephrasing.", "error");
+        refreshCredits();
+        mark(idx, "fail");
+        return;
+      }
+      // Success: save the pre-edit page for undo, then apply. The preview
+      // (PreviewFrame) reads generatedHtml from the store and updates itself.
+      setUndoStack(s => [...s, generatedHtml]);
+      setGeneratedHtml(d.html);
+      refreshCredits();
+      toast(d.skipped ? `Applied — ${d.applied} change${d.applied > 1 ? "s" : ""} (${d.skipped} skipped)` : "Change applied ✓", "success");
+      mark(idx, "ok");
+    } catch {
+      toast("Network error — please try again.", "error");
+      refreshCredits();
+      mark(idx, "fail");
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const undo = () => {
+    if (!undoStack.length || busy) return;
+    const prev = undoStack[undoStack.length - 1];
+    setUndoStack(s => s.slice(0, -1));
+    setGeneratedHtml(prev);
+    toast("Reverted last edit", "info");
+  };
+
+  const statusIcon = { pending: "⏳", ok: "✓", fail: "✗" };
+  const statusColor = { pending: "#9ca3af", ok: "#16a34a", fail: "#dc2626" };
+
+  return (
+    <div style={{ border: "1px solid #fed7aa", background: "linear-gradient(135deg,#fff7ed,#fffbf5)", borderRadius: 12, padding: "14px 16px", marginBottom: 14 }}>
+      <div style={{ fontSize: 11, fontWeight: 700, color: "#f97316", letterSpacing: .5, textTransform: "uppercase", marginBottom: 8 }}>✦ Edit with AI</div>
+
+      {transcript.length > 0 && (
+        <div style={{ display: "flex", flexDirection: "column", gap: 5, marginBottom: 10, maxHeight: 132, overflowY: "auto" }}>
+          {transcript.map((e, i) => (
+            <div key={i} style={{ display: "flex", gap: 7, alignItems: "flex-start", fontSize: 12, color: "#374151", background: "white", border: "1px solid #f3f4f6", borderRadius: 7, padding: "6px 9px" }}>
+              <span style={{ color: statusColor[e.status], fontWeight: 700, flexShrink: 0 }}>{statusIcon[e.status]}</span>
+              <span style={{ lineHeight: 1.4 }}>{e.instruction}</span>
+            </div>
+          ))}
+        </div>
+      )}
+
+      <div style={{ display: "flex", gap: 8, alignItems: "flex-end" }}>
+        <textarea
+          value={input}
+          onChange={e => setInput(e.target.value)}
+          onKeyDown={e => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); send(); } }}
+          placeholder='e.g. "make the hero darker" or "change the phone to 555-1234"'
+          rows={2}
+          disabled={busy}
+          style={{ flex: 1, padding: "9px 12px", border: "1.5px solid #fed7aa", borderRadius: 9, fontSize: 13, fontFamily: "inherit", resize: "none", outline: "none", background: busy ? "#f9fafb" : "white", color: "#111827" }}
+          onFocus={e => e.target.style.borderColor = "#f97316"}
+          onBlur={e => e.target.style.borderColor = "#fed7aa"}
+        />
+        <button onClick={send} disabled={busy || !input.trim()}
+          style={{ padding: "9px 16px", background: busy || !input.trim() ? "#e5e7eb" : "#f97316", color: busy || !input.trim() ? "#9ca3af" : "white", border: "none", borderRadius: 9, fontSize: 13, fontWeight: 700, cursor: busy || !input.trim() ? "not-allowed" : "pointer", fontFamily: "inherit", whiteSpace: "nowrap" }}>
+          {busy ? <span style={{ width: 13, height: 13, border: "2px solid #9ca3af", borderTopColor: "transparent", borderRadius: "50%", animation: "spin .7s linear infinite", display: "inline-block" }}/> : "Send →"}
+        </button>
+      </div>
+
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginTop: 8 }}>
+        <span style={{ fontSize: 10, color: "#9ca3af" }}>1 credit per edit · ⏎ to send</span>
+        <button onClick={undo} disabled={!undoStack.length || busy}
+          style={{ background: "none", border: "none", fontSize: 11, fontWeight: 600, color: !undoStack.length || busy ? "#d1d5db" : "#f97316", cursor: !undoStack.length || busy ? "not-allowed" : "pointer", fontFamily: "inherit" }}>
+          ↩ Undo last edit{undoStack.length > 1 ? ` (${undoStack.length})` : ""}
+        </button>
+      </div>
+    </div>
+  );
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
    RESULT SCREEN — left panel
 ───────────────────────────────────────────────────────────────────────────── */
 function ResultScreen({ html, form, onReset, onBuyMoreCredits }) {
@@ -1519,6 +1632,9 @@ function ResultScreen({ html, form, onReset, onBuyMoreCredits }) {
           <button onClick={onBuyMoreCredits} style={{ width:"100%", padding:"10px", background:"#fff7ed", color:"#f97316", border:"1px solid #fed7aa", borderRadius:8, fontSize:13, fontWeight:700, cursor:"pointer", fontFamily:"inherit", marginBottom:14 }}>
             ⚡ Buy More Credits
           </button>
+
+          {/* AI chat editing (Step 2) */}
+          <EditChat />
 
           {/* Included features */}
           <div style={{ display:"flex", flexDirection:"column", gap:6, marginBottom:16 }}>
