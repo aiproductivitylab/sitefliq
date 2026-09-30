@@ -110,3 +110,10 @@ begin
     execute format('grant execute on function %s to service_role', fn.sig);
   end loop;
 end $$;
+
+-- 5. Remove the UPDATE policy that let any authenticated user set their own
+--    credits.balance to an arbitrary value (using/check auth.uid() = user_id).
+--    All balance writes now go through the service-role RPCs (deduct_credits /
+--    add_credits), which bypass RLS, so end users need no UPDATE access at all.
+--    The SELECT policy on `credits` is left intact (the client reads its balance).
+drop policy if exists "Users can only deduct own credits" on public.credits;
