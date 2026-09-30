@@ -503,7 +503,11 @@ until ~500 MB, then Pro $25/mo.
 
 Small, independently-testable steps. Free/frontend work and security fixes come
 before anything that needs paid external APIs (Google Places) or money movement
-(subscriptions), which come before the post-launch growth features.
+(subscriptions), which come before the remaining growth features.
+
+> **Everything in this plan is pre-launch.** Launch happens only after **all six
+> steps** — including Lead Finder, invoicing, and custom domains — are built and
+> tested end-to-end. See the **Launch checklist** (§5) for the gate.
 
 ### Step 1 — API lockdown + server-side credits  *(security foundation)*
 = **F2**. Add `deduct_credits(p_user_id, p_amount)` RPC + `credit_ledger` table;
@@ -628,16 +632,16 @@ Supabase-schema step; gives users persistence and a sales tool.
 = **F1**, marketed as **"X websites per month"** (25 / 50 / 125). Create the
 Paddle subscription products, extend the webhook (renewal vs top-up), add the
 `subscriptions` table + `/api/portal`, rescale the top-up packs (×4), and migrate
-existing balances. **Test in the Paddle sandbox first.** This is the
-launch/revenue milestone.
+existing balances. **Test in the Paddle sandbox first.** This turns on recurring
+billing, but it is **not** launch — Step 6 must still be built and tested first.
 
-### Step 6 — Post-launch growth features
+### Step 6 — Growth features (still pre-launch)
 In roughly this order (free-API and reuse first, paid/external last):
 1. **Website quality score** (F5 scoring half) — PageSpeed is **free**; set up the
    GCP project + keys here on a pasted URL before touching paid Places.
-2. **Lead Finder** (F5 search half) — Google Places (**paid**); gate behind 2
-   credits, cache by `place_id`, set a **GCP billing budget alert** before first
-   real search.
+2. **Lead Finder** (F5 search half) — Google Places (**paid**); gate behind the
+   monthly lead-search quota, use field-masked Text Search, cache by `place_id`,
+   and set a **GCP billing budget alert** before first real search.
 3. **One-click rebuild from a lead** (F6) — wire lead → importer → generate → save
    as a project.
 4. **Invoicing** (F7) — client-side PDF first, then persist to the `invoices` table.
@@ -647,9 +651,11 @@ In roughly this order (free-API and reuse first, paid/external last):
 **Why this order:** Step 1 makes spending safe and closes the payment bypass
 before anything else touches credits. Step 2 delivers the flagship post-generation
 feature on top of it. Step 3 lifts perceived quality with zero cost. Step 4 makes
-work persist and gives a sales artifact. Step 5 turns on recurring revenue (the
-launch line). Step 6 adds the metered-cost (Places) and account-limited (Netlify)
-features last, once credits, budgets, and subscriptions are all enforced.
+work persist and gives a sales artifact. Step 5 turns on recurring billing. Step 6
+adds the metered-cost (Places) and account-limited (Netlify) features last, once
+credits, budgets, and subscriptions are all enforced. **Launch comes after Step 6**
+— every feature, including Lead Finder, invoicing, and custom domains, must be
+built and tested first (see §5 Launch checklist).
 
 ---
 
@@ -676,3 +682,57 @@ Resend $0 → $20/mo (only if emailing invoices >3k/mo); PageSpeed **$0**.
 under the ~$0.54 Business break-even before F5 — see margin tables). The two real
 cost risks to watch: **Google Places** and, only if we ever switched edits to
 full-rewrite, **Sonnet edits** — both mitigated above.
+
+---
+
+## 5. Launch checklist
+
+**Nothing launches until every box below is checked.** All six build steps must be
+complete, and the whole toolkit — including Lead Finder, invoicing, and custom
+domains — must be verified end-to-end on the live site before any public launch.
+
+### Feature verification (each tested end-to-end on the LIVE site)
+- [ ] **Step 1 — credits/security:** generation and publish require a valid login;
+      a logged-out request is rejected (401); credits deduct server-side; a
+      truncated/failed generation auto-refunds; rate limits trip (5 gen / 10 publish
+      per 10 min); the `credits` UPDATE-policy hole is confirmed closed
+      (`security_checks.sql`); `PADDLE_WEBHOOK_SECRET` set and a Paddle test webhook
+      returns 200.
+- [ ] **Step 2 — chat editing:** targeted edits apply live in the preview; 1 credit
+      per successful edit; a no-match/invalid edit refunds and preserves the page;
+      multi-level undo works; rate limit trips.
+- [ ] **Step 3 — quality pass (+ AI hero if built):** generated pages reviewed for
+      premium look; if AI hero shipped — image saved to Supabase Storage (URL, not
+      base64), clean-logo-overlay fallback works, +1 credit charged, prompt
+      guardrails hold (no fake staff/customers/work).
+- [ ] **Step 4 — previews/projects:** projects persist per user (RLS verified — a
+      user cannot read another's projects/leads/invoices); private share link opens
+      for a logged-out client; before/after view renders (with fallback).
+- [ ] **Step 5 — subscriptions:** all three plans subscribe via Paddle; a renewal
+      refills credits; a top-up pack adds credits; cancel/manage via the Paddle
+      portal works; `past_due` does not refill; existing balances migrated (×4) and
+      generation cost flipped to its launch value.
+- [ ] **Step 6 — growth features:**
+  - [ ] Website quality score returns correct flags (no site / slow / not mobile / no HTTPS).
+  - [ ] **Lead Finder** — real Google Places cost per 50-result search **verified**
+        under the ~$0.54 Business break-even; monthly quotas enforced; GCP budget
+        alert live.
+  - [ ] One-click rebuild from a lead produces a saved project.
+  - [ ] **Invoicing** — create → PDF export → mark paid, persisted per user.
+  - [ ] **Custom domains** — connect a real domain via Netlify, DNS instructions
+        shown, SSL provisions, status reflects live.
+
+### Money + data
+- [ ] A **real (non-sandbox) subscription purchase** completed end-to-end, credits
+      granted, transaction logged, and the credit appears in the ledger.
+- [ ] A real top-up purchase tested the same way.
+- [ ] Refund/chargeback path understood (Paddle dashboard).
+- [ ] All required env vars set in Vercel **Production** (Anthropic, Pexels, Resend,
+      Netlify, Supabase service key, Google keys, Gemini, Paddle secret + price IDs).
+- [ ] Supabase migration applied in production; `security_checks.sql` re-run clean.
+
+### Private beta
+- [ ] **3–5 real users** run the full flow (generate → edit → publish → subscribe)
+      for **one week**.
+- [ ] Feedback collected; blocking bugs fixed; costs reviewed against the margin
+      tables with real usage before opening to the public.
