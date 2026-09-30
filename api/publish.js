@@ -45,7 +45,9 @@ export default async function handler(req, res) {
   const userId = await getUserId(bearer);
   if (!userId) return res.status(401).json({ error: 'Not signed in' });
 
-  const { html, name } = req.body;
+  // Optional `siteId` → republish (redeploy) to an existing site so the live
+  // URL updates in place, instead of creating a new site.
+  const { html, name, siteId: existingSiteId } = req.body;
   if (!html || !name) return res.status(400).json({ error: 'Missing html or name' });
 
   // Rate limit (uses the same rate_events table as generate; requires the service key).
@@ -59,25 +61,37 @@ export default async function handler(req, res) {
   const token = process.env.NETLIFY_TOKEN;
   if (!token) return res.status(500).json({ error: 'Deploy token not configured' });
 
-  const slug = name.toLowerCase().replace(/[^a-z0-9]/g, '-').replace(/-+/g, '-').replace(/^-|-$/g, '').substring(0, 40);
-  const siteName = `sf-${slug}-${Date.now().toString(36)}`;
-
   try {
-    // Create a new Netlify site
-    const siteRes = await fetch('https://api.netlify.com/api/v1/sites', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${token}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ name: siteName }),
-    });
-
-    const site = await siteRes.json();
-    if (!siteRes.ok) return res.status(500).json({ error: site.message || 'Failed to create site' });
-
-    const siteId = site.id;
-    const siteUrl = `https://${siteName}.netlify.app`;
+    let siteId, siteUrl;
+    if (existingSiteId) {
+      // Republish to the SAME site. NOTE: site ownership is not yet verified
+      // against the Sitefliq user (sites aren't tracked per-user until the Step 4
+      // projects table). Netlify siteIds are opaque UUIDs returned only to their
+      // owner, so this is low-risk for now — Step 4 must enforce ownership.
+      const getRes = await fetch(`https://api.netlify.com/api/v1/sites/${existingSiteId}`, {
+        headers: { 'Authorization': `Bearer ${token}` },
+      });
+      const site = await getRes.json();
+      if (!getRes.ok) return res.status(500).json({ error: site.message || 'Site not found' });
+      siteId = site.id;
+      siteUrl = site.ssl_url || site.url || `https://${site.name}.netlify.app`;
+    } else {
+      // First publish: create a new Netlify site.
+      const slug = name.toLowerCase().replace(/[^a-z0-9]/g, '-').replace(/-+/g, '-').replace(/^-|-$/g, '').substring(0, 40);
+      const siteName = `sf-${slug}-${Date.now().toString(36)}`;
+      const siteRes = await fetch('https://api.netlify.com/api/v1/sites', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ name: siteName }),
+      });
+      const site = await siteRes.json();
+      if (!siteRes.ok) return res.status(500).json({ error: site.message || 'Failed to create site' });
+      siteId = site.id;
+      siteUrl = `https://${siteName}.netlify.app`;
+    }
 
     // Deploy the HTML file
     const encoder = new TextEncoder();
@@ -114,7 +128,7 @@ export default async function handler(req, res) {
       body: html,
     });
 
-    return res.status(200).json({ url: siteUrl, ready: true });
+    return res.status(200).json({ url: siteUrl, ready: true, siteId });
 
   } catch (err) {
     console.error('Publish error:', err);

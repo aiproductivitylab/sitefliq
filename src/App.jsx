@@ -1508,6 +1508,9 @@ function ResultScreen({ html, form, onReset, onBuyMoreCredits }) {
   const [copied, setCopied] = useState(false);
   const [publishing, setPublishing] = useState(false);
   const [publishedUrl, setPublishedUrl] = useState(null);
+  const [publishedSiteId, setPublishedSiteId] = useState(null); // Netlify site for republish
+  const [publishedHtml, setPublishedHtml] = useState(null);     // snapshot at last publish
+  const [republishing, setRepublishing] = useState(false);
   const [publishErr, setPublishErr] = useState(null);
   const [urlCopied, setUrlCopied] = useState(false);
   const [showConfetti, setShowConfetti] = useState(true);
@@ -1558,6 +1561,8 @@ function ResultScreen({ html, form, onReset, onBuyMoreCredits }) {
         toast("Publish failed — please try again", "error");
       } else {
         setPublishedUrl(d.url);
+        setPublishedSiteId(d.siteId || null);
+        setPublishedHtml(html);          // mark this html as the published version
         toast("🚀 Page is live!", "success");
       }
     } catch {
@@ -1566,6 +1571,38 @@ function ResultScreen({ html, form, onReset, onBuyMoreCredits }) {
     }
     setPublishing(false);
   };
+
+  // Redeploy the current html to the SAME Netlify site so the live URL updates.
+  const republish = async () => {
+    if (!publishedSiteId || republishing) return;
+    setRepublishing(true); setPublishErr(null);
+    try {
+      const r = await fetch("/api/publish", {
+        method: "POST",
+        headers: {
+          "Content-Type":"application/json",
+          "Authorization": "Bearer " + (sb._token || ""),
+        },
+        body: JSON.stringify({ html, name:form.name, siteId: publishedSiteId }),
+      });
+      const d = await r.json();
+      if (!r.ok || d.error) {
+        setPublishErr(d.error || "Republish failed. Please try again.");
+        toast("Republish failed — please try again", "error");
+      } else {
+        if (d.url) setPublishedUrl(d.url);
+        setPublishedHtml(html);          // current html is now the live version
+        toast("🔄 Live site updated!", "success");
+      }
+    } catch {
+      setPublishErr("Network error. Please try again.");
+      toast("Network error", "error");
+    }
+    setRepublishing(false);
+  };
+
+  // True once published AND the page has changed since the last publish/republish.
+  const hasUnpublishedChanges = !!publishedUrl && html !== publishedHtml;
 
   const copyUrl = () => navigator.clipboard.writeText(publishedUrl).then(() => {
     setUrlCopied(true);
@@ -1619,6 +1656,14 @@ function ResultScreen({ html, form, onReset, onBuyMoreCredits }) {
                 <button onClick={shareTwitter} style={{ flex:1, padding:"6px", background:"#000", color:"white", border:"none", borderRadius:6, fontSize:11, fontWeight:700, cursor:"pointer", fontFamily:"inherit" }}>𝕏 Share</button>
                 <button onClick={shareLinkedIn} style={{ flex:1, padding:"6px", background:"#0077b5", color:"white", border:"none", borderRadius:6, fontSize:11, fontWeight:700, cursor:"pointer", fontFamily:"inherit" }}>in Share</button>
               </div>
+            </div>
+          )}
+          {hasUnpublishedChanges && (
+            <div style={{ background:"#fffbeb", border:"1px solid #fde68a", borderRadius:9, padding:"10px 14px", marginBottom:8, display:"flex", alignItems:"center", justifyContent:"space-between", gap:10 }}>
+              <span style={{ fontSize:12, color:"#b45309", fontWeight:600 }}>⚠ You have unpublished changes</span>
+              <button onClick={republish} disabled={republishing} style={{ padding:"6px 14px", background:republishing?"#e5e7eb":"#d97706", color:republishing?"#9ca3af":"white", border:"none", borderRadius:7, fontSize:12, fontWeight:700, cursor:republishing?"not-allowed":"pointer", fontFamily:"inherit", whiteSpace:"nowrap", display:"flex", alignItems:"center", gap:6 }}>
+                {republishing ? <><span style={{ width:12, height:12, border:"2px solid #9ca3af", borderTopColor:"transparent", borderRadius:"50%", animation:"spin .7s linear infinite", display:"inline-block" }}/> Republishing…</> : "🔄 Republish"}
+              </button>
             </div>
           )}
           {publishErr && <div style={{ fontSize:11, color:"#dc2626", marginBottom:8, textAlign:"center" }}>{publishErr}</div>}

@@ -16,6 +16,9 @@ const EDIT_MAX_TOKENS = 8000;      // edits are small (only the changed strings)
 const EDIT_COST = 1;               // 1 credit per applied edit
 const EDIT_RATE_LIMIT = 20;
 const EDIT_RATE_WINDOW_MIN = 10;
+// Max accepted page size (raw, before masking). A generated page with a base64
+// logo is well under this; reject anything larger with a clear error.
+const MAX_HTML_BYTES = 1_500_000;
 
 const EDIT_SYSTEM_PROMPT = [
   "You are editing an existing single-file HTML landing page. The user gives you the current full HTML and one change request.",
@@ -25,9 +28,34 @@ const EDIT_SYSTEM_PROMPT = [
   "- Make the SMALLEST change that satisfies the request. Never restate or reformat the whole document.",
   "- Preserve everything unrelated: untouched scripts, styles, markup, and the logo.",
   "- Never invent facts, fake reviews, fake staff/customers, or claims the user did not provide.",
+  "- The HTML may contain opaque placeholder tokens like __DATA_0__ in place of image data. Treat them as opaque: never modify, decode, or reproduce their contents. You may keep one inside a `find`/`replace` verbatim if it is part of the surrounding context, but never invent or alter one.",
   "- Output the raw JSON array and NOTHING else — no prose, no markdown code fences.",
   "If the request cannot be satisfied with exact substring edits, return [].",
 ].join("\n");
+
+// Replace every data: URL (e.g. the base64 logo from the __LOGO__ swap) with a
+// short opaque token before the HTML is sent to Claude, and restore them after
+// the edits are applied. Claude never sees or edits the raw base64 — this keeps
+// the request small/cheap and stops the model from mangling binary data.
+// (Assumes base64 data URLs, which contain no spaces/quotes — the logo always is.)
+function maskDataUrls(html) {
+  const map = [];
+  const seen = new Map(); // url -> token (dedupe identical URLs, e.g. logo reused)
+  const masked = html.replace(/data:[^\s"'()]+/g, (url) => {
+    if (seen.has(url)) return seen.get(url);
+    const token = `__DATA_${map.length}__`;
+    seen.set(url, token);
+    map.push({ token, url });
+    return token;
+  });
+  return { masked, map };
+}
+
+function restoreDataUrls(html, map) {
+  let out = html;
+  for (const { token, url } of map) out = out.split(token).join(url);
+  return out;
+}
 
 async function getUserId(token) {
   if (!token) return null;
@@ -111,6 +139,12 @@ export default async function handler(req, res) {
   if (typeof html !== 'string' || !html || typeof instruction !== 'string' || !instruction.trim()) {
     return res.status(400).json({ error: 'html and instruction required' });
   }
+  if (Buffer.byteLength(html, 'utf8') > MAX_HTML_BYTES) {
+    return res.status(413).json({ error: 'page_too_large', message: 'This page is too large to edit by chat. Try removing large embedded images first.' });
+  }
+
+  // Mask data: URLs (base64 logo, etc.) so Claude never sees the raw binary.
+  const { masked, map } = maskDataUrls(html);
 
   // 3. Rate limit (before spend).
   const allowed = await underRateLimit(serviceKey, userId, 'edit', EDIT_RATE_LIMIT, EDIT_RATE_WINDOW_MIN);
@@ -146,7 +180,7 @@ export default async function handler(req, res) {
         model: EDIT_MODEL,
         max_tokens: EDIT_MAX_TOKENS,
         system: EDIT_SYSTEM_PROMPT,
-        messages: [{ role: 'user', content: `Current HTML:\n\n${html}\n\nChange request: ${instruction.trim()}` }],
+        messages: [{ role: 'user', content: `Current HTML:\n\n${masked}\n\nChange request: ${instruction.trim()}` }],
       }),
     });
 
@@ -164,7 +198,8 @@ export default async function handler(req, res) {
       return res.status(422).json({ error: 'no_edits', message: "Couldn't turn that into an edit — try rephrasing." });
     }
 
-    const { out, applied, skipped } = applyEdits(html, edits);
+    // Apply to the masked HTML (Claude's `find` strings reference what it saw).
+    const { out, applied, skipped } = applyEdits(masked, edits);
     // Nothing matched, or the result no longer looks like a full HTML document →
     // preserve the original page and refund.
     if (applied === 0) {
@@ -176,7 +211,9 @@ export default async function handler(req, res) {
       return res.status(422).json({ error: 'invalid_result', message: "That edit would have broken the page, so it wasn't applied." });
     }
 
-    return res.status(200).json({ html: out, applied, skipped });
+    // Restore the data: URLs before returning the final HTML.
+    const finalHtml = restoreDataUrls(out, map);
+    return res.status(200).json({ html: finalHtml, applied, skipped });
   } catch (err) {
     console.error('Edit error:', err);
     await refund();
