@@ -43,7 +43,7 @@ export function usePaddle() {
     paddle.Checkout.open({
       items: [{ priceId, quantity: 1 }],
       customer: userEmail ? { email: userEmail } : undefined,
-      customData: { userId },
+      customData: { user_id: userId },
     });
   }, [paddle]);
 
