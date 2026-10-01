@@ -525,6 +525,33 @@ being solid, so it's first.
 exact-once matching; 1-credit debit via Step 1; multi-level undo history.
 First visible AI feature after generation, reuses the Step 1 credit plumbing.
 
+### Step 2.5 — Premium website redesign  *(no new infra)*
+A full visual redesign of the Sitefliq app itself (not the generated pages).
+Direction: formal, premium B2B SaaS in the spirit of Stripe / Linear / Mercury —
+deep navy/charcoal + white, Sitefliq orange used sparingly as an accent; refined
+typography, generous whitespace, clear hierarchy, subtle motion only. **No emojis
+in the UI. Real product mockups of the builder instead of decorative graphics. No
+invented testimonials, stats, or user counts — only true claims.**
+
+Starts with a **reusable design system** (colours, type scale, spacing, buttons,
+cards, inputs, badges) in its own module (`src/ui/theme.js` + `src/ui/kit.jsx`)
+that every current and future screen must use; components move out of `App.jsx`
+into their own files where it helps, with **no behaviour change**. Built in three
+stages, each independently testable (build must pass; all existing functionality
+preserved):
+
+1. **Design system + homepage + pricing page.** Pricing shows the monthly
+   subscriptions (Starter $25 / 25 sites, Pro $50 / 50, Business $100 / 125,
+   "billed monthly, cancel anytime"), with one-time credit top-ups kept as a
+   small secondary section. Subscription buttons are **not** wired to Paddle yet
+   (price IDs come with Step 5); top-ups keep working via the existing flow.
+2. **Builder, generating screen, result screen** (incl. chat editing + republish)
+   **and auth modals.**
+3. **Help, example page, legal pages.**
+
+Slots here so every later step (quality pass, previews, subscriptions, growth
+features) is built on the new design system rather than retrofitted.
+
 ### Step 3 — Generation quality pass  *(no new infra)*
 Review the current `buildPrompt` and real generated output, and produce a ranked
 list of concrete improvements to make pages look more **premium** and **convert
