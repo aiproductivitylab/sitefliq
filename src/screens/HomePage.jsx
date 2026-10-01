@@ -1,7 +1,7 @@
 // Homepage — premium B2B redesign (Stage 1), income-focused.
 import { useState } from "react";
 import { theme as t } from "../ui/theme";
-import { Container, Section, Eyebrow, Heading, Text, Button, Card, Check, Arrow, MarketingNav, MarketingFooter, ThemeSwitcher } from "../ui/kit";
+import { Container, Section, Eyebrow, Heading, Text, Button, Card, Check, Arrow, MarketingNav, MarketingFooter } from "../ui/kit";
 
 /* A real product mockup of the builder (form → generated preview), drawn in the
    design-system palette — used instead of a decorative illustration. */
@@ -245,7 +245,6 @@ export default function HomePage({ onBuild, onPricing, onExample, onHelp, onMark
       </Section>
 
       <MarketingFooter onMarketing={onMarketing} />
-      <ThemeSwitcher />
     </div>
   );
 }

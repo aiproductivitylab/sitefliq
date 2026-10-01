@@ -62,7 +62,7 @@ const PLANS = [
   },
   {
     id:"pro", name:"Pro", price:"$49", credits:10, perPage:"$4.90",
-    color:"#f97316", badge:"BEST VALUE", desc:"For freelancers & small agencies",
+    color:"#2563eb", badge:"BEST VALUE", desc:"For freelancers & small agencies",
     features:["10 page generations","All styles & colour palettes","Full SEO + conversion copy","Download HTML instantly","No Sitefliq branding","Priority generation speed","Priority support","Credits never expire"],
     priceId:"pri_01kjxachhq3afcqc0gj54x2yq7",
   },
@@ -272,7 +272,7 @@ const GS = () => (
     @keyframes ticker{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
     @keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
     @keyframes popIn{from{opacity:0;transform:scale(.94)}to{opacity:1;transform:scale(1)}}
-    @keyframes glow{0%,100%{box-shadow:0 0 20px #f9731640}50%{box-shadow:0 0 40px #f9731680}}
+    @keyframes glow{0%,100%{box-shadow:0 0 20px #2563eb40}50%{box-shadow:0 0 40px #2563eb80}}
     @keyframes slideDown{from{opacity:0;transform:translateY(-12px)}to{opacity:1;transform:translateY(0)}}
     @keyframes confettiFall{0%{transform:translateY(-20px) rotate(0deg);opacity:1}100%{transform:translateY(100vh) rotate(720deg);opacity:0}}
     textarea:focus,input:focus,select:focus{outline:none}
@@ -298,7 +298,7 @@ function ToastContainer() {
   const [toasts, setToasts] = useState([]);
   useEffect(() => { _toastSetter = setToasts; return () => { _toastSetter = null; }; }, []);
   if (!toasts.length) return null;
-  const colors = { success:"#16a34a", error:"#dc2626", info:"#f97316", warning:"#d97706" };
+  const colors = { success:"#16a34a", error:"#dc2626", info:"#2563eb", warning:"#d97706" };
   const icons  = { success:"✓", error:"✕", info:"⚡", warning:"⚠" };
   return (
     <div style={{ position:"fixed", bottom:24, right:24, zIndex:99999, display:"flex", flexDirection:"column", gap:8 }}>
@@ -319,7 +319,7 @@ function ConfettiBurst({ active }) {
   if (!active) return null;
   const pieces = Array.from({ length: 40 }, (_, i) => ({
     id: i,
-    color: ["#f97316","#22c55e","#3b82f6","#f59e0b","#8b5cf6","#ec4899"][i % 6],
+    color: ["#2563eb","#22c55e","#3b82f6","#f59e0b","#8b5cf6","#ec4899"][i % 6],
     left: Math.random() * 100,
     delay: Math.random() * 1.2,
     size: 6 + Math.random() * 6,
@@ -335,73 +335,18 @@ function ConfettiBurst({ active }) {
 }
 
 /* ─────────────────────────────────────────────────────────────────────────────
-   ANIMATED COUNTER (IntersectionObserver + rAF)
-───────────────────────────────────────────────────────────────────────────── */
-function AnimatedCounter({ target, suffix = "", prefix = "", duration = 2000, style = {} }) {
-  const [count, setCount] = useState(0);
-  const ref = useRef(null);
-  const animated = useRef(false);
-
-  useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-    const obs = new IntersectionObserver(([entry]) => {
-      if (entry.isIntersecting && !animated.current) {
-        animated.current = true;
-        const start = performance.now();
-        const tick = (now) => {
-          const progress = Math.min((now - start) / duration, 1);
-          const ease = 1 - Math.pow(1 - progress, 3);
-          setCount(Math.floor(ease * target));
-          if (progress < 1) requestAnimationFrame(tick);
-        };
-        requestAnimationFrame(tick);
-      }
-    }, { threshold: 0.5 });
-    obs.observe(el);
-    return () => obs.disconnect();
-  }, [target, duration]);
-
-  return <span ref={ref} style={style}>{prefix}{count.toLocaleString()}{suffix}</span>;
-}
-
-/* ─────────────────────────────────────────────────────────────────────────────
    LOW CREDIT BANNER
 ───────────────────────────────────────────────────────────────────────────── */
 function LowCreditBanner({ credits, onBuyCredits }) {
   if (credits > 1) return null;
   return (
-    <div style={{ background: credits === 0 ? "#fef2f2" : "#fff7ed", border:`1px solid ${credits === 0 ? "#fecaca" : "#fed7aa"}`, borderRadius:8, padding:"10px 14px", marginBottom:12, display:"flex", alignItems:"center", justifyContent:"space-between", gap:10 }}>
+    <div style={{ background: credits === 0 ? "#fef2f2" : "#eff6ff", border:`1px solid ${credits === 0 ? "#fecaca" : "#bfdbfe"}`, borderRadius:8, padding:"10px 14px", marginBottom:12, display:"flex", alignItems:"center", justifyContent:"space-between", gap:10 }}>
       <div style={{ fontSize:12, color: credits === 0 ? "#dc2626" : "#d97706", fontWeight:600 }}>
         {credits === 0 ? "⚠ No credits remaining" : "⚡ Only 1 credit left"}
       </div>
-      <button onClick={onBuyCredits} style={{ padding:"5px 12px", background: credits === 0 ? "#dc2626" : "#f97316", color:"white", border:"none", borderRadius:6, fontSize:11, fontWeight:700, cursor:"pointer", whiteSpace:"nowrap" }}>
+      <button onClick={onBuyCredits} style={{ padding:"5px 12px", background: credits === 0 ? "#dc2626" : "#2563eb", color:"white", border:"none", borderRadius:6, fontSize:11, fontWeight:700, cursor:"pointer", whiteSpace:"nowrap" }}>
         Buy Credits →
       </button>
-    </div>
-  );
-}
-
-/* ─────────────────────────────────────────────────────────────────────────────
-   EXIT INTENT POPUP
-───────────────────────────────────────────────────────────────────────────── */
-function ExitIntentPopup({ onClose, onBuild }) {
-  return (
-    <div style={{ position:"fixed", inset:0, background:"rgba(0,0,0,.55)", zIndex:9990, display:"flex", alignItems:"center", justifyContent:"center", animation:"fadeIn .25s ease" }}>
-      <div style={{ background:"white", borderRadius:20, padding:"40px 36px", maxWidth:440, width:"90%", textAlign:"center", position:"relative", boxShadow:"0 20px 60px rgba(0,0,0,.2)", animation:"popIn .3s ease" }}>
-        <button onClick={onClose} style={{ position:"absolute", top:14, right:16, background:"none", border:"none", fontSize:20, cursor:"pointer", color:"#9ca3af" }}>×</button>
-        <div style={{ fontSize:44, marginBottom:12 }}>✋</div>
-        <h2 style={{ fontSize:22, fontWeight:800, color:"#111827", marginBottom:8 }}>Wait — your page is almost ready!</h2>
-        <p style={{ fontSize:14, color:"#6b7280", lineHeight:1.7, marginBottom:24 }}>
-          You're 60 seconds away from a professional landing page. Don't leave without seeing what your business could look like.
-        </p>
-        <button onClick={onBuild} style={{ width:"100%", padding:"13px", background:"#f97316", color:"white", border:"none", borderRadius:10, fontSize:15, fontWeight:700, cursor:"pointer", marginBottom:10, animation:"glow 3s ease-in-out infinite" }}>
-          ✦ Build My Page Now →
-        </button>
-        <button onClick={onClose} style={{ background:"none", border:"none", fontSize:12, color:"#9ca3af", cursor:"pointer" }}>
-          No thanks, I'll leave
-        </button>
-      </div>
     </div>
   );
 }
@@ -461,46 +406,18 @@ function PreviewFrame({ html, businessName }) {
 }
 
 /* ─────────────────────────────────────────────────────────────────────────────
-   TYPEWRITER
-───────────────────────────────────────────────────────────────────────────── */
-function TW({ words, color = "#f97316" }) {
-  const [txt, set] = useState("");
-  const [wi, setWi] = useState(0);
-  const [ci, setCi] = useState(0);
-  const [del, setDel] = useState(false);
-
-  useEffect(() => {
-    const w = words[wi];
-    const t = setTimeout(() => {
-      if (!del) {
-        set(w.slice(0, ci + 1));
-        if (ci + 1 === w.length) setTimeout(() => setDel(true), 2000);
-        else setCi(c => c + 1);
-      } else {
-        set(w.slice(0, ci - 1));
-        if (ci - 1 === 0) { setDel(false); setWi(i => (i + 1) % words.length); setCi(0); }
-        else setCi(c => c - 1);
-      }
-    }, del ? 30 : 75);
-    return () => clearTimeout(t);
-  }, [ci, del, wi, words]);
-
-  return <span style={{ color }}>{txt}<span style={{ animation:"blink 1s infinite", color }}>|</span></span>;
-}
-
-/* ─────────────────────────────────────────────────────────────────────────────
    REUSABLE FIELD
 ───────────────────────────────────────────────────────────────────────────── */
 const Field = memo(function Field({ label, value, onChange, placeholder, required, hint }) {
   return (
     <div>
       <label style={{ fontSize:11, fontWeight:700, color:"#374151", letterSpacing:.5, display:"block", marginBottom:6, textTransform:"uppercase" }}>
-        {label}{required && <span style={{ color:"#f97316" }}> *</span>}
+        {label}{required && <span style={{ color:"#2563eb" }}> *</span>}
         {hint && <span style={{ fontSize:9, color:"#9ca3af", fontWeight:400, textTransform:"none", marginLeft:6 }}>{hint}</span>}
       </label>
       <input value={value} onChange={e => onChange(e.target.value)} placeholder={placeholder}
         style={{ width:"100%", padding:"10px 13px", border:"1.5px solid #e5e7eb", borderRadius:9, fontSize:13, color:"#111827", background:"white", transition:"border-color .15s", fontFamily:"inherit" }}
-        onFocus={e => e.target.style.borderColor = "#f97316"}
+        onFocus={e => e.target.style.borderColor = "#2563eb"}
         onBlur={e => e.target.style.borderColor = "#e5e7eb"}
       />
     </div>
@@ -543,17 +460,17 @@ function WebsiteImporter({ onImport }) {
   };
 
   return (
-    <div style={{ background:"linear-gradient(135deg,#fff7ed,#fffbf5)", border:"1.5px solid #fed7aa", borderRadius:12, padding:"14px 16px", marginBottom:4 }}>
-      <div style={{ fontSize:11, fontWeight:700, color:"#f97316", letterSpacing:.5, textTransform:"uppercase", marginBottom:8 }}>✨ Import from existing website</div>
+    <div style={{ background:"linear-gradient(135deg,#eff6ff,#fffbf5)", border:"1.5px solid #bfdbfe", borderRadius:12, padding:"14px 16px", marginBottom:4 }}>
+      <div style={{ fontSize:11, fontWeight:700, color:"#2563eb", letterSpacing:.5, textTransform:"uppercase", marginBottom:8 }}>✨ Import from existing website</div>
       <div style={{ display:"flex", gap:8 }}>
         <input value={url} onChange={e => setUrl(e.target.value)} onKeyDown={e => e.key === "Enter" && handleImport()}
           placeholder="yourwebsite.com"
-          style={{ flex:1, padding:"9px 12px", border:"1.5px solid #fed7aa", borderRadius:8, fontSize:13, outline:"none", fontFamily:"inherit", background:"white" }}
-          onFocus={e => e.target.style.borderColor = "#f97316"}
-          onBlur={e => e.target.style.borderColor = "#fed7aa"}
+          style={{ flex:1, padding:"9px 12px", border:"1.5px solid #bfdbfe", borderRadius:8, fontSize:13, outline:"none", fontFamily:"inherit", background:"white" }}
+          onFocus={e => e.target.style.borderColor = "#2563eb"}
+          onBlur={e => e.target.style.borderColor = "#bfdbfe"}
         />
         <button onClick={handleImport} disabled={loading || !url.trim()}
-          style={{ padding:"9px 16px", background:loading || !url.trim() ? "#e5e7eb" : "#f97316", color:loading || !url.trim() ? "#9ca3af" : "white", border:"none", borderRadius:8, fontSize:12, fontWeight:700, cursor:loading || !url.trim() ? "not-allowed" : "pointer", fontFamily:"inherit", whiteSpace:"nowrap" }}>
+          style={{ padding:"9px 16px", background:loading || !url.trim() ? "#e5e7eb" : "#2563eb", color:loading || !url.trim() ? "#9ca3af" : "white", border:"none", borderRadius:8, fontSize:12, fontWeight:700, cursor:loading || !url.trim() ? "not-allowed" : "pointer", fontFamily:"inherit", whiteSpace:"nowrap" }}>
           {loading ? "⏳ Scanning…" : "Import →"}
         </button>
       </div>
@@ -583,7 +500,7 @@ function LogoUpload({ value, onChange }) {
       </label>
       <div onClick={() => ref.current.click()}
         style={{ border:"1.5px dashed #e5e7eb", borderRadius:9, padding:"10px 13px", cursor:"pointer", display:"flex", alignItems:"center", gap:10, background:"#fafaf9", transition:"border-color .15s", minHeight:44 }}
-        onMouseEnter={e => e.currentTarget.style.borderColor = "#f97316"}
+        onMouseEnter={e => e.currentTarget.style.borderColor = "#2563eb"}
         onMouseLeave={e => e.currentTarget.style.borderColor = "#e5e7eb"}>
         {value ? (
           <>
@@ -684,7 +601,7 @@ function AddressField({ value, onChange }) {
       </label>
       <div style={{ position:"relative" }}>
         <input value={query} onChange={handleInput}
-          onFocus={e => { e.target.style.borderColor = "#f97316"; if (suggestions.length > 0) setOpen(true); }}
+          onFocus={e => { e.target.style.borderColor = "#2563eb"; if (suggestions.length > 0) setOpen(true); }}
           onBlur={e => e.target.style.borderColor = "#e5e7eb"}
           placeholder="123 Main St, New York, NY"
           autoComplete="off"
@@ -703,9 +620,9 @@ function AddressField({ value, onChange }) {
             return (
               <div key={pred.place_id} onMouseDown={() => handleSelect(pred)}
                 style={{ padding:"10px 14px", cursor:"pointer", borderBottom:i < suggestions.length-1 ? "1px solid #f9fafb" : "none", display:"flex", alignItems:"center", gap:10, background:"white" }}
-                onMouseEnter={e => e.currentTarget.style.background = "#fff7ed"}
+                onMouseEnter={e => e.currentTarget.style.background = "#eff6ff"}
                 onMouseLeave={e => e.currentTarget.style.background = "white"}>
-                <div style={{ width:30, height:30, background:"#fff7ed", border:"1px solid #fed7aa", borderRadius:7, display:"flex", alignItems:"center", justifyContent:"center", fontSize:14, flexShrink:0 }}>📍</div>
+                <div style={{ width:30, height:30, background:"#eff6ff", border:"1px solid #bfdbfe", borderRadius:7, display:"flex", alignItems:"center", justifyContent:"center", fontSize:14, flexShrink:0 }}>📍</div>
                 <div style={{ flex:1, minWidth:0 }}>
                   <div style={{ fontSize:13, color:"#6b7280", lineHeight:1.3 }}>{highlight(main, mainMatches)}</div>
                   {secondary && <div style={{ fontSize:11, color:"#9ca3af", marginTop:2 }}>{secondary}</div>}
@@ -796,8 +713,8 @@ function ProgressStepper({ stage }) {
         const done = i < stage;
         const active = i === stage;
         return (
-          <div key={i} style={{ display:"flex", alignItems:"center", gap:10, padding:"8px 12px", borderRadius:8, background:active?"#fff7ed":done?"#f0fdf4":"#f9fafb", border:`1px solid ${active?"#fed7aa":done?"#bbf7d0":"#f3f4f6"}`, transition:"all .3s" }}>
-            <div style={{ width:28, height:28, borderRadius:"50%", background:active?"#f97316":done?"#16a34a":"#e5e7eb", display:"flex", alignItems:"center", justifyContent:"center", fontSize:12, flexShrink:0 }}>
+          <div key={i} style={{ display:"flex", alignItems:"center", gap:10, padding:"8px 12px", borderRadius:8, background:active?"#eff6ff":done?"#f0fdf4":"#f9fafb", border:`1px solid ${active?"#bfdbfe":done?"#bbf7d0":"#f3f4f6"}`, transition:"all .3s" }}>
+            <div style={{ width:28, height:28, borderRadius:"50%", background:active?"#2563eb":done?"#16a34a":"#e5e7eb", display:"flex", alignItems:"center", justifyContent:"center", fontSize:12, flexShrink:0 }}>
               {done ? "✓" : active ? <span style={{ animation:"spin .8s linear infinite", display:"inline-block" }}>◌</span> : s.icon}
             </div>
             <span style={{ fontSize:12, fontWeight:active?700:done?500:400, color:active?"#ea580c":done?"#16a34a":"#9ca3af" }}>{s.label}</span>
@@ -853,7 +770,7 @@ function BuilderPanel({ form, up, togSec, onNext, ready, credits, user, onBuyCre
       {/* Header */}
       <div style={{ padding:"18px 22px 0", borderBottom:"1px solid #f3f4f6" }}>
         <div style={{ display:"flex", alignItems:"center", gap:9, marginBottom:14 }}>
-          <div style={{ width:30, height:30, background:"#fff7ed", borderRadius:8, display:"flex", alignItems:"center", justifyContent:"center", fontSize:15 }}>✦</div>
+          <div style={{ width:30, height:30, background:"#eff6ff", borderRadius:8, display:"flex", alignItems:"center", justifyContent:"center", fontSize:15 }}>✦</div>
           <div>
             <div style={{ fontSize:13, fontWeight:700, color:"#111827" }}>Let's build something amazing</div>
             <div style={{ fontSize:11, color:"#9ca3af" }}>Fill in your details below</div>
@@ -861,7 +778,7 @@ function BuilderPanel({ form, up, togSec, onNext, ready, credits, user, onBuyCre
         </div>
         <div style={{ display:"flex", gap:0 }}>
           {[["info","Business"],["style","Style"],["sections","Sections"]].map(([id, label]) => (
-            <button key={id} onClick={() => setTab(id)} style={{ padding:"7px 14px", fontSize:12, fontWeight:tab===id?700:400, color:tab===id?"#f97316":"#6b7280", background:"transparent", border:"none", borderBottom:tab===id?"2px solid #f97316":"2px solid transparent", cursor:"pointer", transition:"all .15s", fontFamily:"inherit" }}>
+            <button key={id} onClick={() => setTab(id)} style={{ padding:"7px 14px", fontSize:12, fontWeight:tab===id?700:400, color:tab===id?"#2563eb":"#6b7280", background:"transparent", border:"none", borderBottom:tab===id?"2px solid #2563eb":"2px solid transparent", cursor:"pointer", transition:"all .15s", fontFamily:"inherit" }}>
               {label}
             </button>
           ))}
@@ -879,10 +796,10 @@ function BuilderPanel({ form, up, togSec, onNext, ready, credits, user, onBuyCre
             <LogoUpload value={form.logo} onChange={v => up("logo", v)}/>
             <Field label="Business Name" required value={form.name} onChange={v => up("name",v)} placeholder="e.g. Peak Ridge Roofing"/>
             <div>
-              <label style={{ fontSize:11, fontWeight:700, color:"#374151", letterSpacing:.5, display:"block", marginBottom:6, textTransform:"uppercase" }}>Industry <span style={{ color:"#f97316" }}>*</span></label>
+              <label style={{ fontSize:11, fontWeight:700, color:"#374151", letterSpacing:.5, display:"block", marginBottom:6, textTransform:"uppercase" }}>Industry <span style={{ color:"#2563eb" }}>*</span></label>
               <select value={form.industry} onChange={e => up("industry",e.target.value)}
                 style={{ width:"100%", padding:"10px 13px", border:"1.5px solid #e5e7eb", borderRadius:9, fontSize:13, color:form.industry?"#111827":"#9ca3af", background:"white", cursor:"pointer", fontFamily:"inherit" }}
-                onFocus={e => e.target.style.borderColor="#f97316"}
+                onFocus={e => e.target.style.borderColor="#2563eb"}
                 onBlur={e => e.target.style.borderColor="#e5e7eb"}>
                 <option value="">Select your industry…</option>
                 {INDUSTRIES.map(i => <option key={i}>{i}</option>)}
@@ -891,13 +808,13 @@ function BuilderPanel({ form, up, togSec, onNext, ready, credits, user, onBuyCre
             <Field label="Tagline" value={form.tagline} onChange={v => up("tagline",v)} placeholder="e.g. Beautiful gardens, one yard at a time"/>
             <div>
               <label style={{ fontSize:11, fontWeight:700, color:"#374151", letterSpacing:.5, display:"block", marginBottom:6, textTransform:"uppercase" }}>
-                Describe your business <span style={{ color:"#f97316" }}>*</span>
+                Describe your business <span style={{ color:"#2563eb" }}>*</span>
                 <span style={{ color:"#9ca3af", fontSize:9, fontWeight:400, marginLeft:6 }}>more detail = better page</span>
               </label>
               <textarea value={form.description} onChange={e => up("description",e.target.value)} rows={4}
                 placeholder="What do you offer? Who are your clients? What makes you different? Include services, prices, unique selling points…"
                 style={{ width:"100%", padding:"10px 13px", border:"1.5px solid #e5e7eb", borderRadius:9, fontSize:13, color:"#111827", background:"white", resize:"none", lineHeight:1.6, fontFamily:"inherit", transition:"border-color .15s" }}
-                onFocus={e => e.target.style.borderColor="#f97316"}
+                onFocus={e => e.target.style.borderColor="#2563eb"}
                 onBlur={e => e.target.style.borderColor="#e5e7eb"}
               />
             </div>
@@ -922,7 +839,7 @@ function BuilderPanel({ form, up, togSec, onNext, ready, credits, user, onBuyCre
                     <div style={{ height:32, background:`linear-gradient(135deg,${p.bg},${p.surface})`, display:"flex", alignItems:"flex-end", padding:"0 6px 4px" }}>
                       <div style={{ width:18, height:3, background:p.accent, borderRadius:2 }}/>
                     </div>
-                    <div style={{ padding:"4px 8px", background:"white", fontSize:10, fontWeight:600, color:form.palette===p.id?"#f97316":"#374151" }}>{p.label}</div>
+                    <div style={{ padding:"4px 8px", background:"white", fontSize:10, fontWeight:600, color:form.palette===p.id?"#2563eb":"#374151" }}>{p.label}</div>
                   </div>
                 ))}
               </div>
@@ -931,12 +848,12 @@ function BuilderPanel({ form, up, togSec, onNext, ready, credits, user, onBuyCre
               <label style={{ fontSize:11, fontWeight:700, color:"#374151", letterSpacing:.5, display:"block", marginBottom:10, textTransform:"uppercase" }}>Design Vibe</label>
               <div style={{ display:"flex", flexDirection:"column", gap:6 }}>
                 {VIBES.map(v => (
-                  <div key={v.id} onClick={() => up("vibe",v.id)} style={{ padding:"9px 12px", borderRadius:8, cursor:"pointer", border:form.vibe===v.id?"1.5px solid #f97316":"1.5px solid #e5e7eb", background:form.vibe===v.id?"#fff7ed":"white", display:"flex", alignItems:"center", justifyContent:"space-between", transition:"all .15s" }}>
+                  <div key={v.id} onClick={() => up("vibe",v.id)} style={{ padding:"9px 12px", borderRadius:8, cursor:"pointer", border:form.vibe===v.id?"1.5px solid #2563eb":"1.5px solid #e5e7eb", background:form.vibe===v.id?"#eff6ff":"white", display:"flex", alignItems:"center", justifyContent:"space-between", transition:"all .15s" }}>
                     <div>
                       <div style={{ fontSize:12, fontWeight:600, color:form.vibe===v.id?"#ea580c":"#111827" }}>{v.label}</div>
                       <div style={{ fontSize:11, color:"#9ca3af", marginTop:1 }}>{v.desc}</div>
                     </div>
-                    <div style={{ width:15, height:15, borderRadius:"50%", border:`2px solid ${form.vibe===v.id?"#f97316":"#d1d5db"}`, background:form.vibe===v.id?"#f97316":"transparent", flexShrink:0, display:"flex", alignItems:"center", justifyContent:"center" }}>
+                    <div style={{ width:15, height:15, borderRadius:"50%", border:`2px solid ${form.vibe===v.id?"#2563eb":"#d1d5db"}`, background:form.vibe===v.id?"#2563eb":"transparent", flexShrink:0, display:"flex", alignItems:"center", justifyContent:"center" }}>
                       {form.vibe===v.id && <div style={{ width:5, height:5, borderRadius:"50%", background:"white" }}/>}
                     </div>
                   </div>
@@ -953,12 +870,12 @@ function BuilderPanel({ form, up, togSec, onNext, ready, credits, user, onBuyCre
       <div key={s.id}>
         {/* Section toggle row */}
         <div onClick={() => !s.locked && togSec(s.id)}
-          style={{ padding:"8px 11px", borderRadius:8, cursor:s.locked?"default":"pointer", display:"flex", alignItems:"center", gap:9, border:form.sections.includes(s.id)?"1.5px solid #f97316":"1.5px solid #e5e7eb", background:form.sections.includes(s.id)?"#fff7ed":"white", transition:"all .15s" }}>
+          style={{ padding:"8px 11px", borderRadius:8, cursor:s.locked?"default":"pointer", display:"flex", alignItems:"center", gap:9, border:form.sections.includes(s.id)?"1.5px solid #2563eb":"1.5px solid #e5e7eb", background:form.sections.includes(s.id)?"#eff6ff":"white", transition:"all .15s" }}>
           <span style={{ fontSize:14, width:18, textAlign:"center", flexShrink:0 }}>{s.icon}</span>
           <span style={{ flex:1, fontSize:12, fontWeight:500, color:form.sections.includes(s.id)?"#ea580c":"#374151" }}>{s.label}</span>
           {s.locked
             ? <span style={{ fontSize:9, color:"#d1d5db", background:"#f9fafb", padding:"2px 6px", borderRadius:4, border:"1px solid #e5e7eb" }}>Always on</span>
-            : <div style={{ width:15, height:15, borderRadius:4, border:`2px solid ${form.sections.includes(s.id)?"#f97316":"#d1d5db"}`, background:form.sections.includes(s.id)?"#f97316":"transparent", display:"flex", alignItems:"center", justifyContent:"center", fontSize:9, color:"white", fontWeight:900, flexShrink:0 }}>
+            : <div style={{ width:15, height:15, borderRadius:4, border:`2px solid ${form.sections.includes(s.id)?"#2563eb":"#d1d5db"}`, background:form.sections.includes(s.id)?"#2563eb":"transparent", display:"flex", alignItems:"center", justifyContent:"center", fontSize:9, color:"white", fontWeight:900, flexShrink:0 }}>
                 {form.sections.includes(s.id) && "✓"}
               </div>
           }
@@ -980,7 +897,7 @@ function BuilderPanel({ form, up, togSec, onNext, ready, credits, user, onBuyCre
                   }}
                   placeholder={`Service ${i+1} name`}
                   style={{ padding:"7px 10px", border:"1px solid #e5e7eb", borderRadius:6, fontSize:12, fontFamily:"inherit", outline:"none" }}
-                  onFocus={e => e.target.style.borderColor="#f97316"}
+                  onFocus={e => e.target.style.borderColor="#2563eb"}
                   onBlur={e => e.target.style.borderColor="#e5e7eb"}
                 />
                 <input
@@ -992,7 +909,7 @@ function BuilderPanel({ form, up, togSec, onNext, ready, credits, user, onBuyCre
                   }}
                   placeholder="Price e.g. $99"
                   style={{ padding:"7px 10px", border:"1px solid #e5e7eb", borderRadius:6, fontSize:12, fontFamily:"inherit", outline:"none" }}
-                  onFocus={e => e.target.style.borderColor="#f97316"}
+                  onFocus={e => e.target.style.borderColor="#2563eb"}
                   onBlur={e => e.target.style.borderColor="#e5e7eb"}
                 />
               </div>
@@ -1003,7 +920,7 @@ function BuilderPanel({ form, up, togSec, onNext, ready, credits, user, onBuyCre
         {/* PRICING inputs */}
         {s.id === "pricing" && form.sections.includes("pricing") && (
           <div style={{ background:"#fafaf9", border:"1px solid #f3f4f6", borderRadius:8, padding:"12px", marginTop:4 }}>
-            <div style={{ fontSize:11, fontWeight:700, color:"#374151", marginBottom:8, textTransform:"uppercase", letterSpacing:.5 }}>Pricing Tiers <span style={{ color:"#f97316" }}>*</span></div>
+            <div style={{ fontSize:11, fontWeight:700, color:"#374151", marginBottom:8, textTransform:"uppercase", letterSpacing:.5 }}>Pricing Tiers <span style={{ color:"#2563eb" }}>*</span></div>
             <div style={{ fontSize:11, color:"#9ca3af", marginBottom:10 }}>Add at least 1 pricing tier or remove the Pricing section.</div>
             {[0,1,2].map(i => (
               <div key={i} style={{ background:"white", border:"1px solid #e5e7eb", borderRadius:8, padding:"10px", marginBottom:8 }}>
@@ -1018,19 +935,19 @@ function BuilderPanel({ form, up, togSec, onNext, ready, credits, user, onBuyCre
                     }}
                     placeholder={`Tier name e.g. ${i===0?"Basic":i===1?"Standard":"Premium"}`}
                     style={{ padding:"7px 10px", border:"1px solid #e5e7eb", borderRadius:6, fontSize:12, fontFamily:"inherit", outline:"none" }}
-                    onFocus={e => e.target.style.borderColor="#f97316"}
+                    onFocus={e => e.target.style.borderColor="#2563eb"}
                     onBlur={e => e.target.style.borderColor="#e5e7eb"}
                   />
                   <div style={{ display:"flex", gap:4 }}>
   <select value={form.pricingCurrency||"$"} onChange={e=>up("pricingCurrency",e.target.value)}
     style={{ padding:"7px 6px", border:"1px solid #e5e7eb", borderRadius:6, fontSize:12, fontFamily:"inherit", outline:"none", background:"white", cursor:"pointer" }}
-    onFocus={e=>e.target.style.borderColor="#f97316"} onBlur={e=>e.target.style.borderColor="#e5e7eb"}>
+    onFocus={e=>e.target.style.borderColor="#2563eb"} onBlur={e=>e.target.style.borderColor="#e5e7eb"}>
     {["$","£","€","R","A$","C$","AED","SGD"].map(c=><option key={c}>{c}</option>)}
   </select>
   <input value={form.pricingTiers?.[i]?.price||""} onChange={e=>{const t=[...(form.pricingTiers||[{},{},{}])];t[i]={...t[i],price:e.target.value};up("pricingTiers",t);}}
     placeholder="e.g. 99"
     style={{ flex:1, padding:"7px 10px", border:"1px solid #e5e7eb", borderRadius:6, fontSize:12, fontFamily:"inherit", outline:"none" }}
-    onFocus={e=>e.target.style.borderColor="#f97316"} onBlur={e=>e.target.style.borderColor="#e5e7eb"}/>
+    onFocus={e=>e.target.style.borderColor="#2563eb"} onBlur={e=>e.target.style.borderColor="#e5e7eb"}/>
 </div>
                 </div>
                 <input
@@ -1042,7 +959,7 @@ function BuilderPanel({ form, up, togSec, onNext, ready, credits, user, onBuyCre
                   }}
                   placeholder="What's included e.g. Basic inspection, 30-day warranty"
                   style={{ width:"100%", padding:"7px 10px", border:"1px solid #e5e7eb", borderRadius:6, fontSize:12, fontFamily:"inherit", outline:"none", boxSizing:"border-box" }}
-                  onFocus={e => e.target.style.borderColor="#f97316"}
+                  onFocus={e => e.target.style.borderColor="#2563eb"}
                   onBlur={e => e.target.style.borderColor="#e5e7eb"}
                 />
               </div>
@@ -1071,7 +988,7 @@ function BuilderPanel({ form, up, togSec, onNext, ready, credits, user, onBuyCre
                     </div>
                   ) : (
                     <label style={{ display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center", height:72, border:"1.5px dashed #e5e7eb", borderRadius:8, cursor:"pointer", background:"white", fontSize:10, color:"#9ca3af", gap:4 }}
-                      onMouseEnter={e => e.currentTarget.style.borderColor="#f97316"}
+                      onMouseEnter={e => e.currentTarget.style.borderColor="#2563eb"}
                       onMouseLeave={e => e.currentTarget.style.borderColor="#e5e7eb"}>
                       <span style={{ fontSize:18 }}>+</span>
                       Photo {i+1}
@@ -1103,11 +1020,11 @@ function BuilderPanel({ form, up, togSec, onNext, ready, credits, user, onBuyCre
       {/* CTA */}
       <div style={{ padding:"14px 22px", borderTop:"1px solid #f3f4f6", background:"white" }}>
         <button onClick={onNext} disabled={!ready}
-          style={{ width:"100%", padding:"13px", background:ready?"#f97316":"#e5e7eb", color:ready?"white":"#9ca3af", border:"none", borderRadius:10, fontSize:14, fontWeight:700, cursor:ready?"pointer":"not-allowed", fontFamily:"inherit", display:"flex", alignItems:"center", justifyContent:"center", gap:8, transition:"all .2s", animation:ready?"glow 3s ease-in-out infinite":"none" }}>
+          style={{ width:"100%", padding:"13px", background:ready?"#2563eb":"#e5e7eb", color:ready?"white":"#9ca3af", border:"none", borderRadius:10, fontSize:14, fontWeight:700, cursor:ready?"pointer":"not-allowed", fontFamily:"inherit", display:"flex", alignItems:"center", justifyContent:"center", gap:8, transition:"all .2s", animation:ready?"glow 3s ease-in-out infinite":"none" }}>
           <span>✦</span> {ready ? (user && credits > 0 ? "Generate My Page →" : "See Pricing & Continue →") : "Fill in required fields first"}
         </button>
         {!ready && (
-          <div style={{ marginTop:7, fontSize:11, color:"#f97316", textAlign:"center" }}>
+          <div style={{ marginTop:7, fontSize:11, color:"#2563eb", textAlign:"center" }}>
             Missing: {[!form.name&&"Name", !form.industry&&"Industry", !form.description&&"Description"].filter(Boolean).join(", ")}
           </div>
         )}
@@ -1130,7 +1047,7 @@ function PricingWall({ form, onBack, onPurchase }) {
       <div style={{ height:52, background:"white", borderBottom:"1px solid #f3f4f6", display:"flex", alignItems:"center", justifyContent:"space-between", padding:"0 24px", position:"sticky", top:0, zIndex:10 }}>
         <button onClick={onBack} style={{ display:"flex", alignItems:"center", gap:6, background:"transparent", border:"none", cursor:"pointer", fontSize:13, color:"#6b7280", fontFamily:"inherit" }}>← Back to builder</button>
         <div style={{ display:"flex", alignItems:"center", gap:7 }}>
-          <div style={{ width:24, height:24, background:"#f97316", borderRadius:6, display:"flex", alignItems:"center", justifyContent:"center", fontSize:12, color:"white", fontWeight:800 }}>S</div>
+          <div style={{ width:24, height:24, background:"#2563eb", borderRadius:6, display:"flex", alignItems:"center", justifyContent:"center", fontSize:12, color:"white", fontWeight:800 }}>S</div>
           <span style={{ fontSize:14, fontWeight:800, color:"#111827" }}>Sitefliq</span>
         </div>
         <div style={{ width:100 }}/>
@@ -1154,7 +1071,7 @@ function PricingWall({ form, onBack, onPurchase }) {
           </div>
         </div>
         <div style={{ textAlign:"center", marginBottom:36 }}>
-          <div style={{ fontSize:11, fontWeight:700, color:"#f97316", letterSpacing:2, textTransform:"uppercase", marginBottom:10 }}>ONE LAST STEP</div>
+          <div style={{ fontSize:11, fontWeight:700, color:"#2563eb", letterSpacing:2, textTransform:"uppercase", marginBottom:10 }}>ONE LAST STEP</div>
           <h1 style={{ fontSize:"clamp(26px,4vw,40px)", fontWeight:800, color:"#111827", marginBottom:10, fontFamily:"'Instrument Serif',serif", fontStyle:"italic" }}>Your page is ready to generate</h1>
           <p style={{ fontSize:15, color:"#6b7280", maxWidth:480, margin:"0 auto", lineHeight:1.7 }}>
             Choose a plan to generate and download your <strong style={{ color:"#111827" }}>{form.name}</strong> landing page.
@@ -1363,25 +1280,25 @@ function GeneratingScreen({ form, onDone, onError, onStage }) {
     <div style={{ height:"100%", display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center", background:"white", padding:40, textAlign:"center" }}>
       <div style={{ position:"relative", width:80, height:80, marginBottom:28 }}>
         <div style={{ position:"absolute", inset:0, borderRadius:"50%", border:"1px solid #f3f4f6" }}/>
-        <div style={{ position:"absolute", inset:0, borderRadius:"50%", border:"3px solid transparent", borderTopColor:"#f97316", animation:"spin .8s linear infinite" }}/>
-        <div style={{ position:"absolute", inset:10, borderRadius:"50%", border:"2px solid transparent", borderTopColor:"#f9731640", animation:"spin 1.5s linear infinite reverse" }}/>
+        <div style={{ position:"absolute", inset:0, borderRadius:"50%", border:"3px solid transparent", borderTopColor:"#2563eb", animation:"spin .8s linear infinite" }}/>
+        <div style={{ position:"absolute", inset:10, borderRadius:"50%", border:"2px solid transparent", borderTopColor:"#2563eb40", animation:"spin 1.5s linear infinite reverse" }}/>
         <div style={{ position:"absolute", inset:0, display:"flex", alignItems:"center", justifyContent:"center", fontSize:26 }}>✦</div>
       </div>
       <div style={{ fontSize:18, fontWeight:700, color:"#111827", marginBottom:6, minHeight:28 }}>{stageLabels[stage]}</div>
-      {stage === 3 && <div style={{ fontSize:12, color:"#f97316", marginBottom:8, fontWeight:600 }}>{imgStatus}</div>}
+      {stage === 3 && <div style={{ fontSize:12, color:"#2563eb", marginBottom:8, fontWeight:600 }}>{imgStatus}</div>}
       <div style={{ fontSize:13, color:"#6b7280", marginBottom:28, maxWidth:300, lineHeight:1.6 }}>
-        Building your SEO-optimised page for <strong style={{ color:"#f97316" }}>{form.name}</strong>
+        Building your SEO-optimised page for <strong style={{ color:"#2563eb" }}>{form.name}</strong>
       </div>
       <div style={{ width:"100%", maxWidth:360, marginBottom:20 }}>
         <div style={{ height:4, background:"#f3f4f6", borderRadius:2, overflow:"hidden" }}>
-          <div style={{ height:"100%", background:"linear-gradient(90deg,#f97316,#fb923c)", borderRadius:2, width:`${pct}%`, transition:"width .8s ease" }}/>
+          <div style={{ height:"100%", background:"linear-gradient(90deg,#2563eb,#fb923c)", borderRadius:2, width:`${pct}%`, transition:"width .8s ease" }}/>
         </div>
         <div style={{ display:"flex", justifyContent:"space-between", marginTop:6, fontSize:11, color:"#9ca3af" }}>
           <span>{stageLabels[stage]}</span><span>{pct}%</span>
         </div>
       </div>
-      <div style={{ padding:"14px 20px", background:"#fff7ed", border:"1px solid #fed7aa", borderRadius:12 }}>
-        <div style={{ fontSize:10, color:"#f97316", letterSpacing:1.5, textTransform:"uppercase", marginBottom:4 }}>Generating for</div>
+      <div style={{ padding:"14px 20px", background:"#eff6ff", border:"1px solid #bfdbfe", borderRadius:12 }}>
+        <div style={{ fontSize:10, color:"#2563eb", letterSpacing:1.5, textTransform:"uppercase", marginBottom:4 }}>Generating for</div>
         <div style={{ fontSize:17, fontWeight:800, color:"#111827", marginBottom:2 }}>{form.name}</div>
         <div style={{ fontSize:12, color:"#ea580c" }}>{form.industry}</div>
       </div>
@@ -1459,8 +1376,8 @@ function EditChat() {
   const statusColor = { pending: "#9ca3af", ok: "#16a34a", fail: "#dc2626" };
 
   return (
-    <div style={{ border: "1px solid #fed7aa", background: "linear-gradient(135deg,#fff7ed,#fffbf5)", borderRadius: 12, padding: "14px 16px", marginBottom: 14 }}>
-      <div style={{ fontSize: 11, fontWeight: 700, color: "#f97316", letterSpacing: .5, textTransform: "uppercase", marginBottom: 8 }}>✦ Edit with AI</div>
+    <div style={{ border: "1px solid #bfdbfe", background: "linear-gradient(135deg,#eff6ff,#fffbf5)", borderRadius: 12, padding: "14px 16px", marginBottom: 14 }}>
+      <div style={{ fontSize: 11, fontWeight: 700, color: "#2563eb", letterSpacing: .5, textTransform: "uppercase", marginBottom: 8 }}>✦ Edit with AI</div>
 
       {transcript.length > 0 && (
         <div style={{ display: "flex", flexDirection: "column", gap: 5, marginBottom: 10, maxHeight: 132, overflowY: "auto" }}>
@@ -1481,12 +1398,12 @@ function EditChat() {
           placeholder='e.g. "make the hero darker" or "change the phone to 555-1234"'
           rows={2}
           disabled={busy}
-          style={{ flex: 1, padding: "9px 12px", border: "1.5px solid #fed7aa", borderRadius: 9, fontSize: 13, fontFamily: "inherit", resize: "none", outline: "none", background: busy ? "#f9fafb" : "white", color: "#111827" }}
-          onFocus={e => e.target.style.borderColor = "#f97316"}
-          onBlur={e => e.target.style.borderColor = "#fed7aa"}
+          style={{ flex: 1, padding: "9px 12px", border: "1.5px solid #bfdbfe", borderRadius: 9, fontSize: 13, fontFamily: "inherit", resize: "none", outline: "none", background: busy ? "#f9fafb" : "white", color: "#111827" }}
+          onFocus={e => e.target.style.borderColor = "#2563eb"}
+          onBlur={e => e.target.style.borderColor = "#bfdbfe"}
         />
         <button onClick={send} disabled={busy || !input.trim()}
-          style={{ padding: "9px 16px", background: busy || !input.trim() ? "#e5e7eb" : "#f97316", color: busy || !input.trim() ? "#9ca3af" : "white", border: "none", borderRadius: 9, fontSize: 13, fontWeight: 700, cursor: busy || !input.trim() ? "not-allowed" : "pointer", fontFamily: "inherit", whiteSpace: "nowrap" }}>
+          style={{ padding: "9px 16px", background: busy || !input.trim() ? "#e5e7eb" : "#2563eb", color: busy || !input.trim() ? "#9ca3af" : "white", border: "none", borderRadius: 9, fontSize: 13, fontWeight: 700, cursor: busy || !input.trim() ? "not-allowed" : "pointer", fontFamily: "inherit", whiteSpace: "nowrap" }}>
           {busy ? <span style={{ width: 13, height: 13, border: "2px solid #9ca3af", borderTopColor: "transparent", borderRadius: "50%", animation: "spin .7s linear infinite", display: "inline-block" }}/> : "Send →"}
         </button>
       </div>
@@ -1494,7 +1411,7 @@ function EditChat() {
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginTop: 8 }}>
         <span style={{ fontSize: 10, color: "#9ca3af" }}>1 credit per edit · ⏎ to send</span>
         <button onClick={undo} disabled={!undoStack.length || busy}
-          style={{ background: "none", border: "none", fontSize: 11, fontWeight: 600, color: !undoStack.length || busy ? "#d1d5db" : "#f97316", cursor: !undoStack.length || busy ? "not-allowed" : "pointer", fontFamily: "inherit" }}>
+          style={{ background: "none", border: "none", fontSize: 11, fontWeight: 600, color: !undoStack.length || busy ? "#d1d5db" : "#2563eb", cursor: !undoStack.length || busy ? "not-allowed" : "pointer", fontFamily: "inherit" }}>
           ↩ Undo last edit{undoStack.length > 1 ? ` (${undoStack.length})` : ""}
         </button>
       </div>
@@ -1676,7 +1593,7 @@ function ResultScreen({ html, form, onReset, onBuyMoreCredits }) {
           </div>
 
           {/* Buy more credits */}
-          <button onClick={onBuyMoreCredits} style={{ width:"100%", padding:"10px", background:"#fff7ed", color:"#f97316", border:"1px solid #fed7aa", borderRadius:8, fontSize:13, fontWeight:700, cursor:"pointer", fontFamily:"inherit", marginBottom:14 }}>
+          <button onClick={onBuyMoreCredits} style={{ width:"100%", padding:"10px", background:"#eff6ff", color:"#2563eb", border:"1px solid #bfdbfe", borderRadius:8, fontSize:13, fontWeight:700, cursor:"pointer", fontFamily:"inherit", marginBottom:14 }}>
             ⚡ Buy More Credits
           </button>
 
@@ -1771,11 +1688,11 @@ function AuthModal({ mode = "signin", onSuccess, onClose }) {
           )}
           {tab==="signin" && !forgot && (
             <div style={{ textAlign:"right", marginBottom:16 }}>
-              <button type="button" onClick={() => { setForgot(true); setErr(""); setMsg(""); }} style={{ background:"none", border:"none", fontSize:12, color:"#f97316", cursor:"pointer", fontFamily:"inherit", padding:0 }}>Forgot password?</button>
+              <button type="button" onClick={() => { setForgot(true); setErr(""); setMsg(""); }} style={{ background:"none", border:"none", fontSize:12, color:"#2563eb", cursor:"pointer", fontFamily:"inherit", padding:0 }}>Forgot password?</button>
             </div>
           )}
           <button type="submit" disabled={loading || !email || (!forgot && !password)}
-            style={{ width:"100%", padding:"13px", background:loading||!email||(!forgot&&!password)?"#e5e7eb":"#f97316", color:loading||!email||(!forgot&&!password)?"#9ca3af":"white", border:"none", borderRadius:10, fontSize:15, fontWeight:700, cursor:"pointer", transition:"background .15s", marginBottom:12, fontFamily:"inherit" }}>
+            style={{ width:"100%", padding:"13px", background:loading||!email||(!forgot&&!password)?"#e5e7eb":"#2563eb", color:loading||!email||(!forgot&&!password)?"#9ca3af":"white", border:"none", borderRadius:10, fontSize:15, fontWeight:700, cursor:"pointer", transition:"background .15s", marginBottom:12, fontFamily:"inherit" }}>
             {loading ? "Please wait…" : forgot ? "Send Reset Email →" : tab==="signin" ? "Sign In →" : "Create Account →"}
           </button>
         </form>
@@ -1831,7 +1748,7 @@ function ResetPasswordModal({ token, onDone }) {
               <input value={confirm} onChange={e => setConfirm(e.target.value)} type="password" autoComplete="new-password" placeholder="Repeat password" style={inp}/>
             </div>
             <button type="submit" disabled={loading || !password || !confirm}
-              style={{ width:"100%", padding:"13px", background:loading||!password||!confirm?"#e5e7eb":"#f97316", color:loading||!password||!confirm?"#9ca3af":"white", border:"none", borderRadius:10, fontSize:15, fontWeight:700, cursor:"pointer", fontFamily:"inherit" }}>
+              style={{ width:"100%", padding:"13px", background:loading||!password||!confirm?"#e5e7eb":"#2563eb", color:loading||!password||!confirm?"#9ca3af":"white", border:"none", borderRadius:10, fontSize:15, fontWeight:700, cursor:"pointer", fontFamily:"inherit" }}>
               {loading ? "Updating…" : "Set New Password →"}
             </button>
           </form>
@@ -1879,17 +1796,17 @@ function MarketingPage({ slug, onHome, onBuild }) {
       <ToastContainer/>
       <nav style={{ position:"sticky", top:0, zIndex:100, height:56, display:"flex", alignItems:"center", justifyContent:"space-between", padding:"0 clamp(20px,5vw,48px)", background:"rgba(250,250,249,.92)", backdropFilter:"blur(20px)", borderBottom:"1px solid #e5e7eb" }}>
         <div onClick={onHome} style={{ display:"flex", alignItems:"center", gap:8, cursor:"pointer" }}>
-          <div style={{ width:28, height:28, background:"#f97316", borderRadius:7, display:"flex", alignItems:"center", justifyContent:"center", fontSize:13, color:"white", fontWeight:800 }}>S</div>
+          <div style={{ width:28, height:28, background:"#2563eb", borderRadius:7, display:"flex", alignItems:"center", justifyContent:"center", fontSize:13, color:"white", fontWeight:800 }}>S</div>
           <span style={{ fontSize:18, fontWeight:800, color:"#111827" }}>Sitefliq</span>
         </div>
-        <button onClick={onBuild} style={{ padding:"8px 20px", background:"#f97316", border:"none", borderRadius:8, fontSize:13, cursor:"pointer", color:"white", fontFamily:"inherit", fontWeight:700 }}>Start Building →</button>
+        <button onClick={onBuild} style={{ padding:"8px 20px", background:"#2563eb", border:"none", borderRadius:8, fontSize:13, cursor:"pointer", color:"white", fontFamily:"inherit", fontWeight:700 }}>Start Building →</button>
       </nav>
 
       <div style={{ maxWidth:860, margin:"0 auto", padding:"clamp(48px,8vw,88px) clamp(20px,5vw,40px) 32px" }}>
-        <div style={{ fontSize:11, fontWeight:700, color:"#f97316", letterSpacing:2, textTransform:"uppercase", marginBottom:14 }}>{page.eyebrow}</div>
+        <div style={{ fontSize:11, fontWeight:700, color:"#2563eb", letterSpacing:2, textTransform:"uppercase", marginBottom:14 }}>{page.eyebrow}</div>
         <h1 style={{ fontSize:"clamp(30px,5vw,52px)", fontWeight:800, lineHeight:1.1, marginBottom:20, letterSpacing:"-1px" }}>{page.h1}</h1>
         <p style={{ fontSize:17, color:"#374151", lineHeight:1.8, marginBottom:28 }}>{page.intro}</p>
-        <button onClick={onBuild} style={{ padding:"13px 30px", background:"#f97316", color:"white", border:"none", borderRadius:10, fontSize:15, fontWeight:700, cursor:"pointer", fontFamily:"inherit", boxShadow:"0 4px 20px #f9731640" }}>Start Building for Free →</button>
+        <button onClick={onBuild} style={{ padding:"13px 30px", background:"#2563eb", color:"white", border:"none", borderRadius:10, fontSize:15, fontWeight:700, cursor:"pointer", fontFamily:"inherit", boxShadow:"0 4px 20px #2563eb40" }}>Start Building for Free →</button>
       </div>
 
       {page.rows && (
@@ -1897,9 +1814,9 @@ function MarketingPage({ slug, onHome, onBuild }) {
           <div style={{ overflowX:"auto", border:"1px solid #e5e7eb", borderRadius:14, background:"white", boxShadow:"0 1px 3px rgba(0,0,0,.04)" }}>
             <table style={{ width:"100%", borderCollapse:"collapse" }}>
               <thead>
-                <tr style={{ background:"#fff7ed" }}>
+                <tr style={{ background:"#eff6ff" }}>
                   <th style={mktTh}>&nbsp;</th>
-                  <th style={{ ...mktTh, color:"#f97316" }}>Sitefliq</th>
+                  <th style={{ ...mktTh, color:"#2563eb" }}>Sitefliq</th>
                   <th style={mktTh}>{page.competitor}</th>
                 </tr>
               </thead>
@@ -1931,7 +1848,7 @@ function MarketingPage({ slug, onHome, onBuild }) {
 
       <div style={{ textAlign:"center", padding:"clamp(40px,7vw,72px) clamp(20px,5vw,40px)" }}>
         <h2 style={{ fontSize:"clamp(24px,4vw,38px)", fontWeight:800, marginBottom:16, fontFamily:"'Instrument Serif',serif", fontStyle:"italic" }}>{page.ctaHeading}</h2>
-        <button onClick={onBuild} style={{ padding:"15px 40px", background:"#f97316", color:"white", border:"none", borderRadius:10, fontSize:16, fontWeight:700, cursor:"pointer", fontFamily:"inherit", boxShadow:"0 4px 20px #f9731640" }}>Build My Page →</button>
+        <button onClick={onBuild} style={{ padding:"15px 40px", background:"#2563eb", color:"white", border:"none", borderRadius:10, fontSize:16, fontWeight:700, cursor:"pointer", fontFamily:"inherit", boxShadow:"0 4px 20px #2563eb40" }}>Build My Page →</button>
         <div style={{ marginTop:12, fontSize:12, color:"#9ca3af" }}>See your page before you pay · No credit card to preview</div>
       </div>
 
@@ -1953,7 +1870,7 @@ function LegalPage({ title, updated, onHome, children }) {
       <GS/>
       <nav style={{ position:"fixed", top:0, left:0, right:0, zIndex:100, height:56, display:"flex", alignItems:"center", justifyContent:"space-between", padding:"0 48px", background:"rgba(250,250,249,.95)", backdropFilter:"blur(20px)", borderBottom:"1px solid #e5e7eb" }}>
         <div onClick={onHome} style={{ display:"flex", alignItems:"center", gap:8, cursor:"pointer" }}>
-          <div style={{ width:28, height:28, background:"#f97316", borderRadius:7, display:"flex", alignItems:"center", justifyContent:"center", fontSize:13, color:"white", fontWeight:800 }}>S</div>
+          <div style={{ width:28, height:28, background:"#2563eb", borderRadius:7, display:"flex", alignItems:"center", justifyContent:"center", fontSize:13, color:"white", fontWeight:800 }}>S</div>
           <span style={{ fontSize:18, fontWeight:800, color:"#111827" }}>Sitefliq</span>
         </div>
         <button onClick={onHome} style={{ padding:"7px 16px", background:"transparent", border:"1px solid #e5e7eb", borderRadius:8, fontSize:13, cursor:"pointer", color:"#374151", fontFamily:"inherit" }}>← Back to Home</button>
@@ -2149,21 +2066,21 @@ function ExamplePage({ onBack, onBuild }) {
       <div style={{ height:54, background:"white", borderBottom:"1px solid #f3f4f6", display:"flex", alignItems:"center", justifyContent:"space-between", padding:"0 28px", position:"sticky", top:0, zIndex:10 }}>
         <button onClick={onBack} style={{ display:"flex", alignItems:"center", gap:6, background:"transparent", border:"none", cursor:"pointer", fontSize:13, color:"#6b7280", fontFamily:"inherit" }}>← Back</button>
         <div style={{ display:"flex", alignItems:"center", gap:8 }}>
-          <div style={{ width:24, height:24, background:"#f97316", borderRadius:6, display:"flex", alignItems:"center", justifyContent:"center", fontSize:11, color:"white", fontWeight:800 }}>S</div>
+          <div style={{ width:24, height:24, background:"#2563eb", borderRadius:6, display:"flex", alignItems:"center", justifyContent:"center", fontSize:11, color:"white", fontWeight:800 }}>S</div>
           <span style={{ fontSize:14, fontWeight:800, color:"#111827" }}>Example Output</span>
         </div>
-        <button onClick={onBuild} style={{ padding:"8px 18px", background:"#f97316", border:"none", borderRadius:8, fontSize:13, cursor:"pointer", color:"white", fontFamily:"inherit", fontWeight:700 }}>Build Mine →</button>
+        <button onClick={onBuild} style={{ padding:"8px 18px", background:"#2563eb", border:"none", borderRadius:8, fontSize:13, cursor:"pointer", color:"white", fontFamily:"inherit", fontWeight:700 }}>Build Mine →</button>
       </div>
-      <div style={{ background:"#fff7ed", borderBottom:"1px solid #fed7aa", padding:"12px 28px", display:"flex", alignItems:"center", justifyContent:"space-between", flexWrap:"wrap", gap:10 }}>
+      <div style={{ background:"#eff6ff", borderBottom:"1px solid #bfdbfe", padding:"12px 28px", display:"flex", alignItems:"center", justifyContent:"space-between", flexWrap:"wrap", gap:10 }}>
         <div style={{ display:"flex", alignItems:"center", gap:10, fontSize:13 }}>
           <span style={{ fontSize:16 }}>✦</span>
           <span style={{ fontWeight:600, color:"#111827" }}>Peak Ridge Roofing — Austin TX</span>
           <span style={{ color:"#9ca3af" }}>Sample page generated by Sitefliq AI</span>
-          <span style={{ background:"#f97316", color:"white", padding:"2px 8px", borderRadius:4, fontSize:10, fontWeight:700 }}>EXAMPLE</span>
+          <span style={{ background:"#2563eb", color:"white", padding:"2px 8px", borderRadius:4, fontSize:10, fontWeight:700 }}>EXAMPLE</span>
         </div>
         <div style={{ display:"flex", gap:8 }}>
           {blobUrl && <button onClick={() => window.open(blobUrl,"_blank")} style={{ padding:"7px 14px", background:"white", border:"1px solid #e5e7eb", borderRadius:7, fontSize:12, cursor:"pointer", fontFamily:"inherit", fontWeight:600 }}>🔗 Open Full Page</button>}
-          <button onClick={onBuild} style={{ padding:"7px 16px", background:"#f97316", border:"none", borderRadius:7, fontSize:12, cursor:"pointer", color:"white", fontFamily:"inherit", fontWeight:700 }}>Build Your Page →</button>
+          <button onClick={onBuild} style={{ padding:"7px 16px", background:"#2563eb", border:"none", borderRadius:7, fontSize:12, cursor:"pointer", color:"white", fontFamily:"inherit", fontWeight:700 }}>Build Your Page →</button>
         </div>
       </div>
       <div style={{ background:"white", borderBottom:"1px solid #f3f4f6", padding:"12px 28px", display:"flex", gap:20, flexWrap:"wrap" }}>
@@ -2194,7 +2111,7 @@ function ExamplePage({ onBack, onBuild }) {
       </div>
       <div style={{ textAlign:"center", padding:"32px 28px 48px" }}>
         <div style={{ fontSize:14, color:"#6b7280", marginBottom:16 }}>Ready to build your own? It takes 60 seconds.</div>
-        <button onClick={onBuild} style={{ padding:"14px 40px", background:"#f97316", color:"white", border:"none", borderRadius:10, fontSize:15, fontWeight:700, cursor:"pointer", fontFamily:"inherit", boxShadow:"0 4px 20px #f9731640" }}>
+        <button onClick={onBuild} style={{ padding:"14px 40px", background:"#2563eb", color:"white", border:"none", borderRadius:10, fontSize:15, fontWeight:700, cursor:"pointer", fontFamily:"inherit", boxShadow:"0 4px 20px #2563eb40" }}>
           Build My Landing Page →
         </button>
       </div>
@@ -2244,7 +2161,7 @@ function HelpPage({ onHome }) {
       <div style={{ height:52, background:"white", borderBottom:"1px solid #f3f4f6", display:"flex", alignItems:"center", justifyContent:"space-between", padding:"0 28px", position:"sticky", top:0, zIndex:10 }}>
         <button onClick={onHome} style={{ display:"flex", alignItems:"center", gap:6, background:"transparent", border:"none", cursor:"pointer", fontSize:13, color:"#6b7280", fontFamily:"inherit", fontWeight:500 }}>← Back</button>
         <div style={{ display:"flex", alignItems:"center", gap:7 }}>
-          <div style={{ width:24, height:24, background:"#f97316", borderRadius:6, display:"flex", alignItems:"center", justifyContent:"center", fontSize:11, color:"white", fontWeight:800 }}>S</div>
+          <div style={{ width:24, height:24, background:"#2563eb", borderRadius:6, display:"flex", alignItems:"center", justifyContent:"center", fontSize:11, color:"white", fontWeight:800 }}>S</div>
           <span style={{ fontSize:14, fontWeight:800, color:"#111827" }}>Sitefliq Help</span>
         </div>
         <div style={{ width:80 }}/>
@@ -2256,9 +2173,9 @@ function HelpPage({ onHome }) {
         </div>
         <div style={{ display:"grid", gridTemplateColumns:"repeat(4,1fr)", gap:10, marginBottom:28 }}>
           {categories.map(c => (
-            <div key={c.id} onClick={() => setCategory(c.id)} style={{ background:"white", border:`1.5px solid ${category===c.id?"#f97316":"#e5e7eb"}`, borderRadius:12, padding:"18px 12px", textAlign:"center", cursor:"pointer", transition:"all .15s", boxShadow:category===c.id?"0 0 0 3px rgba(249,115,22,.1)":"none" }}>
+            <div key={c.id} onClick={() => setCategory(c.id)} style={{ background:"white", border:`1.5px solid ${category===c.id?"#2563eb":"#e5e7eb"}`, borderRadius:12, padding:"18px 12px", textAlign:"center", cursor:"pointer", transition:"all .15s", boxShadow:category===c.id?"0 0 0 3px rgba(249,115,22,.1)":"none" }}>
               <div style={{ fontSize:22, marginBottom:8 }}>{c.icon}</div>
-              <div style={{ fontSize:12, fontWeight:600, color:category===c.id?"#f97316":"#374151" }}>{c.label}</div>
+              <div style={{ fontSize:12, fontWeight:600, color:category===c.id?"#2563eb":"#374151" }}>{c.label}</div>
             </div>
           ))}
         </div>
@@ -2268,7 +2185,7 @@ function HelpPage({ onHome }) {
               <div style={{ fontSize:44, marginBottom:16 }}>✅</div>
               <div style={{ fontSize:18, fontWeight:800, color:"#111827", marginBottom:8 }}>Query Submitted!</div>
               <p style={{ fontSize:13, color:"#6b7280", lineHeight:1.7 }}>Your email client opened with your message pre-filled. We'll respond to <strong>{form.email}</strong> within 24 hours.</p>
-              <button onClick={() => setSubmitted(false)} style={{ marginTop:20, padding:"10px 22px", background:"#f97316", border:"none", borderRadius:8, fontSize:13, fontWeight:700, color:"white", cursor:"pointer", fontFamily:"inherit" }}>Submit Another</button>
+              <button onClick={() => setSubmitted(false)} style={{ marginTop:20, padding:"10px 22px", background:"#2563eb", border:"none", borderRadius:8, fontSize:13, fontWeight:700, color:"white", cursor:"pointer", fontFamily:"inherit" }}>Submit Another</button>
             </div>
           ) : (
             <>
@@ -2293,7 +2210,7 @@ function HelpPage({ onHome }) {
                 <textarea style={{...inp, resize:"vertical", minHeight:120, lineHeight:1.6}} placeholder="Describe your query in detail..." maxLength={500} value={form.message} onChange={e => setForm(f => ({...f, message:e.target.value}))}/>
               </div>
               <button onClick={handleSubmit} disabled={!form.name||!form.email||!form.message||!category}
-                style={{ width:"100%", padding:"13px", background:!form.name||!form.email||!form.message||!category?"#e5e7eb":"#f97316", border:"none", borderRadius:10, fontSize:14, fontWeight:700, color:"white", cursor:!form.name||!form.email||!form.message||!category?"not-allowed":"pointer", fontFamily:"inherit" }}>
+                style={{ width:"100%", padding:"13px", background:!form.name||!form.email||!form.message||!category?"#e5e7eb":"#2563eb", border:"none", borderRadius:10, fontSize:14, fontWeight:700, color:"white", cursor:!form.name||!form.email||!form.message||!category?"not-allowed":"pointer", fontFamily:"inherit" }}>
                 ✈️ Submit Query
               </button>
             </>
@@ -2306,7 +2223,7 @@ function HelpPage({ onHome }) {
               <div key={i} style={{ borderBottom:i < faqs.length-1 ? "1px solid #f3f4f6" : "none" }}>
                 <div onClick={() => setOpenFaq(openFaq===i ? null : i)} style={{ padding:"16px 20px", display:"flex", justifyContent:"space-between", alignItems:"center", cursor:"pointer", gap:12 }}>
                   <span style={{ fontSize:13, fontWeight:600, color:"#111827", lineHeight:1.4 }}>{faq.q}</span>
-                  <span style={{ color:"#f97316", fontSize:18, fontWeight:300, flexShrink:0, transition:"transform .25s", display:"inline-block", transform:openFaq===i?"rotate(45deg)":"rotate(0)" }}>+</span>
+                  <span style={{ color:"#2563eb", fontSize:18, fontWeight:300, flexShrink:0, transition:"transform .25s", display:"inline-block", transform:openFaq===i?"rotate(45deg)":"rotate(0)" }}>+</span>
                 </div>
                 {openFaq===i && <div style={{ padding:"0 20px 16px", fontSize:13, color:"#6b7280", lineHeight:1.75 }}>{faq.a}</div>}
               </div>
@@ -2529,22 +2446,22 @@ export default function Sitefliq() {
       <div style={{ height:50, background:"white", borderBottom:"1px solid #f3f4f6", display:"flex", alignItems:"center", justifyContent:"space-between", padding:"0 20px", flexShrink:0 }}>
         <div onClick={() => setScreen("home")} style={{ display:"flex", alignItems:"center", gap:7, cursor:"pointer" }}>
           <span style={{ fontSize:15, color:"#9ca3af" }}>←</span>
-          <div style={{ width:23, height:23, background:"#f97316", borderRadius:5, display:"flex", alignItems:"center", justifyContent:"center", fontSize:11, color:"white", fontWeight:800 }}>S</div>
+          <div style={{ width:23, height:23, background:"#2563eb", borderRadius:5, display:"flex", alignItems:"center", justifyContent:"center", fontSize:11, color:"white", fontWeight:800 }}>S</div>
           <span style={{ fontSize:13, fontWeight:700, color:"#111827" }}>Landing Page Builder</span>
         </div>
         <div style={{ fontSize:11, color:"#9ca3af" }}>
           {screen==="builder"    && "⚡ Powered by Claude AI"}
-          {screen==="generating" && <span style={{ color:"#f97316" }}>⚡ Generating…</span>}
+          {screen==="generating" && <span style={{ color:"#2563eb" }}>⚡ Generating…</span>}
           {screen==="result"     && <span style={{ color:"#16a34a", fontWeight:600 }}>✓ Page Ready — {form.name}</span>}
         </div>
         <div style={{ display:"flex", alignItems:"center", gap:8 }}>
           {user ? (
             <>
-              <span style={{ fontSize:12, background:"#fff7ed", color:credits<=1?"#dc2626":"#f97316", border:`1px solid ${credits<=1?"#fecaca":"#fed7aa"}`, borderRadius:20, padding:"3px 10px", fontWeight:700 }}>⚡ {credits} credits</span>
+              <span style={{ fontSize:12, background:"#eff6ff", color:credits<=1?"#dc2626":"#2563eb", border:`1px solid ${credits<=1?"#fecaca":"#bfdbfe"}`, borderRadius:20, padding:"3px 10px", fontWeight:700 }}>⚡ {credits} credits</span>
               <button onClick={handleSignOut} style={{ fontSize:12, background:"none", border:"1px solid #e5e7eb", borderRadius:6, padding:"4px 10px", cursor:"pointer", color:"#6b7280" }}>Sign out</button>
             </>
           ) : (
-            <button onClick={() => setShowAuth(true, "signin")} style={{ fontSize:12, background:"#f97316", color:"white", border:"none", borderRadius:6, padding:"5px 12px", cursor:"pointer", fontWeight:600 }}>Sign In</button>
+            <button onClick={() => setShowAuth(true, "signin")} style={{ fontSize:12, background:"#2563eb", color:"white", border:"none", borderRadius:6, padding:"5px 12px", cursor:"pointer", fontWeight:600 }}>Sign In</button>
           )}
         </div>
       </div>
