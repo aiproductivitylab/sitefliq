@@ -4,6 +4,7 @@ import { usePaddle } from "./hooks/usePaddle";
 import { MARKETING_PAGES } from "./seo-pages.js";
 import HomePage from "./screens/HomePage.jsx";
 import PricingPage from "./screens/PricingPage.jsx";
+import { Check, Arrow } from "./ui/kit";
 
 /* ─────────────────────────────────────────────────────────────────────────────
    CONSTANTS
@@ -28,18 +29,18 @@ const VIBES = [
 ];
 
 const SECTIONS = [
-  { id:"hero",         label:"Hero Banner",      icon:"⚡", locked:true },
-  { id:"social_proof", label:"Social Proof Bar", icon:"★",  locked:true },
-  { id:"services",     label:"Services",         icon:"◈" },
-  { id:"about",        label:"About / Story",    icon:"◎" },
-  { id:"benefits",     label:"Why Choose Us",    icon:"✦" },
-  { id:"testimonials", label:"Testimonials",     icon:"❝" },
-  { id:"pricing",      label:"Pricing",          icon:"💰" },
-  { id:"gallery",      label:"Gallery",          icon:"▦" },
-  { id:"faq",          label:"FAQ",              icon:"?" },
-  { id:"booking",      label:"Booking Form",     icon:"📅" },
-  { id:"contact",      label:"Contact",          icon:"✉" },
-  { id:"cta",          label:"CTA Banner",       icon:"→" },
+  { id:"hero",         label:"Hero Banner",      locked:true },
+  { id:"social_proof", label:"Social Proof Bar", locked:true },
+  { id:"services",     label:"Services" },
+  { id:"about",        label:"About / Story" },
+  { id:"benefits",     label:"Why Choose Us" },
+  { id:"testimonials", label:"Testimonials" },
+  { id:"pricing",      label:"Pricing" },
+  { id:"gallery",      label:"Gallery" },
+  { id:"faq",          label:"FAQ" },
+  { id:"booking",      label:"Booking Form" },
+  { id:"contact",      label:"Contact" },
+  { id:"cta",          label:"CTA Banner" },
 ];
 
 const INDUSTRIES = [
@@ -299,7 +300,7 @@ function ToastContainer() {
   useEffect(() => { _toastSetter = setToasts; return () => { _toastSetter = null; }; }, []);
   if (!toasts.length) return null;
   const colors = { success:"#16a34a", error:"#dc2626", info:"#2563eb", warning:"#d97706" };
-  const icons  = { success:"✓", error:"✕", info:"⚡", warning:"⚠" };
+  const icons  = { success:"✓", error:"✕", info:"i", warning:"!" };
   return (
     <div style={{ position:"fixed", bottom:24, right:24, zIndex:99999, display:"flex", flexDirection:"column", gap:8 }}>
       {toasts.map(t => (
@@ -319,7 +320,7 @@ function ConfettiBurst({ active }) {
   if (!active) return null;
   const pieces = Array.from({ length: 40 }, (_, i) => ({
     id: i,
-    color: ["#2563eb","#22c55e","#3b82f6","#f59e0b","#8b5cf6","#ec4899"][i % 6],
+    color: ["#2563eb","#22c55e","#3b82f6","#0ea5e9","#8b5cf6","#ec4899"][i % 6],
     left: Math.random() * 100,
     delay: Math.random() * 1.2,
     size: 6 + Math.random() * 6,
@@ -342,7 +343,7 @@ function LowCreditBanner({ credits, onBuyCredits }) {
   return (
     <div style={{ background: credits === 0 ? "#fef2f2" : "#eff6ff", border:`1px solid ${credits === 0 ? "#fecaca" : "#bfdbfe"}`, borderRadius:8, padding:"10px 14px", marginBottom:12, display:"flex", alignItems:"center", justifyContent:"space-between", gap:10 }}>
       <div style={{ fontSize:12, color: credits === 0 ? "#dc2626" : "#d97706", fontWeight:600 }}>
-        {credits === 0 ? "⚠ No credits remaining" : "⚡ Only 1 credit left"}
+        {credits === 0 ? "No credits remaining" : "Only 1 credit left"}
       </div>
       <button onClick={onBuyCredits} style={{ padding:"5px 12px", background: credits === 0 ? "#dc2626" : "#2563eb", color:"white", border:"none", borderRadius:6, fontSize:11, fontWeight:700, cursor:"pointer", whiteSpace:"nowrap" }}>
         Buy Credits →
@@ -380,15 +381,15 @@ function PreviewFrame({ html, businessName }) {
     <div style={{ height:"100%", display:"flex", flexDirection:"column", background:"#f1f5f9" }}>
       <div style={{ padding:"10px 16px", background:"white", borderBottom:"1px solid #e5e7eb", display:"flex", alignItems:"center", gap:8 }}>
         <div style={{ display:"flex", gap:5 }}>
-          {["#ef4444","#f59e0b","#22c55e"].map(c => <div key={c} style={{ width:10, height:10, borderRadius:"50%", background:c }}/>)}
+          {["#ef4444","#0ea5e9","#22c55e"].map(c => <div key={c} style={{ width:10, height:10, borderRadius:"50%", background:c }}/>)}
         </div>
         <div style={{ flex:1, background:"#f3f4f6", borderRadius:6, padding:"4px 12px", fontSize:11, color:"#9ca3af", marginLeft:8 }}>
           {(businessName||"preview").toLowerCase().replace(/\s+/g,"-")}.netlify.app
         </div>
         <div style={{ display:"flex", gap:2, background:"#f3f4f6", borderRadius:7, padding:3 }}>
-          {[["desktop","🖥","Desktop"],["mobile","📱","Mobile"]].map(([m,ic,label]) => (
-            <button key={m} onClick={() => setMode(m)} style={{ padding:"4px 10px", fontSize:11, background:mode===m?"white":"transparent", border:"none", borderRadius:5, cursor:"pointer", fontWeight:mode===m?700:400, color:mode===m?"#111827":"#6b7280" }}>
-              {ic} {label}
+          {[["desktop","Desktop"],["mobile","Mobile"]].map(([m,label]) => (
+            <button key={m} onClick={() => setMode(m)} style={{ padding:"4px 12px", fontSize:11, background:mode===m?"white":"transparent", border:"none", borderRadius:5, cursor:"pointer", fontWeight:mode===m?600:400, color:mode===m?"#16181d":"#6b7280", boxShadow:mode===m?"0 1px 2px rgba(16,24,40,.08)":"none" }}>
+              {label}
             </button>
           ))}
         </div>
@@ -447,7 +448,7 @@ function WebsiteImporter({ onImport }) {
         onImport(data);
         setStatus("success");
         setMsg("Branding imported! Logo, colours and info auto-filled below.");
-        toast("✓ Website imported successfully!", "success");
+        toast("Website imported successfully", "success");
       } else {
         setStatus("error");
         setMsg(data.error || "Couldn't extract branding from that site.");
@@ -460,8 +461,8 @@ function WebsiteImporter({ onImport }) {
   };
 
   return (
-    <div style={{ background:"linear-gradient(135deg,#eff6ff,#fffbf5)", border:"1.5px solid #bfdbfe", borderRadius:12, padding:"14px 16px", marginBottom:4 }}>
-      <div style={{ fontSize:11, fontWeight:700, color:"#2563eb", letterSpacing:.5, textTransform:"uppercase", marginBottom:8 }}>✨ Import from existing website</div>
+    <div style={{ background:"#eff6ff", border:"1px solid #bfdbfe", borderRadius:12, padding:"14px 16px", marginBottom:4 }}>
+      <div style={{ fontSize:11, fontWeight:700, color:"#2563eb", letterSpacing:.5, textTransform:"uppercase", marginBottom:8 }}>Import from an existing website</div>
       <div style={{ display:"flex", gap:8 }}>
         <input value={url} onChange={e => setUrl(e.target.value)} onKeyDown={e => e.key === "Enter" && handleImport()}
           placeholder="yourwebsite.com"
@@ -471,10 +472,10 @@ function WebsiteImporter({ onImport }) {
         />
         <button onClick={handleImport} disabled={loading || !url.trim()}
           style={{ padding:"9px 16px", background:loading || !url.trim() ? "#e5e7eb" : "#2563eb", color:loading || !url.trim() ? "#9ca3af" : "white", border:"none", borderRadius:8, fontSize:12, fontWeight:700, cursor:loading || !url.trim() ? "not-allowed" : "pointer", fontFamily:"inherit", whiteSpace:"nowrap" }}>
-          {loading ? "⏳ Scanning…" : "Import →"}
+          {loading ? "Scanning…" : "Import"}
         </button>
       </div>
-      {status && <div style={{ marginTop:8, fontSize:12, color:status==="success" ? "#16a34a" : "#dc2626" }}>{status==="success" ? "✅" : "⚠️"} {msg}</div>}
+      {status && <div style={{ marginTop:8, fontSize:12, color:status==="success" ? "#15803d" : "#dc2626" }}>{msg}</div>}
       {!status && <div style={{ marginTop:6, fontSize:11, color:"#9ca3af" }}>Auto-extracts logo, brand colours & business info</div>}
     </div>
   );
@@ -509,10 +510,7 @@ function LogoUpload({ value, onChange }) {
             <span onClick={e => { e.stopPropagation(); onChange(""); }} style={{ fontSize:11, color:"#ef4444", cursor:"pointer", padding:"2px 6px", border:"1px solid #fecaca", borderRadius:4 }}>Remove</span>
           </>
         ) : (
-          <>
-            <span style={{ fontSize:18 }}>🖼️</span>
-            <span style={{ fontSize:12, color:"#9ca3af" }}>Upload logo (PNG, JPG, SVG, max 500KB)</span>
-          </>
+          <span style={{ fontSize:12, color:"#9ca3af" }}>Upload logo (PNG, JPG, SVG, max 500KB)</span>
         )}
       </div>
       <input ref={ref} type="file" accept="image/*" onChange={handleFile} style={{ display:"none" }}/>
@@ -608,7 +606,7 @@ function AddressField({ value, onChange }) {
           style={{ width:"100%", padding:"10px 36px 10px 13px", border:"1.5px solid #e5e7eb", borderRadius:9, fontSize:13, color:"#111827", background:"white", fontFamily:"inherit", outline:"none" }}
         />
         <div style={{ position:"absolute", right:11, top:"50%", transform:"translateY(-50%)", pointerEvents:"none", fontSize:13 }}>
-          {loading ? <span style={{ display:"inline-block", animation:"spin .7s linear infinite", color:"#9ca3af" }}>◌</span> : "📍"}
+          {loading ? <span style={{ display:"inline-block", animation:"spin .7s linear infinite", color:"#9ca3af" }}>◌</span> : null}
         </div>
       </div>
       {open && suggestions.length > 0 && (
@@ -622,7 +620,7 @@ function AddressField({ value, onChange }) {
                 style={{ padding:"10px 14px", cursor:"pointer", borderBottom:i < suggestions.length-1 ? "1px solid #f9fafb" : "none", display:"flex", alignItems:"center", gap:10, background:"white" }}
                 onMouseEnter={e => e.currentTarget.style.background = "#eff6ff"}
                 onMouseLeave={e => e.currentTarget.style.background = "white"}>
-                <div style={{ width:30, height:30, background:"#eff6ff", border:"1px solid #bfdbfe", borderRadius:7, display:"flex", alignItems:"center", justifyContent:"center", fontSize:14, flexShrink:0 }}>📍</div>
+                <div style={{ width:30, height:30, background:"#eff6ff", border:"1px solid #bfdbfe", borderRadius:7, display:"flex", alignItems:"center", justifyContent:"center", flexShrink:0 }}><span style={{ width:7, height:7, borderRadius:"50%", background:"#2563eb", display:"inline-block" }}/></div>
                 <div style={{ flex:1, minWidth:0 }}>
                   <div style={{ fontSize:13, color:"#6b7280", lineHeight:1.3 }}>{highlight(main, mainMatches)}</div>
                   {secondary && <div style={{ fontSize:11, color:"#9ca3af", marginTop:2 }}>{secondary}</div>}
@@ -650,15 +648,15 @@ const LivePreview = memo(function LivePreview({ form }) {
     <div style={{ height:"100%", display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center", padding:28, background:"#f1f5f9" }}>
       {!filled ? (
         <div style={{ textAlign:"center", color:"#9ca3af" }}>
-          <div style={{ fontSize:44, marginBottom:14, opacity:.3 }}>✦</div>
+          <div style={{ width:48, height:48, margin:"0 auto 14px", borderRadius:12, border:"2px dashed #d3d8e0" }}/>
           <div style={{ fontSize:13, fontWeight:600, color:"#6b7280", marginBottom:6 }}>Preview appears here</div>
           <div style={{ fontSize:12 }}>Fill in your business details</div>
         </div>
       ) : (
         <div style={{ width:"100%", maxWidth:500, animation:"popIn .4s ease" }}>
           <div style={{ background:"#e2e8f0", borderRadius:"10px 10px 0 0", padding:"9px 14px", display:"flex", alignItems:"center", gap:8 }}>
-            <div style={{ display:"flex", gap:5 }}>{["#ef4444","#f59e0b","#22c55e"].map(c => <div key={c} style={{ width:9, height:9, borderRadius:"50%", background:c }}/>)}</div>
-            <div style={{ flex:1, background:"white", borderRadius:20, padding:"4px 11px", fontSize:10, color:"#6b7280" }}>🔒 {(form.name || "yourbusiness").toLowerCase().replace(/\s+/g, "-")}.netlify.app</div>
+            <div style={{ display:"flex", gap:5 }}>{["#ef4444","#0ea5e9","#22c55e"].map(c => <div key={c} style={{ width:9, height:9, borderRadius:"50%", background:c }}/>)}</div>
+            <div style={{ flex:1, background:"white", borderRadius:20, padding:"4px 11px", fontSize:10, color:"#6b7280" }}>{(form.name || "yourbusiness").toLowerCase().replace(/\s+/g, "-")}.netlify.app</div>
           </div>
           <div style={{ background:pal.bg, borderRadius:"0 0 10px 10px", overflow:"hidden", boxShadow:"0 16px 50px rgba(0,0,0,.12)" }}>
             <div style={{ padding:"10px 18px", display:"flex", justifyContent:"space-between", alignItems:"center", borderBottom:`1px solid ${pal.accent}22` }}>
@@ -701,23 +699,23 @@ const LivePreview = memo(function LivePreview({ form }) {
 ───────────────────────────────────────────────────────────────────────────── */
 function ProgressStepper({ stage }) {
   const steps = [
-    { label:"Reading your business", icon:"📋" },
-    { label:"Choosing palette & fonts", icon:"🎨" },
-    { label:"Writing niche copy", icon:"✍️" },
-    { label:"Sourcing images", icon:"🖼️" },
-    { label:"Building your page", icon:"⚡" },
+    "Reading your business",
+    "Choosing palette & fonts",
+    "Writing niche copy",
+    "Sourcing images",
+    "Building your page",
   ];
   return (
     <div style={{ display:"flex", flexDirection:"column", gap:8, padding:"16px 0" }}>
-      {steps.map((s, i) => {
+      {steps.map((label, i) => {
         const done = i < stage;
         const active = i === stage;
         return (
-          <div key={i} style={{ display:"flex", alignItems:"center", gap:10, padding:"8px 12px", borderRadius:8, background:active?"#eff6ff":done?"#f0fdf4":"#f9fafb", border:`1px solid ${active?"#bfdbfe":done?"#bbf7d0":"#f3f4f6"}`, transition:"all .3s" }}>
-            <div style={{ width:28, height:28, borderRadius:"50%", background:active?"#2563eb":done?"#16a34a":"#e5e7eb", display:"flex", alignItems:"center", justifyContent:"center", fontSize:12, flexShrink:0 }}>
-              {done ? "✓" : active ? <span style={{ animation:"spin .8s linear infinite", display:"inline-block" }}>◌</span> : s.icon}
+          <div key={i} style={{ display:"flex", alignItems:"center", gap:11, padding:"9px 12px", borderRadius:10, background:active?"#eff6ff":done?"#f0fdf4":"#f6f7f9", border:`1px solid ${active?"#bfdbfe":done?"#bbf7d0":"#e7e9ee"}`, transition:"all .3s" }}>
+            <div style={{ width:26, height:26, borderRadius:"50%", background:active?"#2563eb":done?"#15803d":"#e7e9ee", color:active||done?"#fff":"#8b94a4", display:"flex", alignItems:"center", justifyContent:"center", fontSize:12, fontWeight:700, flexShrink:0 }}>
+              {done ? <Check size={13} color="#ffffff"/> : active ? <span style={{ animation:"spin .8s linear infinite", display:"inline-block" }}>◌</span> : i + 1}
             </div>
-            <span style={{ fontSize:12, fontWeight:active?700:done?500:400, color:active?"#ea580c":done?"#16a34a":"#9ca3af" }}>{s.label}</span>
+            <span style={{ fontSize:13, fontWeight:active?600:done?500:400, color:active?"#1d4ed8":done?"#15803d":"#8b94a4" }}>{label}</span>
           </div>
         );
       })}
@@ -769,12 +767,9 @@ function BuilderPanel({ form, up, togSec, onNext, ready, credits, user, onBuyCre
     <div style={{ display:"flex", flexDirection:"column", height:"100%", background:"white" }}>
       {/* Header */}
       <div style={{ padding:"18px 22px 0", borderBottom:"1px solid #f3f4f6" }}>
-        <div style={{ display:"flex", alignItems:"center", gap:9, marginBottom:14 }}>
-          <div style={{ width:30, height:30, background:"#eff6ff", borderRadius:8, display:"flex", alignItems:"center", justifyContent:"center", fontSize:15 }}>✦</div>
-          <div>
-            <div style={{ fontSize:13, fontWeight:700, color:"#111827" }}>Let's build something amazing</div>
-            <div style={{ fontSize:11, color:"#9ca3af" }}>Fill in your details below</div>
-          </div>
+        <div style={{ marginBottom:14 }}>
+          <div style={{ fontSize:15, fontWeight:700, color:"#16181d", letterSpacing:"-0.01em" }}>Build your website</div>
+          <div style={{ fontSize:12, color:"#8b94a4", marginTop:2 }}>Fill in the details — you can refine everything after.</div>
         </div>
         <div style={{ display:"flex", gap:0 }}>
           {[["info","Business"],["style","Style"],["sections","Sections"]].map(([id, label]) => (
@@ -850,7 +845,7 @@ function BuilderPanel({ form, up, togSec, onNext, ready, credits, user, onBuyCre
                 {VIBES.map(v => (
                   <div key={v.id} onClick={() => up("vibe",v.id)} style={{ padding:"9px 12px", borderRadius:8, cursor:"pointer", border:form.vibe===v.id?"1.5px solid #2563eb":"1.5px solid #e5e7eb", background:form.vibe===v.id?"#eff6ff":"white", display:"flex", alignItems:"center", justifyContent:"space-between", transition:"all .15s" }}>
                     <div>
-                      <div style={{ fontSize:12, fontWeight:600, color:form.vibe===v.id?"#ea580c":"#111827" }}>{v.label}</div>
+                      <div style={{ fontSize:12, fontWeight:600, color:form.vibe===v.id?"#1d4ed8":"#111827" }}>{v.label}</div>
                       <div style={{ fontSize:11, color:"#9ca3af", marginTop:1 }}>{v.desc}</div>
                     </div>
                     <div style={{ width:15, height:15, borderRadius:"50%", border:`2px solid ${form.vibe===v.id?"#2563eb":"#d1d5db"}`, background:form.vibe===v.id?"#2563eb":"transparent", flexShrink:0, display:"flex", alignItems:"center", justifyContent:"center" }}>
@@ -871,12 +866,11 @@ function BuilderPanel({ form, up, togSec, onNext, ready, credits, user, onBuyCre
         {/* Section toggle row */}
         <div onClick={() => !s.locked && togSec(s.id)}
           style={{ padding:"8px 11px", borderRadius:8, cursor:s.locked?"default":"pointer", display:"flex", alignItems:"center", gap:9, border:form.sections.includes(s.id)?"1.5px solid #2563eb":"1.5px solid #e5e7eb", background:form.sections.includes(s.id)?"#eff6ff":"white", transition:"all .15s" }}>
-          <span style={{ fontSize:14, width:18, textAlign:"center", flexShrink:0 }}>{s.icon}</span>
-          <span style={{ flex:1, fontSize:12, fontWeight:500, color:form.sections.includes(s.id)?"#ea580c":"#374151" }}>{s.label}</span>
+          <span style={{ flex:1, fontSize:13, fontWeight:500, color:form.sections.includes(s.id)?"#1d4ed8":"#374151" }}>{s.label}</span>
           {s.locked
-            ? <span style={{ fontSize:9, color:"#d1d5db", background:"#f9fafb", padding:"2px 6px", borderRadius:4, border:"1px solid #e5e7eb" }}>Always on</span>
-            : <div style={{ width:15, height:15, borderRadius:4, border:`2px solid ${form.sections.includes(s.id)?"#2563eb":"#d1d5db"}`, background:form.sections.includes(s.id)?"#2563eb":"transparent", display:"flex", alignItems:"center", justifyContent:"center", fontSize:9, color:"white", fontWeight:900, flexShrink:0 }}>
-                {form.sections.includes(s.id) && "✓"}
+            ? <span style={{ fontSize:9, color:"#9ca3af", background:"#f6f7f9", padding:"2px 7px", borderRadius:4, border:"1px solid #e7e9ee", textTransform:"uppercase", letterSpacing:.4, fontWeight:600 }}>Always on</span>
+            : <div style={{ width:16, height:16, borderRadius:5, border:`2px solid ${form.sections.includes(s.id)?"#2563eb":"#d1d5db"}`, background:form.sections.includes(s.id)?"#2563eb":"transparent", display:"flex", alignItems:"center", justifyContent:"center", flexShrink:0 }}>
+                {form.sections.includes(s.id) && <Check size={11} color="#ffffff"/>}
               </div>
           }
         </div>
@@ -1020,16 +1014,19 @@ function BuilderPanel({ form, up, togSec, onNext, ready, credits, user, onBuyCre
       {/* CTA */}
       <div style={{ padding:"14px 22px", borderTop:"1px solid #f3f4f6", background:"white" }}>
         <button onClick={onNext} disabled={!ready}
-          style={{ width:"100%", padding:"13px", background:ready?"#2563eb":"#e5e7eb", color:ready?"white":"#9ca3af", border:"none", borderRadius:10, fontSize:14, fontWeight:700, cursor:ready?"pointer":"not-allowed", fontFamily:"inherit", display:"flex", alignItems:"center", justifyContent:"center", gap:8, transition:"all .2s", animation:ready?"glow 3s ease-in-out infinite":"none" }}>
-          <span>✦</span> {ready ? (user && credits > 0 ? "Generate My Page →" : "See Pricing & Continue →") : "Fill in required fields first"}
+          style={{ width:"100%", padding:"13px", background:ready?"#2563eb":"#e5e7eb", color:ready?"white":"#9ca3af", border:"none", borderRadius:10, fontSize:14, fontWeight:600, cursor:ready?"pointer":"not-allowed", fontFamily:"inherit", display:"flex", alignItems:"center", justifyContent:"center", gap:8, transition:"all .2s" }}>
+          {ready ? (user && credits > 0 ? "Generate my page" : "See pricing & continue") : "Fill in required fields first"}
+          {ready && <Arrow color="currentColor"/>}
         </button>
         {!ready && (
           <div style={{ marginTop:7, fontSize:11, color:"#2563eb", textAlign:"center" }}>
             Missing: {[!form.name&&"Name", !form.industry&&"Industry", !form.description&&"Description"].filter(Boolean).join(", ")}
           </div>
         )}
-        <div style={{ marginTop:9, display:"flex", justifyContent:"center", gap:14, fontSize:10, color:"#9ca3af" }}>
-          <span>✓ Real photos included</span><span>✓ SEO optimised</span><span>✓ Mobile ready</span>
+        <div style={{ marginTop:11, display:"flex", justifyContent:"center", gap:16, fontSize:11, color:"#8b94a4" }}>
+          {["Real photos","SEO optimised","Mobile ready"].map(x => (
+            <span key={x} style={{ display:"inline-flex", alignItems:"center", gap:5 }}><Check size={12}/> {x}</span>
+          ))}
         </div>
       </div>
     </div>
@@ -1055,65 +1052,63 @@ function PricingWall({ form, onBack, onPurchase }) {
       <div style={{ maxWidth:900, margin:"0 auto", padding:"40px 24px 60px" }}>
         {/* Page summary */}
         <div style={{ background:"white", border:"1px solid #f3f4f6", borderRadius:16, padding:"20px 24px", marginBottom:36, display:"flex", alignItems:"center", gap:16, boxShadow:"0 1px 4px rgba(0,0,0,.04)" }}>
-          <div style={{ width:48, height:48, background:`linear-gradient(135deg,${pal.bg},${pal.surface})`, borderRadius:10, border:`2px solid ${pal.accent}33`, flexShrink:0, display:"flex", alignItems:"center", justifyContent:"center" }}>
-            <span style={{ fontSize:20, color:pal.accent }}>✦</span>
-          </div>
+          <div style={{ width:48, height:48, background:`linear-gradient(135deg,${pal.bg},${pal.surface})`, borderRadius:10, border:`2px solid ${pal.accent}33`, flexShrink:0 }}/>
           <div style={{ flex:1 }}>
             <div style={{ fontSize:16, fontWeight:800, color:"#111827", marginBottom:2 }}>{form.name}</div>
             <div style={{ fontSize:12, color:"#6b7280" }}>{form.industry} · {form.sections.length} sections · {form.palette} palette</div>
           </div>
           <div style={{ display:"flex", gap:12, fontSize:11 }}>
             {["SEO Ready","Mobile","Niche Copy"].map(t => (
-              <div key={t} style={{ display:"flex", alignItems:"center", gap:4, color:"#16a34a" }}>
-                <span style={{ fontWeight:700 }}>✓</span>{t}
+              <div key={t} style={{ display:"flex", alignItems:"center", gap:5, color:"#15803d" }}>
+                <Check size={13} color="#15803d"/>{t}
               </div>
             ))}
           </div>
         </div>
         <div style={{ textAlign:"center", marginBottom:36 }}>
           <div style={{ fontSize:11, fontWeight:700, color:"#2563eb", letterSpacing:2, textTransform:"uppercase", marginBottom:10 }}>ONE LAST STEP</div>
-          <h1 style={{ fontSize:"clamp(26px,4vw,40px)", fontWeight:800, color:"#111827", marginBottom:10, fontFamily:"'Instrument Serif',serif", fontStyle:"italic" }}>Your page is ready to generate</h1>
+          <h1 style={{ fontSize:"clamp(26px,4vw,40px)", fontWeight:700, color:"#16181d", letterSpacing:"-0.02em", marginBottom:10 }}>Your page is ready to generate</h1>
           <p style={{ fontSize:15, color:"#6b7280", maxWidth:480, margin:"0 auto", lineHeight:1.7 }}>
             Choose a plan to generate and download your <strong style={{ color:"#111827" }}>{form.name}</strong> landing page.
           </p>
         </div>
         <div style={{ display:"grid", gridTemplateColumns:"repeat(3,1fr)", gap:18, marginBottom:36 }}>
           {PLANS.map(plan => (
-            <div key={plan.id} style={{ background:"white", borderRadius:16, padding:"28px 24px", position:"relative", border:plan.badge?`2px solid ${plan.color}`:"1px solid #e5e7eb", boxShadow:plan.badge?`0 4px 30px ${plan.color}18`:"0 1px 3px rgba(0,0,0,.04)", transition:"transform .2s,box-shadow .2s" }}
-              onMouseEnter={e => { e.currentTarget.style.transform="translateY(-3px)"; e.currentTarget.style.boxShadow=plan.badge?`0 8px 40px ${plan.color}28`:"0 8px 24px rgba(0,0,0,.08)"; }}
-              onMouseLeave={e => { e.currentTarget.style.transform="translateY(0)"; e.currentTarget.style.boxShadow=plan.badge?`0 4px 30px ${plan.color}18`:"0 1px 3px rgba(0,0,0,.04)"; }}>
-              {plan.badge && <div style={{ position:"absolute", top:-12, left:"50%", transform:"translateX(-50%)", background:plan.color, color:"white", padding:"3px 14px", borderRadius:100, fontSize:9, fontWeight:800, letterSpacing:1.5, whiteSpace:"nowrap" }}>{plan.badge}</div>}
-              <div style={{ fontSize:10, fontWeight:700, color:plan.color, letterSpacing:2, textTransform:"uppercase", marginBottom:10 }}>{plan.name}</div>
-              <div style={{ background:`${plan.color}10`, border:`1px solid ${plan.color}30`, borderRadius:10, padding:"14px 16px", marginBottom:14, display:"flex", alignItems:"center", justifyContent:"space-between" }}>
+            <div key={plan.id} style={{ background:"white", borderRadius:16, padding:"28px 24px", position:"relative", border:plan.badge?`2px solid ${"#2563eb"}`:"1px solid #e5e7eb", boxShadow:plan.badge?`0 4px 30px ${"#2563eb"}18`:"0 1px 3px rgba(0,0,0,.04)", transition:"transform .2s,box-shadow .2s" }}
+              onMouseEnter={e => { e.currentTarget.style.transform="translateY(-3px)"; e.currentTarget.style.boxShadow=plan.badge?`0 8px 40px ${"#2563eb"}28`:"0 8px 24px rgba(0,0,0,.08)"; }}
+              onMouseLeave={e => { e.currentTarget.style.transform="translateY(0)"; e.currentTarget.style.boxShadow=plan.badge?`0 4px 30px ${"#2563eb"}18`:"0 1px 3px rgba(0,0,0,.04)"; }}>
+              {plan.badge && <div style={{ position:"absolute", top:-12, left:"50%", transform:"translateX(-50%)", background:"#2563eb", color:"white", padding:"3px 14px", borderRadius:100, fontSize:9, fontWeight:800, letterSpacing:1.5, whiteSpace:"nowrap" }}>{plan.badge}</div>}
+              <div style={{ fontSize:10, fontWeight:700, color:"#2563eb", letterSpacing:2, textTransform:"uppercase", marginBottom:10 }}>{plan.name}</div>
+              <div style={{ background:`${"#2563eb"}10`, border:`1px solid ${"#2563eb"}30`, borderRadius:10, padding:"14px 16px", marginBottom:14, display:"flex", alignItems:"center", justifyContent:"space-between" }}>
                 <div>
-                  <div style={{ fontSize:11, color:plan.color, fontWeight:700, letterSpacing:1, textTransform:"uppercase", marginBottom:2 }}>Credits</div>
-                  <div style={{ fontSize:36, fontWeight:800, color:"#111827", lineHeight:1, fontFamily:"'Instrument Serif',serif" }}>{plan.credits}</div>
+                  <div style={{ fontSize:11, color:"#2563eb", fontWeight:700, letterSpacing:1, textTransform:"uppercase", marginBottom:2 }}>Credits</div>
+                  <div style={{ fontSize:36, fontWeight:700, color:"#16181d", lineHeight:1, letterSpacing:"-0.02em" }}>{plan.credits}</div>
                 </div>
                 <div style={{ textAlign:"right" }}>
                   <div style={{ fontSize:11, color:"#9ca3af", marginBottom:2 }}>per page</div>
-                  <div style={{ fontSize:16, fontWeight:700, color:plan.color }}>{plan.perPage}</div>
+                  <div style={{ fontSize:16, fontWeight:700, color:"#2563eb" }}>{plan.perPage}</div>
                 </div>
               </div>
               <div style={{ marginBottom:4, display:"flex", alignItems:"baseline", gap:6 }}>
-                <span style={{ fontSize:38, fontWeight:800, color:"#111827", fontFamily:"'Instrument Serif',serif" }}>{plan.price}</span>
+                <span style={{ fontSize:38, fontWeight:700, color:"#16181d", letterSpacing:"-0.02em" }}>{plan.price}</span>
                 <span style={{ fontSize:12, color:"#9ca3af" }}>one-time · no subscription</span>
               </div>
               <div style={{ fontSize:11, color:"#6b7280", marginBottom:16 }}>{plan.desc}</div>
               <div style={{ display:"flex", flexDirection:"column", gap:7, marginBottom:20 }}>
                 {plan.features.map(f => (
                   <div key={f} style={{ display:"flex", gap:8, fontSize:12, color:"#374151", alignItems:"flex-start" }}>
-                    <span style={{ color:plan.color, flexShrink:0, fontWeight:700 }}>✓</span>{f}
+                    <span style={{ marginTop:1 }}><Check size={13}/></span>{f}
                   </div>
                 ))}
               </div>
-              <button onClick={() => onPurchase(plan)} style={{ width:"100%", padding:"12px", borderRadius:10, fontFamily:"'Geist',sans-serif", fontSize:13, fontWeight:700, cursor:"pointer", background:plan.badge?plan.color:"transparent", border:plan.badge?"none":`2px solid ${plan.color}`, color:plan.badge?"white":plan.color, transition:"all .2s" }}>
+              <button onClick={() => onPurchase(plan)} style={{ width:"100%", padding:"12px", borderRadius:10, fontFamily:"'Geist',sans-serif", fontSize:13, fontWeight:700, cursor:"pointer", background:plan.badge?"#2563eb":"transparent", border:plan.badge?"none":`2px solid ${"#2563eb"}`, color:plan.badge?"white":"#2563eb", transition:"all .2s" }}>
                 Get {plan.credits} Credits →
               </button>
             </div>
           ))}
         </div>
         <div style={{ display:"flex", justifyContent:"center", gap:32, fontSize:12, color:"#9ca3af", flexWrap:"wrap" }}>
-          {["🔒 Secure checkout via Paddle","⚡ 1 credit = 1 full landing page","💾 Credits never expire","↩ 14-day money back guarantee"].map(t => <span key={t}>{t}</span>)}
+          {["Secure checkout via Paddle","1 credit = 1 full landing page","Credits never expire","14-day money-back guarantee"].map(t => <span key={t} style={{ display:"inline-flex", alignItems:"center", gap:6 }}><Check size={12}/> {t}</span>)}
         </div>
       </div>
     </div>
@@ -1181,7 +1176,7 @@ function GeneratingScreen({ form, onDone, onError, onStage }) {
         const slots = Array.from({ length: 6 }, (_, i) => results[i] || firstOk);
         imageSlots = slots;
         const okCount = results.filter(Boolean).length;
-        if (!cancelled) setImgStatus(okCount > 0 ? `Found ${okCount} photos ✓` : "Using styled design…");
+        if (!cancelled) setImgStatus(okCount > 0 ? `Found ${okCount} photos` : "Using styled design…");
         return fetch("/api/generate", {
           method: "POST",
           headers: {
@@ -1282,16 +1277,15 @@ function GeneratingScreen({ form, onDone, onError, onStage }) {
         <div style={{ position:"absolute", inset:0, borderRadius:"50%", border:"1px solid #f3f4f6" }}/>
         <div style={{ position:"absolute", inset:0, borderRadius:"50%", border:"3px solid transparent", borderTopColor:"#2563eb", animation:"spin .8s linear infinite" }}/>
         <div style={{ position:"absolute", inset:10, borderRadius:"50%", border:"2px solid transparent", borderTopColor:"#2563eb40", animation:"spin 1.5s linear infinite reverse" }}/>
-        <div style={{ position:"absolute", inset:0, display:"flex", alignItems:"center", justifyContent:"center", fontSize:26 }}>✦</div>
       </div>
-      <div style={{ fontSize:18, fontWeight:700, color:"#111827", marginBottom:6, minHeight:28 }}>{stageLabels[stage]}</div>
+      <div style={{ fontSize:18, fontWeight:700, color:"#16181d", marginBottom:6, minHeight:28, letterSpacing:"-0.01em" }}>{stageLabels[stage]}</div>
       {stage === 3 && <div style={{ fontSize:12, color:"#2563eb", marginBottom:8, fontWeight:600 }}>{imgStatus}</div>}
       <div style={{ fontSize:13, color:"#6b7280", marginBottom:28, maxWidth:300, lineHeight:1.6 }}>
         Building your SEO-optimised page for <strong style={{ color:"#2563eb" }}>{form.name}</strong>
       </div>
       <div style={{ width:"100%", maxWidth:360, marginBottom:20 }}>
         <div style={{ height:4, background:"#f3f4f6", borderRadius:2, overflow:"hidden" }}>
-          <div style={{ height:"100%", background:"linear-gradient(90deg,#2563eb,#fb923c)", borderRadius:2, width:`${pct}%`, transition:"width .8s ease" }}/>
+          <div style={{ height:"100%", background:"linear-gradient(90deg,#2563eb,#60a5fa)", borderRadius:2, width:`${pct}%`, transition:"width .8s ease" }}/>
         </div>
         <div style={{ display:"flex", justifyContent:"space-between", marginTop:6, fontSize:11, color:"#9ca3af" }}>
           <span>{stageLabels[stage]}</span><span>{pct}%</span>
@@ -1300,7 +1294,7 @@ function GeneratingScreen({ form, onDone, onError, onStage }) {
       <div style={{ padding:"14px 20px", background:"#eff6ff", border:"1px solid #bfdbfe", borderRadius:12 }}>
         <div style={{ fontSize:10, color:"#2563eb", letterSpacing:1.5, textTransform:"uppercase", marginBottom:4 }}>Generating for</div>
         <div style={{ fontSize:17, fontWeight:800, color:"#111827", marginBottom:2 }}>{form.name}</div>
-        <div style={{ fontSize:12, color:"#ea580c" }}>{form.industry}</div>
+        <div style={{ fontSize:12, color:"#1d4ed8" }}>{form.industry}</div>
       </div>
     </div>
   );
@@ -1353,7 +1347,7 @@ function EditChat() {
       setUndoStack(s => [...s, generatedHtml]);
       setGeneratedHtml(d.html);
       refreshCredits();
-      toast(d.skipped ? `Applied — ${d.applied} change${d.applied > 1 ? "s" : ""} (${d.skipped} skipped)` : "Change applied ✓", "success");
+      toast(d.skipped ? `Applied — ${d.applied} change${d.applied > 1 ? "s" : ""} (${d.skipped} skipped)` : "Change applied", "success");
       mark(idx, "ok");
     } catch {
       toast("Network error — please try again.", "error");
@@ -1372,12 +1366,12 @@ function EditChat() {
     toast("Reverted last edit", "info");
   };
 
-  const statusIcon = { pending: "⏳", ok: "✓", fail: "✗" };
-  const statusColor = { pending: "#9ca3af", ok: "#16a34a", fail: "#dc2626" };
+  const statusIcon = { pending: "…", ok: "✓", fail: "✕" };
+  const statusColor = { pending: "#9ca3af", ok: "#15803d", fail: "#dc2626" };
 
   return (
-    <div style={{ border: "1px solid #bfdbfe", background: "linear-gradient(135deg,#eff6ff,#fffbf5)", borderRadius: 12, padding: "14px 16px", marginBottom: 14 }}>
-      <div style={{ fontSize: 11, fontWeight: 700, color: "#2563eb", letterSpacing: .5, textTransform: "uppercase", marginBottom: 8 }}>✦ Edit with AI</div>
+    <div style={{ border: "1px solid #bfdbfe", background: "#eff6ff", borderRadius: 12, padding: "14px 16px", marginBottom: 14 }}>
+      <div style={{ fontSize: 11, fontWeight: 700, color: "#2563eb", letterSpacing: .5, textTransform: "uppercase", marginBottom: 8 }}>Edit with AI</div>
 
       {transcript.length > 0 && (
         <div style={{ display: "flex", flexDirection: "column", gap: 5, marginBottom: 10, maxHeight: 132, overflowY: "auto" }}>
@@ -1409,10 +1403,10 @@ function EditChat() {
       </div>
 
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginTop: 8 }}>
-        <span style={{ fontSize: 10, color: "#9ca3af" }}>1 credit per edit · ⏎ to send</span>
+        <span style={{ fontSize: 10, color: "#9ca3af" }}>1 credit per edit · Enter to send</span>
         <button onClick={undo} disabled={!undoStack.length || busy}
           style={{ background: "none", border: "none", fontSize: 11, fontWeight: 600, color: !undoStack.length || busy ? "#d1d5db" : "#2563eb", cursor: !undoStack.length || busy ? "not-allowed" : "pointer", fontFamily: "inherit" }}>
-          ↩ Undo last edit{undoStack.length > 1 ? ` (${undoStack.length})` : ""}
+          Undo last edit{undoStack.length > 1 ? ` (${undoStack.length})` : ""}
         </button>
       </div>
     </div>
@@ -1482,7 +1476,7 @@ function ResultScreen({ html, form, onReset, onBuyMoreCredits }) {
         setPublishedUrl(d.url);
         setPublishedSiteId(d.siteId || null);
         setPublishedHtml(html);          // mark this html as the published version
-        toast("🚀 Page is live!", "success");
+        toast("Page is live", "success");
       }
     } catch {
       setPublishErr("Network error. Please try again.");
@@ -1511,7 +1505,7 @@ function ResultScreen({ html, form, onReset, onBuyMoreCredits }) {
       } else {
         if (d.url) setPublishedUrl(d.url);
         setPublishedHtml(html);          // current html is now the live version
-        toast("🔄 Live site updated!", "success");
+        toast("Live site updated", "success");
       }
     } catch {
       setPublishErr("Network error. Please try again.");
@@ -1531,7 +1525,7 @@ function ResultScreen({ html, form, onReset, onBuyMoreCredits }) {
 
   const shareTwitter = () => {
     if (!publishedUrl) return;
-    window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(`Just built my landing page in 60 seconds with @sitefliq ⚡\n${publishedUrl}`)}`, "_blank");
+    window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(`Just built my landing page with @sitefliq\n${publishedUrl}`)}`, "_blank");
   };
 
   const shareLinkedIn = () => {
@@ -1546,55 +1540,55 @@ function ResultScreen({ html, form, onReset, onBuyMoreCredits }) {
         <div style={{ padding:"18px 22px", borderBottom:"1px solid #f3f4f6", overflowY:"auto", flex:1 }}>
           {/* Success header */}
           <div style={{ display:"flex", alignItems:"center", gap:10, marginBottom:16, padding:"12px 14px", background:"#f0fdf4", border:"1px solid #bbf7d0", borderRadius:12 }}>
-            <div style={{ width:34, height:34, borderRadius:"50%", background:"#dcfce7", border:"2px solid #86efac", display:"flex", alignItems:"center", justifyContent:"center", fontSize:16 }}>✓</div>
+            <div style={{ width:34, height:34, borderRadius:"50%", background:"#dcfce7", border:"2px solid #86efac", display:"flex", alignItems:"center", justifyContent:"center" }}><Check size={16} color="#15803d"/></div>
             <div>
-              <div style={{ fontSize:14, fontWeight:700, color:"#111827" }}>Your page is ready!</div>
+              <div style={{ fontSize:14, fontWeight:700, color:"#16181d" }}>Your page is ready</div>
               <div style={{ fontSize:11, color:"#6b7280" }}>{html.length.toLocaleString()} chars · {form.sections.length} sections</div>
             </div>
           </div>
 
           <button onClick={open} style={{ width:"100%", padding:"10px", background:"white", color:"#374151", border:"1px solid #e5e7eb", borderRadius:9, fontSize:13, fontWeight:600, cursor:"pointer", marginBottom:8, display:"flex", alignItems:"center", justifyContent:"center", gap:8, fontFamily:"inherit" }}>
-            🔗 Open in New Tab
+            Open in new tab
           </button>
 
           {/* Publish */}
           {!publishedUrl ? (
-            <button onClick={publish} disabled={publishing} style={{ width:"100%", padding:"12px", background:publishing?"#e5e7eb":"#111827", color:publishing?"#9ca3af":"white", border:"none", borderRadius:9, fontSize:14, fontWeight:700, cursor:publishing?"not-allowed":"pointer", marginBottom:8, display:"flex", alignItems:"center", justifyContent:"center", gap:8, fontFamily:"inherit", transition:"all .2s" }}>
-              {publishing ? <><span style={{ width:14, height:14, border:"2px solid #9ca3af", borderTopColor:"transparent", borderRadius:"50%", animation:"spin .7s linear infinite", display:"inline-block" }}/> Publishing…</> : "🚀 Publish Live"}
+            <button onClick={publish} disabled={publishing} style={{ width:"100%", padding:"12px", background:publishing?"#e5e7eb":"#16181d", color:publishing?"#9ca3af":"white", border:"none", borderRadius:9, fontSize:14, fontWeight:600, cursor:publishing?"not-allowed":"pointer", marginBottom:8, display:"flex", alignItems:"center", justifyContent:"center", gap:8, fontFamily:"inherit", transition:"all .2s" }}>
+              {publishing ? <><span style={{ width:14, height:14, border:"2px solid #9ca3af", borderTopColor:"transparent", borderRadius:"50%", animation:"spin .7s linear infinite", display:"inline-block" }}/> Publishing…</> : "Publish live"}
             </button>
           ) : (
             <div style={{ background:"#f0fdf4", border:"1px solid #86efac", borderRadius:9, padding:"12px 14px", marginBottom:8 }}>
-              <div style={{ fontSize:12, fontWeight:700, color:"#16a34a", marginBottom:6 }}>✓ Live at:</div>
+              <div style={{ fontSize:12, fontWeight:700, color:"#15803d", marginBottom:6, display:"flex", alignItems:"center", gap:6 }}><Check size={13} color="#15803d"/> Live at</div>
               <div style={{ display:"flex", gap:6, alignItems:"center", marginBottom:10 }}>
                 <a href={publishedUrl} target="_blank" rel="noreferrer" style={{ fontSize:11, color:"#0369a1", flex:1, overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap", textDecoration:"none", fontWeight:600 }}>{publishedUrl}</a>
-                <button onClick={copyUrl} style={{ padding:"4px 10px", background:"white", border:"1px solid #86efac", borderRadius:6, fontSize:11, fontWeight:600, cursor:"pointer", fontFamily:"inherit", color:urlCopied?"#16a34a":"#374151", whiteSpace:"nowrap" }}>{urlCopied?"✓ Copied":"Copy"}</button>
-                <button onClick={() => window.open(publishedUrl,"_blank")} style={{ padding:"4px 10px", background:"#16a34a", border:"none", borderRadius:6, fontSize:11, fontWeight:600, cursor:"pointer", fontFamily:"inherit", color:"white", whiteSpace:"nowrap" }}>Open</button>
+                <button onClick={copyUrl} style={{ padding:"4px 10px", background:"white", border:"1px solid #86efac", borderRadius:6, fontSize:11, fontWeight:600, cursor:"pointer", fontFamily:"inherit", color:urlCopied?"#15803d":"#374151", whiteSpace:"nowrap" }}>{urlCopied?"Copied":"Copy"}</button>
+                <button onClick={() => window.open(publishedUrl,"_blank")} style={{ padding:"4px 10px", background:"#15803d", border:"none", borderRadius:6, fontSize:11, fontWeight:600, cursor:"pointer", fontFamily:"inherit", color:"white", whiteSpace:"nowrap" }}>Open</button>
               </div>
               {/* Share buttons */}
               <div style={{ display:"flex", gap:6 }}>
-                <button onClick={shareTwitter} style={{ flex:1, padding:"6px", background:"#000", color:"white", border:"none", borderRadius:6, fontSize:11, fontWeight:700, cursor:"pointer", fontFamily:"inherit" }}>𝕏 Share</button>
-                <button onClick={shareLinkedIn} style={{ flex:1, padding:"6px", background:"#0077b5", color:"white", border:"none", borderRadius:6, fontSize:11, fontWeight:700, cursor:"pointer", fontFamily:"inherit" }}>in Share</button>
+                <button onClick={shareTwitter} style={{ flex:1, padding:"6px", background:"#16181d", color:"white", border:"none", borderRadius:6, fontSize:11, fontWeight:600, cursor:"pointer", fontFamily:"inherit" }}>Share on X</button>
+                <button onClick={shareLinkedIn} style={{ flex:1, padding:"6px", background:"#0077b5", color:"white", border:"none", borderRadius:6, fontSize:11, fontWeight:600, cursor:"pointer", fontFamily:"inherit" }}>Share on LinkedIn</button>
               </div>
             </div>
           )}
           {hasUnpublishedChanges && (
-            <div style={{ background:"#fffbeb", border:"1px solid #fde68a", borderRadius:9, padding:"10px 14px", marginBottom:8, display:"flex", alignItems:"center", justifyContent:"space-between", gap:10 }}>
-              <span style={{ fontSize:12, color:"#b45309", fontWeight:600 }}>⚠ You have unpublished changes</span>
-              <button onClick={republish} disabled={republishing} style={{ padding:"6px 14px", background:republishing?"#e5e7eb":"#d97706", color:republishing?"#9ca3af":"white", border:"none", borderRadius:7, fontSize:12, fontWeight:700, cursor:republishing?"not-allowed":"pointer", fontFamily:"inherit", whiteSpace:"nowrap", display:"flex", alignItems:"center", gap:6 }}>
-                {republishing ? <><span style={{ width:12, height:12, border:"2px solid #9ca3af", borderTopColor:"transparent", borderRadius:"50%", animation:"spin .7s linear infinite", display:"inline-block" }}/> Republishing…</> : "🔄 Republish"}
+            <div style={{ background:"#eff6ff", border:"1px solid #bfdbfe", borderRadius:9, padding:"10px 14px", marginBottom:8, display:"flex", alignItems:"center", justifyContent:"space-between", gap:10 }}>
+              <span style={{ fontSize:12, color:"#1d4ed8", fontWeight:600 }}>You have unpublished changes</span>
+              <button onClick={republish} disabled={republishing} style={{ padding:"6px 14px", background:republishing?"#e5e7eb":"#2563eb", color:republishing?"#9ca3af":"white", border:"none", borderRadius:7, fontSize:12, fontWeight:600, cursor:republishing?"not-allowed":"pointer", fontFamily:"inherit", whiteSpace:"nowrap", display:"flex", alignItems:"center", gap:6 }}>
+                {republishing ? <><span style={{ width:12, height:12, border:"2px solid #9ca3af", borderTopColor:"transparent", borderRadius:"50%", animation:"spin .7s linear infinite", display:"inline-block" }}/> Republishing…</> : "Republish"}
               </button>
             </div>
           )}
           {publishErr && <div style={{ fontSize:11, color:"#dc2626", marginBottom:8, textAlign:"center" }}>{publishErr}</div>}
 
           <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:8, marginBottom:14 }}>
-            <button onClick={dl} style={{ padding:"9px", background:"white", color:"#374151", border:"1px solid #e5e7eb", borderRadius:8, fontSize:12, fontWeight:600, cursor:"pointer", fontFamily:"inherit" }}>↓ Download HTML</button>
-            <button onClick={copy} style={{ padding:"9px", background:"white", color:copied?"#16a34a":"#374151", border:`1px solid ${copied?"#86efac":"#e5e7eb"}`, borderRadius:8, fontSize:12, fontWeight:600, cursor:"pointer", fontFamily:"inherit" }}>{copied?"✓ Copied!":"{ } Copy Code"}</button>
+            <button onClick={dl} style={{ padding:"9px", background:"white", color:"#374151", border:"1px solid #e5e7eb", borderRadius:8, fontSize:12, fontWeight:600, cursor:"pointer", fontFamily:"inherit" }}>Download HTML</button>
+            <button onClick={copy} style={{ padding:"9px", background:"white", color:copied?"#15803d":"#374151", border:`1px solid ${copied?"#86efac":"#e5e7eb"}`, borderRadius:8, fontSize:12, fontWeight:600, cursor:"pointer", fontFamily:"inherit" }}>{copied?"Copied":"Copy code"}</button>
           </div>
 
           {/* Buy more credits */}
-          <button onClick={onBuyMoreCredits} style={{ width:"100%", padding:"10px", background:"#eff6ff", color:"#2563eb", border:"1px solid #bfdbfe", borderRadius:8, fontSize:13, fontWeight:700, cursor:"pointer", fontFamily:"inherit", marginBottom:14 }}>
-            ⚡ Buy More Credits
+          <button onClick={onBuyMoreCredits} style={{ width:"100%", padding:"10px", background:"#eff6ff", color:"#2563eb", border:"1px solid #bfdbfe", borderRadius:8, fontSize:13, fontWeight:600, cursor:"pointer", fontFamily:"inherit", marginBottom:14 }}>
+            Buy more credits
           </button>
 
           {/* AI chat editing (Step 2) */}
@@ -1602,15 +1596,15 @@ function ResultScreen({ html, form, onReset, onBuyMoreCredits }) {
 
           {/* Included features */}
           <div style={{ display:"flex", flexDirection:"column", gap:6, marginBottom:16 }}>
-            {[["🔍","SEO + Schema Markup"],["🎯","5+ Conversion CTAs"],["📱","Mobile Responsive"],["🖼️",`Real photos for ${form.industry}`],["✍️","Niche-specific copy"]].map(([ic,t]) => (
-              <div key={t} style={{ display:"flex", gap:9, padding:"7px 10px", background:"#f9fafb", borderRadius:7, fontSize:12, color:"#374151", alignItems:"center" }}>
-                <span>{ic}</span><span>{t}</span>
+            {["SEO + schema markup","5+ conversion CTAs","Mobile responsive",`Real photos for ${form.industry}`,"Niche-specific copy"].map(label => (
+              <div key={label} style={{ display:"flex", gap:9, padding:"7px 10px", background:"#f6f7f9", borderRadius:7, fontSize:12, color:"#374151", alignItems:"center" }}>
+                <Check size={13}/><span>{label}</span>
               </div>
             ))}
           </div>
 
           <button onClick={onReset} style={{ width:"100%", padding:"10px", background:"white", color:"#374151", border:"1px solid #e5e7eb", borderRadius:8, fontSize:13, fontWeight:500, cursor:"pointer", fontFamily:"inherit" }}>
-            ← Build Another Page
+            Build another page
           </button>
         </div>
       </div>
@@ -1697,7 +1691,7 @@ function AuthModal({ mode = "signin", onSuccess, onClose }) {
           </button>
         </form>
         {forgot && <button onClick={() => { setForgot(false); setErr(""); setMsg(""); }} style={{ width:"100%", padding:"10px", background:"none", border:"1px solid #e5e7eb", borderRadius:10, fontSize:13, color:"#6b7280", cursor:"pointer", fontFamily:"inherit" }}>← Back to Sign In</button>}
-        <p style={{ textAlign:"center", marginTop:12, fontSize:12, color:"#9ca3af" }}>🔒 Secure · Your data is never shared</p>
+        <p style={{ textAlign:"center", marginTop:12, fontSize:12, color:"#9ca3af" }}>Secure · Your data is never shared</p>
       </div>
     </div>
   );
@@ -1733,8 +1727,8 @@ function ResetPasswordModal({ token, onDone }) {
           <p style={{ fontSize:13, color:"#6b7280" }}>Choose a strong password for your account</p>
         </div>
         {done ? (
-          <div style={{ background:"#f0fdf4", border:"1px solid #bbf7d0", borderRadius:8, padding:"16px", textAlign:"center", fontSize:14, color:"#16a34a", fontWeight:600 }}>
-            ✓ Password updated! Redirecting…
+          <div style={{ background:"#f0fdf4", border:"1px solid #bbf7d0", borderRadius:8, padding:"16px", textAlign:"center", fontSize:14, color:"#15803d", fontWeight:600 }}>
+            Password updated. Redirecting…
           </div>
         ) : (
           <form onSubmit={e => { e.preventDefault(); handle(); }}>
@@ -2093,7 +2087,7 @@ function ExamplePage({ onBack, onBuild }) {
       <div style={{ padding:"24px 28px" }}>
         <div style={{ borderRadius:14, overflow:"hidden", boxShadow:"0 4px 30px rgba(0,0,0,.1)", border:"1px solid #e5e7eb" }}>
           <div style={{ background:"#f1f5f9", padding:"10px 16px", display:"flex", alignItems:"center", gap:10, borderBottom:"1px solid #e5e7eb" }}>
-            <div style={{ display:"flex", gap:5 }}>{["#ef4444","#f59e0b","#22c55e"].map(c => <div key={c} style={{ width:10, height:10, borderRadius:"50%", background:c }}/>)}</div>
+            <div style={{ display:"flex", gap:5 }}>{["#ef4444","#0ea5e9","#22c55e"].map(c => <div key={c} style={{ width:10, height:10, borderRadius:"50%", background:c }}/>)}</div>
             <div style={{ flex:1, background:"white", borderRadius:20, padding:"5px 14px", fontSize:11, color:"#6b7280", display:"flex", alignItems:"center", gap:6, maxWidth:400, margin:"0 auto" }}>
               <span>🔒</span> peakridgeroofing.netlify.app
             </div>
@@ -2444,24 +2438,24 @@ export default function Sitefliq() {
 
       {/* Top bar */}
       <div style={{ height:50, background:"white", borderBottom:"1px solid #f3f4f6", display:"flex", alignItems:"center", justifyContent:"space-between", padding:"0 20px", flexShrink:0 }}>
-        <div onClick={() => setScreen("home")} style={{ display:"flex", alignItems:"center", gap:7, cursor:"pointer" }}>
+        <div onClick={() => setScreen("home")} style={{ display:"flex", alignItems:"center", gap:8, cursor:"pointer" }}>
           <span style={{ fontSize:15, color:"#9ca3af" }}>←</span>
-          <div style={{ width:23, height:23, background:"#2563eb", borderRadius:5, display:"flex", alignItems:"center", justifyContent:"center", fontSize:11, color:"white", fontWeight:800 }}>S</div>
-          <span style={{ fontSize:13, fontWeight:700, color:"#111827" }}>Landing Page Builder</span>
+          <div style={{ width:23, height:23, background:"#2563eb", borderRadius:6, display:"flex", alignItems:"center", justifyContent:"center", fontSize:11, color:"white", fontWeight:700 }}>S</div>
+          <span style={{ fontSize:13, fontWeight:700, color:"#16181d" }}>Website Builder</span>
         </div>
         <div style={{ fontSize:11, color:"#9ca3af" }}>
-          {screen==="builder"    && "⚡ Powered by Claude AI"}
-          {screen==="generating" && <span style={{ color:"#2563eb" }}>⚡ Generating…</span>}
-          {screen==="result"     && <span style={{ color:"#16a34a", fontWeight:600 }}>✓ Page Ready — {form.name}</span>}
+          {screen==="builder"    && "Powered by Claude AI"}
+          {screen==="generating" && <span style={{ color:"#2563eb" }}>Generating…</span>}
+          {screen==="result"     && <span style={{ color:"#15803d", fontWeight:600 }}>Page ready — {form.name}</span>}
         </div>
         <div style={{ display:"flex", alignItems:"center", gap:8 }}>
           {user ? (
             <>
-              <span style={{ fontSize:12, background:"#eff6ff", color:credits<=1?"#dc2626":"#2563eb", border:`1px solid ${credits<=1?"#fecaca":"#bfdbfe"}`, borderRadius:20, padding:"3px 10px", fontWeight:700 }}>⚡ {credits} credits</span>
+              <span style={{ fontSize:12, background:"#eff6ff", color:credits<=1?"#dc2626":"#2563eb", border:`1px solid ${credits<=1?"#fecaca":"#bfdbfe"}`, borderRadius:20, padding:"3px 11px", fontWeight:600 }}>{credits} credits</span>
               <button onClick={handleSignOut} style={{ fontSize:12, background:"none", border:"1px solid #e5e7eb", borderRadius:6, padding:"4px 10px", cursor:"pointer", color:"#6b7280" }}>Sign out</button>
             </>
           ) : (
-            <button onClick={() => setShowAuth(true, "signin")} style={{ fontSize:12, background:"#2563eb", color:"white", border:"none", borderRadius:6, padding:"5px 12px", cursor:"pointer", fontWeight:600 }}>Sign In</button>
+            <button onClick={() => setShowAuth(true, "signin")} style={{ fontSize:12, background:"#2563eb", color:"white", border:"none", borderRadius:6, padding:"5px 12px", cursor:"pointer", fontWeight:600 }}>Sign in</button>
           )}
         </div>
       </div>
@@ -2518,7 +2512,7 @@ export default function Sitefliq() {
                 await refreshCredits();
                 setGeneratedHtml(html);
                 setScreen("result");
-                toast("🎉 Your page is ready!", "success");
+                toast("Your page is ready", "success");
               }}
               onError={(err) => {
                 // The server may have auto-refunded (failed/truncated generation),
