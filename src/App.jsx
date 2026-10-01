@@ -826,6 +826,15 @@ function BuilderPanel({ form, up, togSec, onNext, ready, credits, user, onBuyCre
 
         {tab === "style" && (
           <div style={{ display:"flex", flexDirection:"column", gap:22 }}>
+            <div onClick={() => up("aiHero", form.aiHero === false)} style={{ display:"flex", alignItems:"center", justifyContent:"space-between", gap:12, padding:"12px 14px", borderRadius:10, cursor:"pointer", border:`1.5px solid ${form.aiHero!==false?"#2563eb":"#e5e7eb"}`, background:form.aiHero!==false?"#eff6ff":"white", transition:"all .15s" }}>
+              <div>
+                <div style={{ fontSize:13, fontWeight:600, color:"#16181d" }}>AI hero image <span style={{ color:"#2563eb" }}>+1 credit</span></div>
+                <div style={{ fontSize:11, color:"#6b7280", marginTop:2, lineHeight:1.5 }}>A unique AI-generated scene for your hero. Every other image still uses stock photos.</div>
+              </div>
+              <div style={{ width:40, height:22, borderRadius:999, background:form.aiHero!==false?"#2563eb":"#d1d5db", position:"relative", flexShrink:0, transition:"background .15s" }}>
+                <div style={{ position:"absolute", top:2, left:form.aiHero!==false?20:2, width:18, height:18, borderRadius:"50%", background:"white", transition:"left .15s" }}/>
+              </div>
+            </div>
             <div>
               <label style={{ fontSize:11, fontWeight:700, color:"#374151", letterSpacing:.5, display:"block", marginBottom:10, textTransform:"uppercase" }}>Colour Palette</label>
               <div style={{ display:"grid", gridTemplateColumns:"repeat(3,1fr)", gap:8 }}>
@@ -1122,6 +1131,7 @@ function GeneratingScreen({ form, onDone, onError, onStage }) {
   const [pct, setPct] = useState(0);
   const [stage, setStage] = useState(0);
   const [imgStatus, setImgStatus] = useState("Sourcing photos…");
+  const setHeroUrl = useAppStore(s => s.setHeroUrl);
 
   const stageLabels = [
     "Reading your business details…",
@@ -1168,13 +1178,31 @@ function GeneratingScreen({ form, onDone, onError, onStage }) {
         .catch(() => null);
 
     Promise.all(queries.map(q => fetchImg(q)))
-      .then(results => {
+      .then(async results => {
         // Keep slots index-aligned to the keyword order; any slot that failed
         // falls back to the first successful image, so one Pexels miss never
         // shifts every section's photo. All-null only when every fetch failed.
         const firstOk = results.find(Boolean) || null;
         const slots = Array.from({ length: 6 }, (_, i) => results[i] || firstOk);
+
+        // AI hero image (optional, +1 credit, best-effort): replaces slot 0 only;
+        // Pexels is kept for every other image. On any failure or insufficient
+        // credit the server refunds the extra credit and we keep the Pexels hero.
+        if (form.aiHero !== false) {
+          try {
+            setImgStatus("Creating AI hero image…");
+            const pal = PALETTES.find(p => p.id === form.palette) || PALETTES[0];
+            const hr = await fetch("/api/hero-image", {
+              method: "POST",
+              headers: { "Content-Type":"application/json", "Authorization": "Bearer " + (sb._token || "") },
+              body: JSON.stringify({ mode:"clean", industry:form.industry, description:form.description, vibe:form.vibe, colors:{ bg:pal.bg, surface:pal.surface, accent:pal.accent } }),
+            });
+            if (hr.ok) { const hd = await hr.json().catch(() => ({})); if (hd.url) slots[0] = hd.url; }
+          } catch { /* keep the Pexels hero */ }
+        }
+
         imageSlots = slots;
+        setHeroUrl(slots[0] || "");
         const okCount = results.filter(Boolean).length;
         if (!cancelled) setImgStatus(okCount > 0 ? `Found ${okCount} photos` : "Using styled design…");
         return fetch("/api/generate", {
@@ -1427,6 +1455,42 @@ function ResultScreen({ html, form, onReset, onBuyMoreCredits }) {
   const [publishErr, setPublishErr] = useState(null);
   const [urlCopied, setUrlCopied] = useState(false);
   const [showConfetti, setShowConfetti] = useState(true);
+  const [heroBusy, setHeroBusy] = useState(null); // "clean" | "branded" | null
+
+  const setGeneratedHtml = useAppStore(s => s.setGeneratedHtml);
+  const refreshCredits = useAppStore(s => s.refreshCredits);
+  const heroUrl = useAppStore(s => s.heroUrl);
+  const setHeroUrl = useAppStore(s => s.setHeroUrl);
+
+  // Regenerate the hero image (clean scene) or re-render it with the logo baked
+  // into the scene (branded). 1 credit each; the new image URL is swapped in
+  // place of the current hero URL throughout the page HTML.
+  const regenHero = async (mode) => {
+    if (heroBusy) return;
+    if (mode === "branded" && !form.logo) { toast("Upload a logo in the builder first", "warning"); return; }
+    if (!heroUrl) { toast("No hero image to replace on this page", "warning"); return; }
+    setHeroBusy(mode);
+    try {
+      const pal = PALETTES.find(p => p.id === form.palette) || PALETTES[0];
+      const r = await fetch("/api/hero-image", {
+        method: "POST",
+        headers: { "Content-Type":"application/json", "Authorization": "Bearer " + (sb._token || "") },
+        body: JSON.stringify({
+          mode, industry: form.industry, description: form.description, vibe: form.vibe,
+          colors: { bg: pal.bg, surface: pal.surface, accent: pal.accent },
+          logo: mode === "branded" ? form.logo : undefined,
+        }),
+      });
+      if (r.status === 402) { toast("Not enough credits for a hero image", "warning"); refreshCredits(); return; }
+      const d = await r.json().catch(() => ({}));
+      if (!r.ok || !d.url) { toast(d.message || "Couldn't generate the hero image", "error"); refreshCredits(); return; }
+      setGeneratedHtml(html.split(heroUrl).join(d.url));   // swap every hero occurrence
+      setHeroUrl(d.url);
+      refreshCredits();
+      toast(mode === "branded" ? "Branded hero applied" : "New hero applied", "success");
+    } catch { toast("Network error — please try again", "error"); refreshCredits(); }
+    finally { setHeroBusy(null); }
+  };
 
   useEffect(() => {
     const b = new Blob([html], { type:"text/html" });
@@ -1584,6 +1648,23 @@ function ResultScreen({ html, form, onReset, onBuyMoreCredits }) {
           <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:8, marginBottom:14 }}>
             <button onClick={dl} style={{ padding:"9px", background:"white", color:"#374151", border:"1px solid #e5e7eb", borderRadius:8, fontSize:12, fontWeight:600, cursor:"pointer", fontFamily:"inherit" }}>Download HTML</button>
             <button onClick={copy} style={{ padding:"9px", background:"white", color:copied?"#15803d":"#374151", border:`1px solid ${copied?"#86efac":"#e5e7eb"}`, borderRadius:8, fontSize:12, fontWeight:600, cursor:"pointer", fontFamily:"inherit" }}>{copied?"Copied":"Copy code"}</button>
+          </div>
+
+          {/* Hero image controls */}
+          <div style={{ marginBottom:14 }}>
+            <div style={{ fontSize:10, fontWeight:600, color:"#8b94a4", marginBottom:7, textTransform:"uppercase", letterSpacing:.5 }}>Hero image · 1 credit each</div>
+            <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:8 }}>
+              <button onClick={() => regenHero("clean")} disabled={!!heroBusy}
+                style={{ padding:"9px", background:"white", color:heroBusy?"#9ca3af":"#2563eb", border:"1px solid #bfdbfe", borderRadius:8, fontSize:12, fontWeight:600, cursor:heroBusy?"not-allowed":"pointer", fontFamily:"inherit", display:"flex", alignItems:"center", justifyContent:"center", gap:7 }}>
+                {heroBusy==="clean" ? <span style={{ width:12, height:12, border:"2px solid #9ca3af", borderTopColor:"transparent", borderRadius:"50%", animation:"spin .7s linear infinite", display:"inline-block" }}/> : null}
+                Regenerate hero
+              </button>
+              <button onClick={() => regenHero("branded")} disabled={!!heroBusy || !form.logo} title={!form.logo ? "Upload a logo in the builder to use this" : undefined}
+                style={{ padding:"9px", background:"white", color:(heroBusy||!form.logo)?"#9ca3af":"#2563eb", border:`1px solid ${(!form.logo)?"#e5e7eb":"#bfdbfe"}`, borderRadius:8, fontSize:12, fontWeight:600, cursor:(heroBusy||!form.logo)?"not-allowed":"pointer", fontFamily:"inherit", display:"flex", alignItems:"center", justifyContent:"center", gap:7 }}>
+                {heroBusy==="branded" ? <span style={{ width:12, height:12, border:"2px solid #9ca3af", borderTopColor:"transparent", borderRadius:"50%", animation:"spin .7s linear infinite", display:"inline-block" }}/> : null}
+                Brand it in the scene
+              </button>
+            </div>
           </div>
 
           {/* Buy more credits */}

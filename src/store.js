@@ -9,6 +9,7 @@ const DEFAULT_FORM = {
   location:"", phone:"", email:"", cta:"Get Started Today",
   palette:"noir", vibe:"bold", logo:"", importedColours:[],
   sections:["hero","social_proof","services","about","testimonials","contact"],
+  aiHero:true,   // AI hero image (+1 credit), on by default
 };
 
 // Supabase auth/data helper
@@ -115,6 +116,11 @@ export const useAppStore = create(
       // Generated HTML
       generatedHtml: "",
       setGeneratedHtml: (html) => set({ generatedHtml: html }),
+
+      // Current hero image URL (slot __IMG_0__) — set at generation, used by the
+      // result-screen "Regenerate hero" / "Brand it" actions to swap it in-place.
+      heroUrl: "",
+      setHeroUrl: (url) => set({ heroUrl: url }),
 
       // UI state
       showAuth: false,

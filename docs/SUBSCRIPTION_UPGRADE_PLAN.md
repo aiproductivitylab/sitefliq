@@ -561,7 +561,14 @@ API, no cost. Deliver the list first; apply the top items as prompt edits and
 eyeball before/after. Slots here because it lifts the core product with zero
 external dependency, right after editing lands.
 
-#### Step 3 add-on — AI hero images (Google Nano Banana / Gemini)  *(plan only, not built)*
+**Required quality-pass rule — no emoji icons in generated pages.** Generated
+client pages must **never** use emoji as icons (e.g. 🏠 🔧 ⛈️ for service cards,
+⚡ in footers). `buildPrompt` must instruct the model to use clean **inline SVG
+icons** (simple line/stroke icons that inherit the page's accent colour) instead,
+so output looks professionally designed rather than clip-art. Audit the example
+output and the `EXAMPLE_HTML` sample against this.
+
+#### Step 3 add-on — AI hero images (Google Nano Banana / Gemini)  *(IMPLEMENTED — see api/hero-image.js)*
 
 **What it does:** Replace the *hero* image only with an AI-generated scene tailored
 to the business, while keeping **Pexels for gallery and section images** (hybrid —
