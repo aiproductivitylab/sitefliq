@@ -1,7 +1,33 @@
 // Sitefliq design system — reusable components.
 // Built on the tokens in theme.js. Inline-styled (the app uses no CSS framework).
 import { useState } from "react";
-import { theme as t } from "./theme";
+import { theme as t, themeKey } from "./theme";
+
+/* TEMPORARY palette switcher — compare ?theme=a|b|c|d live. Remove once chosen. */
+export function ThemeSwitcher() {
+  const opts = [["a", "Emerald"], ["b", "Blue"], ["c", "Gold"], ["d", "Orange"]];
+  const go = (k) => {
+    try {
+      const u = new URL(window.location.href);
+      u.searchParams.set("theme", k);
+      window.location.href = u.toString();
+    } catch { /* noop */ }
+  };
+  return (
+    <div style={{ position: "fixed", right: 16, bottom: 16, zIndex: 9999, display: "flex", gap: 4, padding: 6,
+      background: "#ffffff", border: "1px solid #d3d8e0", borderRadius: 999, boxShadow: "0 6px 20px rgba(16,24,40,.14)" }}>
+      {opts.map(([k, label]) => (
+        <button key={k} onClick={() => go(k)} title={label} style={{
+          padding: "6px 11px", borderRadius: 999, fontSize: 12, fontWeight: 700, cursor: "pointer",
+          fontFamily: t.font.sans,
+          border: themeKey === k ? "1px solid #0b1221" : "1px solid transparent",
+          background: themeKey === k ? "#0b1221" : "transparent",
+          color: themeKey === k ? "#ffffff" : "#5a6474",
+        }}>{label}</button>
+      ))}
+    </div>
+  );
+}
 
 /* Layout ------------------------------------------------------------------ */
 
@@ -54,7 +80,7 @@ export function Button({ variant = "primary", size = "md", as = "button", href, 
   const [hover, setHover] = useState(false);
   const palette = {
     primary:   { bg: t.color.bgInk, bgH: "#161f33", fg: t.color.onInk, border: "transparent" },
-    accent:    { bg: t.color.accent, bgH: t.color.accentHover, fg: "#ffffff", border: "transparent" },
+    accent:    { bg: t.color.accent, bgH: t.color.accentHover, fg: t.color.onAccent, border: "transparent" },
     secondary: { bg: t.color.bg, bgH: t.color.bgAlt, fg: t.color.ink, border: t.color.borderStrong },
     ghost:     { bg: "transparent", bgH: t.color.bgAlt, fg: t.color.text, border: "transparent" },
     onInk:     { bg: "rgba(255,255,255,0.06)", bgH: "rgba(255,255,255,0.12)", fg: t.color.onInk, border: t.color.borderInk },

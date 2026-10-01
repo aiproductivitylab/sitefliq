@@ -3,7 +3,7 @@
 // with Step 5). One-time credit top-ups stay as a small secondary section and
 // keep working through the existing onPurchase/Paddle flow.
 import { theme as t } from "../ui/theme";
-import { Container, Eyebrow, Heading, Text, Button, Card, Badge, Check, MarketingNav, MarketingFooter } from "../ui/kit";
+import { Container, Eyebrow, Heading, Text, Button, Card, Badge, Check, MarketingNav, MarketingFooter, ThemeSwitcher } from "../ui/kit";
 
 const SUBSCRIPTIONS = [
   {
@@ -130,6 +130,7 @@ export default function PricingPage({ onBuild, onHome, onMarketing, user, credit
       </Container>
 
       <MarketingFooter onMarketing={onMarketing || onHome} />
+      <ThemeSwitcher />
     </div>
   );
 }
