@@ -122,6 +122,12 @@ export const useAppStore = create(
       heroUrl: "",
       setHeroUrl: (url) => set({ heroUrl: url }),
 
+      // An AI hero that was generated (and charged) but whose page generation
+      // hasn't succeeded yet. Reused for free if the user retries; cleared once a
+      // generation succeeds or the form is reset.
+      pendingHeroUrl: "",
+      setPendingHeroUrl: (url) => set({ pendingHeroUrl: url }),
+
       // UI state
       showAuth: false,
       authMode: "signin",

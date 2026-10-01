@@ -1127,11 +1127,18 @@ function PricingWall({ form, onBack, onPurchase }) {
 /* ─────────────────────────────────────────────────────────────────────────────
    GENERATING SCREEN
 ───────────────────────────────────────────────────────────────────────────── */
+// Client-side mirror of the server costs (1 page + 1 AI hero). Used only to
+// decide whether to attempt the AI hero; the server remains authoritative.
+const PAGE_PLUS_HERO_COST = 2;
+
 function GeneratingScreen({ form, onDone, onError, onStage }) {
   const [pct, setPct] = useState(0);
   const [stage, setStage] = useState(0);
   const [imgStatus, setImgStatus] = useState("Sourcing photos…");
   const setHeroUrl = useAppStore(s => s.setHeroUrl);
+  const credits = useAppStore(s => s.credits);
+  const pendingHeroUrl = useAppStore(s => s.pendingHeroUrl);
+  const setPendingHeroUrl = useAppStore(s => s.setPendingHeroUrl);
 
   const stageLabels = [
     "Reading your business details…",
@@ -1185,20 +1192,31 @@ function GeneratingScreen({ form, onDone, onError, onStage }) {
         const firstOk = results.find(Boolean) || null;
         const slots = Array.from({ length: 6 }, (_, i) => results[i] || firstOk);
 
-        // AI hero image (optional, +1 credit, best-effort): replaces slot 0 only;
-        // Pexels is kept for every other image. On any failure or insufficient
-        // credit the server refunds the extra credit and we keep the Pexels hero.
+        // AI hero image (optional, +1 credit). Pexels is kept for every other
+        // image. Requires credits for BOTH the page and the hero — if the user can
+        // only afford the page, skip the AI hero and use the Pexels hero. A hero
+        // generated on a previous (failed) attempt is reused for free on retry.
         if (form.aiHero !== false) {
-          try {
-            setImgStatus("Creating AI hero image…");
-            const pal = PALETTES.find(p => p.id === form.palette) || PALETTES[0];
-            const hr = await fetch("/api/hero-image", {
-              method: "POST",
-              headers: { "Content-Type":"application/json", "Authorization": "Bearer " + (sb._token || "") },
-              body: JSON.stringify({ mode:"clean", industry:form.industry, description:form.description, vibe:form.vibe, colors:{ bg:pal.bg, surface:pal.surface, accent:pal.accent } }),
-            });
-            if (hr.ok) { const hd = await hr.json().catch(() => ({})); if (hd.url) slots[0] = hd.url; }
-          } catch { /* keep the Pexels hero */ }
+          if (pendingHeroUrl) {
+            slots[0] = pendingHeroUrl;                 // already paid for — reuse
+          } else if (credits < PAGE_PLUS_HERO_COST) {
+            toast("Not enough credits for an AI hero — using a stock photo instead", "info");
+          } else {
+            try {
+              setImgStatus("Creating AI hero image…");
+              const pal = PALETTES.find(p => p.id === form.palette) || PALETTES[0];
+              const hr = await fetch("/api/hero-image", {
+                method: "POST",
+                headers: { "Content-Type":"application/json", "Authorization": "Bearer " + (sb._token || "") },
+                body: JSON.stringify({ mode:"clean", industry:form.industry, description:form.description, vibe:form.vibe, colors:{ bg:pal.bg, surface:pal.surface, accent:pal.accent } }),
+              });
+              if (hr.ok) {
+                const hd = await hr.json().catch(() => ({}));
+                if (hd.url) { slots[0] = hd.url; setPendingHeroUrl(hd.url); }  // keep for free retry
+              }
+              // 402 / failure: server refunds the hero credit; keep the Pexels hero
+            } catch { /* keep the Pexels hero */ }
+          }
         }
 
         imageSlots = slots;
@@ -2340,6 +2358,8 @@ export default function Sitefliq() {
   const toggleSection = useAppStore(s => s.toggleSection);
   const generatedHtml = useAppStore(s => s.generatedHtml);
   const setGeneratedHtml = useAppStore(s => s.setGeneratedHtml);
+  const setHeroUrl   = useAppStore(s => s.setHeroUrl);
+  const setPendingHeroUrl = useAppStore(s => s.setPendingHeroUrl);
   const showAuth    = useAppStore(s => s.showAuth);
   const authMode    = useAppStore(s => s.authMode);
   const setShowAuth = useAppStore(s => s.setShowAuth);
@@ -2572,6 +2592,8 @@ export default function Sitefliq() {
               onReset={() => {
                 resetForm();
                 setGeneratedHtml("");
+                setHeroUrl("");
+                setPendingHeroUrl("");
                 setScreen("builder");
               }}
             />
@@ -2589,6 +2611,7 @@ export default function Sitefliq() {
                 // The credit was already deducted server-side in /api/generate;
                 // just refresh the balance so the UI reflects it.
                 await refreshCredits();
+                setPendingHeroUrl("");   // hero consumed by a successful page
                 setGeneratedHtml(html);
                 setScreen("result");
                 toast("Your page is ready", "success");

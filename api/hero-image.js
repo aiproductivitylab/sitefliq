@@ -180,15 +180,33 @@ export default async function handler(req, res) {
       return res.status(502).json({ error: 'generation_failed', message: 'Could not generate the hero image.' });
     }
 
+    // Decode the JPEG, then compress to WebP (max 2400px wide, ~quality 80,
+    // aiming for < 400KB) so the hosted hero stays small for page speed. Uses
+    // sharp when available on the runtime; otherwise uploads the original JPEG
+    // unchanged so the feature still works. Logs before/after sizes.
+    const rawBytes = Buffer.from(img.data, 'base64');
+    let outBytes = rawBytes;
+    let outMime = img.mime || 'image/jpeg';
+    let outExt = outMime.includes('png') ? 'png' : 'jpg';
+    const beforeKB = Math.round(rawBytes.length / 1024);
+    try {
+      const sharp = (await import('sharp')).default;
+      const toWebp = (quality) => sharp(rawBytes).rotate().resize({ width: 2400, withoutEnlargement: true }).webp({ quality }).toBuffer();
+      let webp = await toWebp(80);
+      if (webp.length > 400 * 1024) webp = await toWebp(60);   // second pass to aim < 400KB
+      outBytes = webp; outMime = 'image/webp'; outExt = 'webp';
+      console.log(`Hero image compressed: ${beforeKB}KB ${img.mime} -> ${Math.round(outBytes.length / 1024)}KB webp`);
+    } catch (e) {
+      console.warn(`sharp unavailable — uploading original (${beforeKB}KB ${img.mime}):`, e?.message || e);
+    }
+
     // Upload to Supabase Storage (service key bypasses RLS). Bucket must exist and
     // be public-read. Unique per-user path so POST never collides.
-    const bytes = Buffer.from(img.data, 'base64');
-    const ext = img.mime.includes('png') ? 'png' : 'jpg';
-    const path = `${userId}/${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`;
+    const path = `${userId}/${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${outExt}`;
     const upRes = await fetch(`${SUPABASE_URL}/storage/v1/object/${BUCKET}/${path}`, {
       method: 'POST',
-      headers: { apikey: serviceKey, Authorization: 'Bearer ' + serviceKey, 'Content-Type': img.mime, 'x-upsert': 'true' },
-      body: bytes,
+      headers: { apikey: serviceKey, Authorization: 'Bearer ' + serviceKey, 'Content-Type': outMime, 'x-upsert': 'true' },
+      body: outBytes,
     });
     if (!upRes.ok) {
       const detail = await upRes.text().catch(() => '');
