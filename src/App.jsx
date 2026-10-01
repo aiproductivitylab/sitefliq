@@ -2,6 +2,8 @@ import { useState, useEffect, useRef, useCallback, memo } from "react";
 import { useAppStore, sb } from "./store";
 import { usePaddle } from "./hooks/usePaddle";
 import { MARKETING_PAGES } from "./seo-pages.js";
+import HomePage from "./screens/HomePage.jsx";
+import PricingPage from "./screens/PricingPage.jsx";
 
 /* ─────────────────────────────────────────────────────────────────────────────
    CONSTANTS
@@ -1943,243 +1945,6 @@ function MarketingPage({ slug, onHome, onBuild }) {
 }
 
 /* ─────────────────────────────────────────────────────────────────────────────
-   HOME PAGE
-───────────────────────────────────────────────────────────────────────────── */
-function HomePage({ onBuild, onPricing, onExample, onHelp, onMarketing, user, credits, onSignIn, onSignOut }) {
-  const [showExitIntent, setShowExitIntent] = useState(false);
-
-  useEffect(() => {
-    let shown = false;
-    let timer = null;
-    const handleMouseLeave = (e) => {
-      if (e.clientY <= 5 && !shown && !sessionStorage.getItem("sf_exit_shown")) {
-        shown = true;
-        clearTimeout(timer);
-        timer = setTimeout(() => setShowExitIntent(true), 0);
-      }
-    };
-    // Only show after 5s on page
-    setTimeout(() => {
-      document.addEventListener("mouseleave", handleMouseLeave);
-    }, 5000);
-    return () => {
-      document.removeEventListener("mouseleave", handleMouseLeave);
-      clearTimeout(timer);
-    };
-  }, []);
-
-  const closeExit = () => {
-    setShowExitIntent(false);
-    sessionStorage.setItem("sf_exit_shown", "1");
-  };
-
-  return (
-    <div style={{ minHeight:"100vh", background:"#fafaf9", color:"#111827" }}>
-      <GS/>
-      {showExitIntent && <ExitIntentPopup onClose={closeExit} onBuild={() => { closeExit(); onBuild(); }}/>}
-
-      {/* Nav */}
-      <nav style={{ position:"fixed", top:0, left:0, right:0, zIndex:100, height:56, display:"flex", alignItems:"center", justifyContent:"space-between", padding:"0 48px", background:"rgba(250,250,249,.92)", backdropFilter:"blur(20px)", borderBottom:"1px solid #e5e7eb" }}>
-        <div style={{ display:"flex", alignItems:"center", gap:8 }}>
-          <div style={{ width:28, height:28, background:"#f97316", borderRadius:7, display:"flex", alignItems:"center", justifyContent:"center", fontSize:13, color:"white", fontWeight:800 }}>S</div>
-          <span style={{ fontSize:18, fontWeight:800, color:"#111827" }}>Sitefliq</span>
-        </div>
-        <div style={{ display:"flex", gap:8, alignItems:"center" }}>
-          <button onClick={onPricing} style={{ padding:"7px 16px", background:"transparent", border:"1px solid #e5e7eb", borderRadius:8, fontSize:13, cursor:"pointer", color:"#374151", fontFamily:"inherit", fontWeight:500 }}>Pricing</button>
-          <button onClick={onExample} style={{ padding:"7px 16px", background:"transparent", border:"1px solid #e5e7eb", borderRadius:8, fontSize:13, cursor:"pointer", color:"#374151", fontFamily:"inherit", fontWeight:500 }}>See Example</button>
-          <button onClick={onHelp} style={{ padding:"7px 16px", background:"transparent", border:"1px solid #e5e7eb", borderRadius:8, fontSize:13, cursor:"pointer", color:"#6b7280", fontFamily:"inherit", fontWeight:500 }}>🛟 Help</button>
-          {user ? (
-            <>
-              <span style={{ padding:"7px 14px", background:"#fff7ed", color:credits <= 1 ? "#dc2626" : "#f97316", border:`1px solid ${credits <= 1 ? "#fecaca" : "#fed7aa"}`, borderRadius:8, fontSize:13, fontWeight:700 }}>⚡ {credits} credits</span>
-              <button onClick={onSignOut} style={{ padding:"7px 16px", background:"transparent", border:"1px solid #e5e7eb", borderRadius:8, fontSize:13, cursor:"pointer", color:"#6b7280", fontFamily:"inherit" }}>Sign out</button>
-            </>
-          ) : (
-            <button onClick={onSignIn} style={{ padding:"7px 16px", background:"transparent", border:"1px solid #e5e7eb", borderRadius:8, fontSize:13, cursor:"pointer", color:"#374151", fontFamily:"inherit", fontWeight:500 }}>Sign In</button>
-          )}
-          <button onClick={onBuild} style={{ padding:"8px 20px", background:"#f97316", border:"none", borderRadius:8, fontSize:13, cursor:"pointer", color:"white", fontFamily:"inherit", fontWeight:700 }}>Start Building →</button>
-        </div>
-      </nav>
-
-      {/* Hero */}
-      <div style={{ minHeight:"100vh", display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center", textAlign:"center", padding:"100px 40px 80px", background:"linear-gradient(180deg,#fff7ed 0%,#fafaf9 55%)" }}>
-        <div style={{ display:"inline-flex", alignItems:"center", gap:8, padding:"5px 14px", background:"#fff7ed", border:"1px solid #fed7aa", borderRadius:100, marginBottom:22, animation:"fadeUp .6s ease" }}>
-          <div style={{ width:6, height:6, borderRadius:"50%", background:"#f97316", animation:"pulse 2s infinite" }}/>
-          <span style={{ fontSize:10, color:"#f97316", fontWeight:700, letterSpacing:1.5 }}>AI LANDING PAGE BUILDER</span>
-        </div>
-        <h1 style={{ fontSize:"clamp(40px,6vw,74px)", fontWeight:800, lineHeight:1.0, marginBottom:20, color:"#111827", letterSpacing:"-2px", maxWidth:820, animation:"fadeUp .6s .1s ease both" }}>
-          Build websites.{" "}
-          <span style={{ fontFamily:"'Instrument Serif',serif", fontStyle:"italic" }}>
-            <TW words={["Get paid.", "Get clients.", "Get noticed.", "Grow faster."]} color="#f97316"/>
-          </span>
-        </h1>
-        <p style={{ fontSize:17, color:"#6b7280", maxWidth:500, margin:"0 auto 36px", lineHeight:1.8, animation:"fadeUp .6s .2s ease both" }}>
-          Describe your business. AI writes niche-specific copy, builds full SEO meta tags, and delivers a stunning landing page in 60 seconds.
-        </p>
-        <div style={{ display:"flex", gap:10, justifyContent:"center", flexWrap:"wrap", marginBottom:14, animation:"fadeUp .6s .3s ease both" }}>
-          <button onClick={onBuild} style={{ padding:"14px 34px", background:"#f97316", color:"white", border:"none", borderRadius:10, fontSize:16, fontWeight:700, cursor:"pointer", fontFamily:"inherit", boxShadow:"0 4px 20px #f9731640" }}>
-            Start Building for Free →
-          </button>
-          <button onClick={onExample} style={{ padding:"14px 22px", background:"white", color:"#374151", border:"1px solid #e5e7eb", borderRadius:10, fontSize:14, cursor:"pointer", fontFamily:"inherit" }}>
-            👁 See Example
-          </button>
-        </div>
-        <div style={{ fontSize:12, color:"#9ca3af", animation:"fadeUp .6s .4s ease both" }}>No credit card to preview · Pay only when you're ready to download</div>
-
-        {/* Animated stats */}
-        <div style={{ display:"flex", gap:40, marginTop:48, animation:"fadeUp .6s .5s ease both" }}>
-          {[{ target:60, suffix:"s", label:"Average build time", icon:"⏱" }, { target:49, prefix:"$", suffix:"", label:"Per 10 credits", icon:"💰" }].map(s => (
-            <div key={s.label} style={{ textAlign:"center" }}>
-              <div style={{ fontSize:18, marginBottom:3 }}>{s.icon}</div>
-              <div style={{ fontSize:22, fontWeight:800, color:"#111827" }}>
-                <AnimatedCounter target={s.target} suffix={s.suffix} prefix={s.prefix||""}/>
-              </div>
-              <div style={{ fontSize:11, color:"#9ca3af" }}>{s.label}</div>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* Ticker */}
-      <div style={{ overflow:"hidden", borderTop:"1px solid #e5e7eb", borderBottom:"1px solid #e5e7eb", padding:"12px 0", background:"white" }}>
-        <div style={{ display:"flex", gap:40, animation:"ticker 24s linear infinite", width:"max-content" }}>
-          {[...Array(2)].map((_, r) =>
-            ["Yoga Studios","Gyms","Salons","Restaurants","Photographers","Coaches","Real Estate","Boutiques","Clinics","Cafes","Freelancers","Agencies"].map((l, i) => (
-              <span key={`${r}-${i}`} style={{ fontSize:12, color:"#9ca3af", whiteSpace:"nowrap" }}>
-                <span style={{ color:"#f97316", marginRight:7 }}>✦</span>{l}
-              </span>
-            ))
-          )}
-        </div>
-      </div>
-
-      {/* How it works */}
-      <div style={{ maxWidth:920, margin:"80px auto", padding:"0 40px" }}>
-        <div style={{ textAlign:"center", marginBottom:44 }}>
-          <div style={{ fontSize:10, color:"#f97316", letterSpacing:3, textTransform:"uppercase", fontWeight:700, marginBottom:10 }}>HOW IT WORKS</div>
-          <h2 style={{ fontSize:"clamp(26px,4vw,42px)", fontWeight:800, color:"#111827" }}>From idea to live in minutes</h2>
-        </div>
-        <div style={{ display:"grid", gridTemplateColumns:"repeat(4,1fr)", gap:16 }}>
-          {[
-            { n:"01", ic:"📝", t:"Describe it",   d:"Tell us your business name, industry and description." },
-            { n:"02", ic:"🎨", t:"Choose style",  d:"Pick colours, vibe and which sections to include." },
-            { n:"03", ic:"💳", t:"Choose a plan", d:"Pay once. No subscriptions. Credits never expire." },
-            { n:"04", ic:"⚡", t:"Get your page", d:"AI generates. You download. Go live today." },
-          ].map(s => (
-            <div key={s.n} style={{ padding:22, borderRadius:14, background:"white", border:"1px solid #f3f4f6", boxShadow:"0 1px 3px rgba(0,0,0,.04)" }}>
-              <div style={{ width:32, height:32, background:"#fff7ed", borderRadius:8, display:"flex", alignItems:"center", justifyContent:"center", fontSize:16, marginBottom:12 }}>{s.ic}</div>
-              <div style={{ fontSize:10, fontWeight:700, color:"#f97316", letterSpacing:1, marginBottom:6 }}>{s.n}</div>
-              <div style={{ fontSize:14, fontWeight:700, color:"#111827", marginBottom:5 }}>{s.t}</div>
-              <div style={{ fontSize:12, color:"#6b7280", lineHeight:1.6 }}>{s.d}</div>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* CTA */}
-      <div style={{ textAlign:"center", padding:"70px 40px 90px" }}>
-        <h2 style={{ fontSize:"clamp(28px,4vw,48px)", fontWeight:800, color:"#111827", marginBottom:24 }}>Your landing page is waiting.</h2>
-        <button onClick={onBuild} style={{ padding:"15px 42px", background:"#f97316", color:"white", border:"none", borderRadius:10, fontSize:16, fontWeight:700, cursor:"pointer", fontFamily:"inherit", boxShadow:"0 4px 20px #f9731640" }}>
-          Build It Now →
-        </button>
-        <div style={{ marginTop:12, fontSize:12, color:"#9ca3af" }}>See your page before you pay</div>
-      </div>
-
-      <div style={{ textAlign:"center", padding:"16px 40px", borderTop:"1px solid #f3f4f6", fontSize:11, color:"#9ca3af", background:"white", display:"flex", alignItems:"center", justifyContent:"center", gap:20, flexWrap:"wrap" }}>
-        <span>© 2026 Sitefliq · AI Landing Page Builder</span>
-        <a href="#terms" style={{ cursor:"pointer", textDecoration:"underline", color:"#9ca3af" }}>Terms</a>
-        <a href="#privacy" style={{ cursor:"pointer", textDecoration:"underline", color:"#9ca3af" }}>Privacy</a>
-        <a href="#refund" style={{ cursor:"pointer", textDecoration:"underline", color:"#9ca3af" }}>Refund Policy</a>
-        <a href="#acceptable-use" style={{ cursor:"pointer", textDecoration:"underline", color:"#9ca3af" }}>Acceptable Use</a>
-        <span style={{ color:"#d1d5db" }}>·</span>
-        <span style={{ fontWeight:600, color:"#6b7280" }}>Compare:</span>
-        {[["vs-durable","Durable"],["vs-carrd","Carrd"],["vs-wix","Wix"]].map(([sl,lbl]) => (
-          <a key={sl} href={`/${sl}`} onClick={(e) => { e.preventDefault(); onMarketing(sl); }} style={{ cursor:"pointer", textDecoration:"underline", color:"#9ca3af" }}>vs {lbl}</a>
-        ))}
-        <span style={{ color:"#d1d5db" }}>·</span>
-        <span style={{ fontWeight:600, color:"#6b7280" }}>Solutions:</span>
-        {[["for-plumbers","Plumbers"],["for-electricians","Electricians"],["for-gyms","Gyms"],["for-salons","Salons"]].map(([sl,lbl]) => (
-          <a key={sl} href={`/${sl}`} onClick={(e) => { e.preventDefault(); onMarketing(sl); }} style={{ cursor:"pointer", textDecoration:"underline", color:"#9ca3af" }}>{lbl}</a>
-        ))}
-        <a href="mailto:hello@sitefliq.com" style={{ color:"#9ca3af", textDecoration:"underline" }}>hello@sitefliq.com</a>
-      </div>
-    </div>
-  );
-}
-
-/* ─────────────────────────────────────────────────────────────────────────────
-   PRICING PAGE (standalone)
-───────────────────────────────────────────────────────────────────────────── */
-function PricingPage({ onBuild, onHome, user, credits, onSignIn, onSignOut, onPurchase }) {
-  return (
-    <div style={{ minHeight:"100vh", background:"#fafaf9" }}>
-      <GS/>
-      <nav style={{ height:56, display:"flex", alignItems:"center", justifyContent:"space-between", padding:"0 48px", borderBottom:"1px solid #e5e7eb", background:"white" }}>
-        <div onClick={onHome} style={{ display:"flex", alignItems:"center", gap:8, cursor:"pointer" }}>
-          <div style={{ width:27, height:27, background:"#f97316", borderRadius:6, display:"flex", alignItems:"center", justifyContent:"center", fontSize:12, color:"white", fontWeight:800 }}>S</div>
-          <span style={{ fontSize:17, fontWeight:800, color:"#111827" }}>Sitefliq</span>
-        </div>
-        <div style={{ display:"flex", alignItems:"center", gap:10 }}>
-          {user ? (
-            <>
-              <span style={{ fontSize:12, background:"#fff7ed", color:credits <= 1 ? "#dc2626" : "#f97316", border:`1px solid ${credits <= 1 ? "#fecaca" : "#fed7aa"}`, borderRadius:20, padding:"3px 10px", fontWeight:700 }}>⚡ {credits} credits</span>
-              <button onClick={onSignOut} style={{ padding:"7px 14px", background:"transparent", border:"1px solid #e5e7eb", borderRadius:8, fontSize:13, cursor:"pointer", color:"#6b7280", fontFamily:"inherit" }}>Sign out</button>
-              <button onClick={onBuild} style={{ padding:"8px 18px", background:"#f97316", border:"none", borderRadius:8, fontSize:13, cursor:"pointer", color:"white", fontFamily:"inherit", fontWeight:700 }}>Build Page →</button>
-            </>
-          ) : (
-            <>
-              <button onClick={onSignIn} style={{ padding:"8px 16px", background:"transparent", border:"1px solid #e5e7eb", borderRadius:8, fontSize:13, cursor:"pointer", color:"#374151", fontFamily:"inherit" }}>Sign In</button>
-              <button onClick={onBuild} style={{ padding:"8px 18px", background:"#f97316", border:"none", borderRadius:8, fontSize:13, cursor:"pointer", color:"white", fontFamily:"inherit", fontWeight:700 }}>Start Free →</button>
-            </>
-          )}
-        </div>
-      </nav>
-      <div style={{ maxWidth:860, margin:"0 auto", padding:"70px 40px" }}>
-        <h1 style={{ fontSize:46, fontWeight:800, textAlign:"center", color:"#111827", marginBottom:8, fontFamily:"'Instrument Serif',serif", fontStyle:"italic" }}>Simple pricing</h1>
-        <p style={{ textAlign:"center", color:"#6b7280", marginBottom:32, fontSize:14 }}>Buy credits once. Use them whenever. 1 credit = 1 complete landing page.</p>
-        <div style={{ display:"flex", justifyContent:"center", gap:24, marginBottom:40, flexWrap:"wrap" }}>
-          {[["⚡","1 credit = 1 full page"],["💾","Credits never expire"],["🔒","One-time payment, no subscription"]].map(([ic,t]) => (
-            <div key={t} style={{ display:"flex", alignItems:"center", gap:8, padding:"10px 16px", background:"white", border:"1px solid #f3f4f6", borderRadius:10, boxShadow:"0 1px 3px rgba(0,0,0,.04)", fontSize:12, fontWeight:600, color:"#111827" }}>
-              <span style={{ fontSize:18 }}>{ic}</span>{t}
-            </div>
-          ))}
-        </div>
-        <div style={{ display:"grid", gridTemplateColumns:"repeat(3,1fr)", gap:18 }}>
-          {PLANS.map(p => (
-            <div key={p.id} style={{ padding:30, borderRadius:16, position:"relative", background:"white", border:p.badge?`2px solid ${p.color}`:"1px solid #e5e7eb", boxShadow:p.badge?`0 4px 30px ${p.color}18`:"0 1px 3px rgba(0,0,0,.04)" }}>
-              {p.badge && <div style={{ position:"absolute", top:-11, left:"50%", transform:"translateX(-50%)", background:p.color, color:"white", padding:"3px 13px", borderRadius:100, fontSize:9, fontWeight:800, letterSpacing:1.5, whiteSpace:"nowrap" }}>{p.badge}</div>}
-              <div style={{ fontSize:10, fontWeight:700, color:p.color, letterSpacing:2, textTransform:"uppercase", marginBottom:10 }}>{p.name}</div>
-              <div style={{ background:`${p.color}10`, border:`1px solid ${p.color}25`, borderRadius:10, padding:"14px 16px", marginBottom:14, display:"flex", alignItems:"center", justifyContent:"space-between" }}>
-                <div>
-                  <div style={{ fontSize:10, color:p.color, fontWeight:700, letterSpacing:1, textTransform:"uppercase", marginBottom:2 }}>Credits</div>
-                  <div style={{ fontSize:40, fontWeight:800, color:"#111827", lineHeight:1, fontFamily:"'Instrument Serif',serif" }}>{p.credits}</div>
-                </div>
-                <div style={{ textAlign:"right" }}>
-                  <div style={{ fontSize:10, color:"#9ca3af", marginBottom:2 }}>per page</div>
-                  <div style={{ fontSize:15, fontWeight:700, color:p.color }}>{p.perPage}</div>
-                </div>
-              </div>
-              <div style={{ display:"flex", alignItems:"baseline", gap:6, marginBottom:2 }}>
-                <span style={{ fontSize:36, fontWeight:800, color:"#111827", fontFamily:"'Instrument Serif',serif" }}>{p.price}</span>
-              </div>
-              <div style={{ fontSize:11, color:"#9ca3af", marginBottom:16 }}>one-time · no subscription</div>
-              <div style={{ display:"flex", flexDirection:"column", gap:8, marginBottom:22 }}>
-                {p.features.map(f => <div key={f} style={{ display:"flex", gap:8, fontSize:12, color:"#374151" }}><span style={{ color:p.color, flexShrink:0, fontWeight:700 }}>✓</span>{f}</div>)}
-              </div>
-              <button onClick={() => onPurchase(p)} style={{ width:"100%", padding:11, borderRadius:9, fontFamily:"'Geist',sans-serif", fontSize:13, fontWeight:700, cursor:"pointer", background:p.badge?p.color:"transparent", border:p.badge?"none":`2px solid ${p.color}`, color:p.badge?"white":p.color, transition:"all .2s" }}>
-                Get {p.credits} Credits →
-              </button>
-            </div>
-          ))}
-        </div>
-        <div style={{ marginTop:24, textAlign:"center", fontSize:12, color:"#9ca3af" }}>
-          🔒 Secure checkout via Paddle · Credits never expire · 14-day money back guarantee
-        </div>
-      </div>
-    </div>
-  );
-}
-
-/* ─────────────────────────────────────────────────────────────────────────────
    LEGAL PAGES
 ───────────────────────────────────────────────────────────────────────────── */
 function LegalPage({ title, updated, onHome, children }) {
@@ -2732,10 +2497,13 @@ export default function Sitefliq() {
       <PricingPage
         onBuild={() => setScreen("builder")}
         onHome={() => setScreen("home")}
+        onMarketing={goMarketing}
         user={user} credits={credits}
         onSignIn={() => setShowAuth(true, "signin")}
         onSignOut={handleSignOut}
         onPurchase={handlePurchase}
+        onSubscribe={() => toast("Subscriptions launch soon — one-time credit packs are available below.", "info")}
+        topupPlans={PLANS}
       />
       {showAuth && <AuthModal mode={authMode} onSuccess={handleAuthSuccess} onClose={() => setShowAuth(false)}/>}
     </>
