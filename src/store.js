@@ -51,6 +51,44 @@ export const sb = {
     this._token = null; this._user = null;
     localStorage.removeItem("sb_token"); localStorage.removeItem("sb_user");
   },
+  // ── Projects (Step 4) ──────────────────────────────────────────────
+  async createProject(fields) {
+    if (!this._token || !this._user) return null;
+    const r = await this.req("/rest/v1/projects", {
+      method: "POST",
+      body: JSON.stringify({ user_id: this._user.id, ...fields }),
+      prefer: "return=representation",
+    });
+    return (r.ok && Array.isArray(r.data) && r.data[0]) ? r.data[0] : null;
+  },
+  async updateProject(id, fields) {
+    if (!this._token || !id) return false;
+    const r = await this.req(`/rest/v1/projects?id=eq.${id}`, {
+      method: "PATCH",
+      body: JSON.stringify(fields),
+      prefer: "return=minimal",
+    });
+    return r.ok;
+  },
+  async listProjects() {
+    if (!this._token) return [];
+    const r = await this.req("/rest/v1/projects?select=id,business_name,industry,share_token,published_url,netlify_site_id,created_at,updated_at&order=created_at.desc");
+    return (r.ok && Array.isArray(r.data)) ? r.data : [];
+  },
+  async getProject(id) {
+    if (!this._token || !id) return null;
+    const r = await this.req(`/rest/v1/projects?id=eq.${id}&select=*&limit=1`);
+    return (r.ok && Array.isArray(r.data) && r.data[0]) ? r.data[0] : null;
+  },
+  // Public — resolves a shared project by token via the SECURITY DEFINER RPC.
+  async getSharedProject(token) {
+    const r = await this.req("/rest/v1/rpc/get_shared_project", {
+      method: "POST",
+      body: JSON.stringify({ p_token: token }),
+    });
+    return (r.ok && Array.isArray(r.data) && r.data[0]) ? r.data[0] : null;
+  },
+
   async getCredits() {
     if(!this._token) return 0;
     const r = await this.req("/rest/v1/credits?select=balance&limit=1");
@@ -127,6 +165,10 @@ export const useAppStore = create(
       // generation succeeds or the form is reset.
       pendingHeroUrl: "",
       setPendingHeroUrl: (url) => set({ pendingHeroUrl: url }),
+
+      // The project backing the page currently on the result screen (Step 4).
+      project: null,
+      setProject: (project) => set({ project }),
 
       // UI state
       showAuth: false,

@@ -153,14 +153,20 @@ const STEPS = [
   { n: "04", t: "Refine & publish", d: "Edit by chat, then publish live or download the HTML." },
 ];
 
-export default function HomePage({ onBuild, onPricing, onExample, onHelp, onMarketing, user, credits, onSignIn, onSignOut }) {
+export default function HomePage({ onBuild, onPricing, onExample, onHelp, onProjects, onMarketing, user, credits, onSignIn, onSignOut }) {
+  const navLinks = [
+    ...(user ? [{ label: "Projects", onClick: onProjects }] : []),
+    { label: "Pricing", onClick: onPricing },
+    { label: "Example", onClick: onExample },
+    { label: "Help", onClick: onHelp },
+  ];
   return (
     <div style={{ background: t.color.bg, color: t.color.text, fontFamily: t.font.sans }}>
       <div style={{ borderBottom: `1px solid ${t.color.border}`, background: "rgba(255,255,255,.85)", backdropFilter: "blur(12px)", position: "sticky", top: 0, zIndex: 100 }}>
         <MarketingNav
           onHome={() => {}} onBuild={onBuild} onSignIn={onSignIn} onSignOut={onSignOut}
           user={user} credits={credits}
-          links={[{ label: "Pricing", onClick: onPricing }, { label: "Example", onClick: onExample }, { label: "Help", onClick: onHelp }]}
+          links={navLinks}
         />
       </div>
 

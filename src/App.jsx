@@ -4,6 +4,8 @@ import { usePaddle } from "./hooks/usePaddle";
 import { MARKETING_PAGES } from "./seo-pages.js";
 import HomePage from "./screens/HomePage.jsx";
 import PricingPage from "./screens/PricingPage.jsx";
+import ProjectsDashboard from "./screens/ProjectsDashboard.jsx";
+import PreviewPage from "./screens/PreviewPage.jsx";
 import { Check, Arrow } from "./ui/kit";
 
 /* ─────────────────────────────────────────────────────────────────────────────
@@ -445,7 +447,7 @@ function WebsiteImporter({ onImport }) {
       });
       const data = await r.json();
       if (data.success) {
-        onImport(data);
+        onImport({ ...data, importedUrl: url.trim() });
         setStatus("success");
         setMsg("Branding imported! Logo, colours and info auto-filled below.");
         toast("Website imported successfully", "success");
@@ -730,6 +732,7 @@ function BuilderPanel({ form, up, togSec, onNext, ready, credits, user, onBuyCre
   const [tab, setTab] = useState("info");
 
   const handleImport = (data) => {
+    if (data.importedUrl) up("importedFrom", data.importedUrl);
     if (data.logo) up("logo", data.logo);
     if (data.businessName || data.title) up("name", (data.businessName || data.title.replace(/\s*[|\-–].*/,"")).trim());
     if (data.description) up("description", data.description);
@@ -1353,6 +1356,7 @@ function EditChat() {
   const generatedHtml = useAppStore(s => s.generatedHtml);
   const setGeneratedHtml = useAppStore(s => s.setGeneratedHtml);
   const refreshCredits = useAppStore(s => s.refreshCredits);
+  const project = useAppStore(s => s.project);
 
   const [input, setInput] = useState("");
   const [busy, setBusy] = useState(false);
@@ -1392,6 +1396,7 @@ function EditChat() {
       // (PreviewFrame) reads generatedHtml from the store and updates itself.
       setUndoStack(s => [...s, generatedHtml]);
       setGeneratedHtml(d.html);
+      if (project?.id) sb.updateProject(project.id, { html: d.html });   // persist edit (best-effort)
       refreshCredits();
       toast(d.skipped ? `Applied — ${d.applied} change${d.applied > 1 ? "s" : ""} (${d.skipped} skipped)` : "Change applied", "success");
       mark(idx, "ok");
@@ -1479,6 +1484,18 @@ function ResultScreen({ html, form, onReset, onBuyMoreCredits }) {
   const refreshCredits = useAppStore(s => s.refreshCredits);
   const heroUrl = useAppStore(s => s.heroUrl);
   const setHeroUrl = useAppStore(s => s.setHeroUrl);
+  const project = useAppStore(s => s.project);
+
+  // When this page is backed by a saved project that was already published,
+  // reflect its live URL so the result screen shows "live" + republish.
+  useEffect(() => {
+    if (project?.published_url && project?.netlify_site_id) {
+      setPublishedUrl(project.published_url);
+      setPublishedSiteId(project.netlify_site_id);
+      setPublishedHtml(html);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [project?.id]);
 
   // Regenerate the hero image (clean scene) or re-render it with the logo baked
   // into the scene (branded). 1 credit each; the new image URL is swapped in
@@ -1502,8 +1519,10 @@ function ResultScreen({ html, form, onReset, onBuyMoreCredits }) {
       if (r.status === 402) { toast("Not enough credits for a hero image", "warning"); refreshCredits(); return; }
       const d = await r.json().catch(() => ({}));
       if (!r.ok || !d.url) { toast(d.message || "Couldn't generate the hero image", "error"); refreshCredits(); return; }
-      setGeneratedHtml(html.split(heroUrl).join(d.url));   // swap every hero occurrence
+      const newHtml = html.split(heroUrl).join(d.url);     // swap every hero occurrence
+      setGeneratedHtml(newHtml);
       setHeroUrl(d.url);
+      if (project?.id) sb.updateProject(project.id, { html: newHtml, hero_url: d.url });
       refreshCredits();
       toast(mode === "branded" ? "Branded hero applied" : "New hero applied", "success");
     } catch { toast("Network error — please try again", "error"); refreshCredits(); }
@@ -1558,6 +1577,7 @@ function ResultScreen({ html, form, onReset, onBuyMoreCredits }) {
         setPublishedUrl(d.url);
         setPublishedSiteId(d.siteId || null);
         setPublishedHtml(html);          // mark this html as the published version
+        if (project?.id) sb.updateProject(project.id, { netlify_site_id: d.siteId || null, published_url: d.url });
         toast("Page is live", "success");
       }
     } catch {
@@ -1587,6 +1607,7 @@ function ResultScreen({ html, form, onReset, onBuyMoreCredits }) {
       } else {
         if (d.url) setPublishedUrl(d.url);
         setPublishedHtml(html);          // current html is now the live version
+        if (project?.id) sb.updateProject(project.id, { published_url: d.url || publishedUrl, html });
         toast("Live site updated", "success");
       }
     } catch {
@@ -2360,6 +2381,7 @@ export default function Sitefliq() {
   const setGeneratedHtml = useAppStore(s => s.setGeneratedHtml);
   const setHeroUrl   = useAppStore(s => s.setHeroUrl);
   const setPendingHeroUrl = useAppStore(s => s.setPendingHeroUrl);
+  const setProject  = useAppStore(s => s.setProject);
   const showAuth    = useAppStore(s => s.showAuth);
   const authMode    = useAppStore(s => s.authMode);
   const setShowAuth = useAppStore(s => s.setShowAuth);
@@ -2375,6 +2397,31 @@ export default function Sitefliq() {
   // Paddle hook
   const { openCheckout, isReady: paddleReady } = usePaddle();
   const [genStage, setGenStage] = useState(0);
+  const [previewToken, setPreviewToken] = useState(null);
+
+  // Public client preview route: /p/:token (checked before any auth-gated screen).
+  useEffect(() => {
+    const read = () => {
+      const m = /^\/p\/([^/?#]+)/.exec(window.location.pathname);
+      setPreviewToken(m ? decodeURIComponent(m[1]) : null);
+    };
+    read();
+    window.addEventListener("popstate", read);
+    return () => window.removeEventListener("popstate", read);
+  }, []);
+
+  // Load a saved project into the result screen to keep editing / republish / download.
+  const openProject = async (summary) => {
+    const full = await sb.getProject(summary.id);
+    if (!full) { toast("Couldn't open that project", "error"); return; }
+    setProject(full);
+    setGeneratedHtml(full.html || "");
+    setHeroUrl(full.hero_url || "");
+    setPendingHeroUrl("");
+    updateForm("name", full.business_name || "");
+    updateForm("industry", full.industry || "");
+    setScreen("result");
+  };
 
   const ready = form.name.trim() && form.industry.trim() && form.description.trim();
 
@@ -2454,6 +2501,15 @@ export default function Sitefliq() {
     setLegalScreen(null);
     window.history.replaceState({}, "", window.location.pathname);
   };
+  // Public client preview — no login required; wins over everything else.
+  if (previewToken) return (
+    <>
+      <GS/>
+      <ToastContainer/>
+      <PreviewPage token={previewToken} onExit={() => { window.history.pushState({}, "", "/"); setPreviewToken(null); setScreen("home"); }}/>
+    </>
+  );
+
   if (legalScreen === "terms")   return <TermsPage   onHome={exitLegal}/>;
   if (legalScreen === "privacy") return <PrivacyPage onHome={exitLegal}/>;
   if (legalScreen === "refund")  return <RefundPage  onHome={exitLegal}/>;
@@ -2475,6 +2531,7 @@ export default function Sitefliq() {
         onPricing={() => setScreen("pricing_standalone")}
         onExample={() => setScreen("example")}
         onHelp={() => setScreen("help")}
+        onProjects={() => setScreen("projects")}
         onMarketing={goMarketing}
         user={user} credits={credits}
         onSignIn={() => setShowAuth(true, "signin")}
@@ -2489,6 +2546,21 @@ export default function Sitefliq() {
       <GS/>
       <ToastContainer/>
       <HelpPage onHome={() => setScreen("home")}/>
+    </>
+  );
+
+  if (screen === "projects") return (
+    <>
+      <GS/>
+      <ToastContainer/>
+      <ProjectsDashboard
+        onHome={() => setScreen("home")}
+        onBuild={() => { setProject(null); setScreen("builder"); }}
+        onOpen={openProject}
+        user={user} credits={credits}
+        onSignOut={handleSignOut}
+      />
+      {showAuth && <AuthModal mode={authMode} onSuccess={handleAuthSuccess} onClose={() => setShowAuth(false)}/>}
     </>
   );
 
@@ -2594,6 +2666,7 @@ export default function Sitefliq() {
                 setGeneratedHtml("");
                 setHeroUrl("");
                 setPendingHeroUrl("");
+                setProject(null);
                 setScreen("builder");
               }}
             />
@@ -2613,6 +2686,13 @@ export default function Sitefliq() {
                 await refreshCredits();
                 setPendingHeroUrl("");   // hero consumed by a successful page
                 setGeneratedHtml(html);
+                // Auto-save as a project (best-effort; result screen works even if null).
+                const { heroUrl } = useAppStore.getState();
+                const p = await sb.createProject({
+                  business_name: form.name, industry: form.industry, html,
+                  source_url: form.importedFrom || null, hero_url: heroUrl || null,
+                });
+                setProject(p);
                 setScreen("result");
                 toast("Your page is ready", "success");
               }}

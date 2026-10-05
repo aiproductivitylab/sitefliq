@@ -61,13 +61,23 @@ export default async function handler(req, res) {
   const token = process.env.NETLIFY_TOKEN;
   if (!token) return res.status(500).json({ error: 'Deploy token not configured' });
 
+  // Republish security: the Netlify site must belong to one of THIS user's
+  // projects. Verified via the projects table with the service key (RLS-bypassing),
+  // so a user can't redeploy over another user's published site by guessing an id.
+  if (existingSiteId) {
+    const q = `${SUPABASE_URL}/rest/v1/projects?select=id&user_id=eq.${userId}`
+      + `&netlify_site_id=eq.${encodeURIComponent(existingSiteId)}&limit=1`;
+    const ownRes = await fetch(q, { headers: { apikey: serviceKey, Authorization: 'Bearer ' + serviceKey } });
+    const owned = await ownRes.json().catch(() => []);
+    if (!ownRes.ok || !Array.isArray(owned) || owned.length === 0) {
+      return res.status(403).json({ error: 'That site is not linked to your account.' });
+    }
+  }
+
   try {
     let siteId, siteUrl;
     if (existingSiteId) {
-      // Republish to the SAME site. NOTE: site ownership is not yet verified
-      // against the Sitefliq user (sites aren't tracked per-user until the Step 4
-      // projects table). Netlify siteIds are opaque UUIDs returned only to their
-      // owner, so this is low-risk for now — Step 4 must enforce ownership.
+      // Republish to the SAME site (ownership verified above).
       const getRes = await fetch(`https://api.netlify.com/api/v1/sites/${existingSiteId}`, {
         headers: { 'Authorization': `Bearer ${token}` },
       });
