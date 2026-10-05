@@ -1,49 +1,10 @@
-// Pricing — premium B2B redesign (Stage 1).
-// Monthly subscriptions are primary (NOT wired to Paddle yet — price IDs come
-// with Step 5). One-time credit top-ups stay as a small secondary section and
-// keep working through the existing onPurchase/Paddle flow.
+// Pricing — premium B2B redesign.
+// Monthly subscription plans come from src/config/plans.js (the single source of
+// truth for the Paddle price IDs). One-time credit top-ups stay as a small
+// secondary section and keep working through the existing onPurchase/Paddle flow.
 import { theme as t } from "../ui/theme";
 import { Container, Eyebrow, Heading, Text, Button, Card, Badge, Check, MarketingNav, MarketingFooter } from "../ui/kit";
-
-const SUBSCRIPTIONS = [
-  {
-    id: "starter", name: "Starter", price: 25, websites: 25, credits: 100,
-    tagline: "For solo operators getting started.",
-    features: [
-      "25 websites per month",
-      "AI copy, SEO & schema on every page",
-      "Real industry photography",
-      "Plain-English chat editing",
-      "One-click publish & HTML download",
-      "Email support",
-    ],
-    popular: false,
-  },
-  {
-    id: "pro", name: "Pro", price: 50, websites: 50, credits: 200,
-    tagline: "For freelancers and small agencies.",
-    features: [
-      "50 websites per month",
-      "Everything in Starter",
-      "No Sitefliq branding",
-      "Priority generation",
-      "Priority support",
-    ],
-    popular: true,
-  },
-  {
-    id: "business", name: "Business", price: 100, websites: 125, credits: 500,
-    tagline: "For agencies and resellers at volume.",
-    features: [
-      "125 websites per month",
-      "Everything in Pro",
-      "White-label output",
-      "Best rate per website",
-      "Dedicated support",
-    ],
-    popular: false,
-  },
-];
+import { SUBSCRIPTION_PLANS as SUBSCRIPTIONS } from "../config/plans";
 
 export default function PricingPage({ onBuild, onHome, onMarketing, user, credits, onSignIn, onSignOut, onPurchase, onSubscribe, topupPlans = [] }) {
   return (

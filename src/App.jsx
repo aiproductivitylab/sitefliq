@@ -7,6 +7,7 @@ import PricingPage from "./screens/PricingPage.jsx";
 import ProjectsDashboard from "./screens/ProjectsDashboard.jsx";
 import PreviewPage from "./screens/PreviewPage.jsx";
 import { Check, Arrow } from "./ui/kit";
+import { isPlaceholderPriceId } from "./config/plans";
 
 /* ─────────────────────────────────────────────────────────────────────────────
    CONSTANTS
@@ -2478,8 +2479,20 @@ export default function Sitefliq() {
     setScreen(next);
   };
 
-  // Handle purchase via Paddle
+  // Handle one-time credit-pack purchase via Paddle
   const handlePurchase = (plan) => {
+    if (!user) { setShowAuth(true, "signup"); return; }
+    if (!paddleReady) { toast("Payment system loading, please try again in a moment", "warning"); return; }
+    openCheckout(plan.priceId, user.id, user.email);
+  };
+
+  // Handle monthly subscription checkout (Step 5). Uses the price IDs from
+  // src/config/plans.js; until those are filled in, show a short notice.
+  const handleSubscribe = (plan) => {
+    if (!plan || isPlaceholderPriceId(plan.priceId)) {
+      toast("Subscriptions are launching soon — one-time credit packs are available below.", "info");
+      return;
+    }
     if (!user) { setShowAuth(true, "signup"); return; }
     if (!paddleReady) { toast("Payment system loading, please try again in a moment", "warning"); return; }
     openCheckout(plan.priceId, user.id, user.email);
@@ -2585,7 +2598,7 @@ export default function Sitefliq() {
         onSignIn={() => setShowAuth(true, "signin")}
         onSignOut={handleSignOut}
         onPurchase={handlePurchase}
-        onSubscribe={() => toast("Subscriptions launch soon — one-time credit packs are available below.", "info")}
+        onSubscribe={handleSubscribe}
         topupPlans={PLANS}
       />
       {showAuth && <AuthModal mode={authMode} onSuccess={handleAuthSuccess} onClose={() => setShowAuth(false)}/>}
