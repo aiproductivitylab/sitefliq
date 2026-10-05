@@ -1,13 +1,15 @@
 -- Step 5: monthly subscriptions, two-bucket credits, and the credit-unit ×4 migration.
--- Apply in Supabase (SQL Editor) once, after 0001 and 0002.
+-- Apply in Supabase (SQL Editor) once, after 0001 and 0002. Fully atomic — the
+-- whole thing applies or nothing does.
 --
 -- Credit model:
---   monthly_credits  — reset to the plan allotment on each billing month (no rollover)
+--   monthly_credits  — reset to the plan allotment on each billing month (no rollover);
+--                      set to 0 when a subscription is cancelled
 --   topup_credits    — never expire; spent only AFTER monthly credits run out
 --   balance          — kept as a mirror (= monthly + topup) so existing reads
 --                      (sb.getCredits selects `balance`) keep working unchanged
---
--- NOTE: the ×4 migration block near the bottom must run exactly once.
+
+begin;
 
 alter table public.credits add column if not exists monthly_credits   integer not null default 0;
 alter table public.credits add column if not exists topup_credits      integer not null default 0;
@@ -15,6 +17,22 @@ alter table public.credits add column if not exists monthly_allotment  integer n
 
 -- Needed for ON CONFLICT upserts below (one credits row per user).
 create unique index if not exists credits_user_id_key on public.credits(user_id);
+
+-- Postgres can't change a function's return type with CREATE OR REPLACE, so drop
+-- every existing overload of these three functions first (the earlier 0001
+-- definitions returned different shapes). Done in one pass over pg_proc.
+do $$
+declare r record;
+begin
+  for r in
+    select p.oid::regprocedure as sig
+    from pg_proc p join pg_namespace n on n.oid = p.pronamespace
+    where n.nspname = 'public'
+      and p.proname in ('add_credits', 'deduct_credits', 'refill_monthly_credits')
+  loop
+    execute 'drop function if exists ' || r.sig;
+  end loop;
+end $$;
 
 -- Spend monthly first, then top-up. Atomic (row lock). Raises on insufficient.
 create or replace function public.deduct_credits(
@@ -82,7 +100,8 @@ begin
 end;
 $$;
 
--- Reset monthly credits to the plan allotment (subscription renewal). No rollover.
+-- Set monthly credits to the given allotment (subscription renewal; no rollover).
+-- Passing 0 clears monthly credits on cancellation; top-up credits are untouched.
 create or replace function public.refill_monthly_credits(p_user_id uuid, p_amount integer)
 returns integer
 language plpgsql
@@ -100,12 +119,13 @@ begin
   returning balance into new_total;
 
   insert into public.credit_ledger(user_id, delta, reason)
-  values (p_user_id, p_amount, 'subscription_refill');
+  values (p_user_id, p_amount, case when p_amount = 0 then 'subscription_cancel' else 'subscription_refill' end);
   return new_total;
 end;
 $$;
 
--- Lock all three down to the service role (same as 0001).
+-- Lock all three down to the service role (same as 0001). Must run after the
+-- definitions above.
 do $$
 declare fn record;
 begin
@@ -137,6 +157,7 @@ create table if not exists public.subscriptions (
 create index if not exists subscriptions_user_idx on public.subscriptions(user_id);
 
 alter table public.subscriptions enable row level security;
+drop policy if exists subscriptions_select_own on public.subscriptions;
 create policy subscriptions_select_own on public.subscriptions for select using (auth.uid() = user_id);
 -- No insert/update/delete policy: end users cannot write; the service role bypasses RLS.
 revoke insert, update, delete on public.subscriptions from authenticated, anon;
@@ -149,3 +170,5 @@ update public.credits
 set topup_credits = balance * 4,
     balance = balance * 4
 where topup_credits = 0 and monthly_credits = 0 and balance > 0;
+
+commit;

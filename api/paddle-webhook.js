@@ -116,12 +116,22 @@ export default async function handler(req, res) {
     }
 
     if (type === 'subscription.canceled') {
-      // Keep access until the period ends — only flag status; don't zero credits.
+      // This fires when the subscription is actually canceled (at the effective
+      // end). Flag status, then zero the user's monthly credits + allotment
+      // (refill with 0). Top-up credits are untouched; balance recalculates to
+      // just the top-up via refill_monthly_credits.
       await fetch(`${SUPABASE_URL}/rest/v1/subscriptions?paddle_subscription_id=eq.${encodeURIComponent(data.id)}`, {
         method: 'PATCH',
         headers: { ...sh, Prefer: 'return=minimal' },
         body: JSON.stringify({ status: 'canceled', current_period_end: data.current_billing_period?.ends_at || null }),
       });
+      const userId = data.custom_data?.user_id || await userBySubscription(data.id);
+      if (userId) {
+        const ok = await refill(userId, 0);
+        if (!ok) console.error(`cancel: failed to clear monthly credits for ${userId} (sub ${data.id})`);
+      } else {
+        console.error(`cancel: no user match for sub ${data.id}`);
+      }
       return res.status(200).json({ success: true });
     }
 
