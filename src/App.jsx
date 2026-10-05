@@ -1567,17 +1567,17 @@ function ResultScreen({ html, form, onReset, onBuyMoreCredits }) {
           "Content-Type":"application/json",
           "Authorization": "Bearer " + (sb._token || ""),
         },
-        body: JSON.stringify({ html, name:form.name }),
+        body: JSON.stringify({ html, name:form.name, projectId: project?.id }),
       });
       const d = await r.json();
       if (!r.ok || d.error) {
         setPublishErr(d.error || "Publish failed. Please try again.");
         toast("Publish failed — please try again", "error");
       } else {
+        // The server saved netlify_site_id + published_url to the project itself.
         setPublishedUrl(d.url);
         setPublishedSiteId(d.siteId || null);
         setPublishedHtml(html);          // mark this html as the published version
-        if (project?.id) sb.updateProject(project.id, { netlify_site_id: d.siteId || null, published_url: d.url });
         toast("Page is live", "success");
       }
     } catch {
@@ -1587,9 +1587,10 @@ function ResultScreen({ html, form, onReset, onBuyMoreCredits }) {
     setPublishing(false);
   };
 
-  // Redeploy the current html to the SAME Netlify site so the live URL updates.
+  // Redeploy the current html. The server redeploys to the project's own site
+  // (derived server-side) and updates published_url itself.
   const republish = async () => {
-    if (!publishedSiteId || republishing) return;
+    if (!publishedUrl || republishing) return;
     setRepublishing(true); setPublishErr(null);
     try {
       const r = await fetch("/api/publish", {
@@ -1598,7 +1599,7 @@ function ResultScreen({ html, form, onReset, onBuyMoreCredits }) {
           "Content-Type":"application/json",
           "Authorization": "Bearer " + (sb._token || ""),
         },
-        body: JSON.stringify({ html, name:form.name, siteId: publishedSiteId }),
+        body: JSON.stringify({ html, name:form.name, projectId: project?.id }),
       });
       const d = await r.json();
       if (!r.ok || d.error) {
@@ -1607,7 +1608,7 @@ function ResultScreen({ html, form, onReset, onBuyMoreCredits }) {
       } else {
         if (d.url) setPublishedUrl(d.url);
         setPublishedHtml(html);          // current html is now the live version
-        if (project?.id) sb.updateProject(project.id, { published_url: d.url || publishedUrl, html });
+        if (project?.id) sb.updateProject(project.id, { html });   // html is client-writable; URL saved server-side
         toast("Live site updated", "success");
       }
     } catch {

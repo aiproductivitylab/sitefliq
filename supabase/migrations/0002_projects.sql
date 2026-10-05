@@ -31,6 +31,16 @@ create policy projects_insert_own on public.projects for insert with check (auth
 create policy projects_update_own on public.projects for update using (auth.uid() = user_id) with check (auth.uid() = user_id);
 create policy projects_delete_own on public.projects for delete using (auth.uid() = user_id);
 
+-- Column-level write privileges. RLS already limits users to their OWN rows, but
+-- without this a user could still set sensitive columns on those rows — e.g. point
+-- netlify_site_id at another customer's Netlify site and overwrite it on republish.
+-- Users may only write the "content" columns; netlify_site_id, published_url,
+-- share_token, id, user_id and timestamps are set by column defaults or by the
+-- server (service_role, which keeps full access and bypasses RLS).
+revoke insert, update on public.projects from authenticated;
+grant insert (user_id, business_name, industry, html, source_url, hero_url, is_public) on public.projects to authenticated;
+grant update (business_name, industry, html, source_url, hero_url, is_public) on public.projects to authenticated;
+
 -- Keep updated_at current on every update.
 create or replace function public.projects_touch_updated_at()
 returns trigger language plpgsql as $$

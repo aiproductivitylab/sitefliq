@@ -45,9 +45,10 @@ export default async function handler(req, res) {
   const userId = await getUserId(bearer);
   if (!userId) return res.status(401).json({ error: 'Not signed in' });
 
-  // Optional `siteId` → republish (redeploy) to an existing site so the live
-  // URL updates in place, instead of creating a new site.
-  const { html, name, siteId: existingSiteId } = req.body;
+  // `projectId` ties this publish to one of the user's projects. The server
+  // derives the Netlify site from THAT project — it never trusts a client-supplied
+  // site id — so a user can't redeploy over another customer's site.
+  const { html, name, projectId } = req.body;
   if (!html || !name) return res.status(400).json({ error: 'Missing html or name' });
 
   // Rate limit (uses the same rate_events table as generate; requires the service key).
@@ -61,24 +62,26 @@ export default async function handler(req, res) {
   const token = process.env.NETLIFY_TOKEN;
   if (!token) return res.status(500).json({ error: 'Deploy token not configured' });
 
-  // Republish security: the Netlify site must belong to one of THIS user's
-  // projects. Verified via the projects table with the service key (RLS-bypassing),
-  // so a user can't redeploy over another user's published site by guessing an id.
-  if (existingSiteId) {
-    const q = `${SUPABASE_URL}/rest/v1/projects?select=id&user_id=eq.${userId}`
-      + `&netlify_site_id=eq.${encodeURIComponent(existingSiteId)}&limit=1`;
-    const ownRes = await fetch(q, { headers: { apikey: serviceKey, Authorization: 'Bearer ' + serviceKey } });
-    const owned = await ownRes.json().catch(() => []);
-    if (!ownRes.ok || !Array.isArray(owned) || owned.length === 0) {
-      return res.status(403).json({ error: 'That site is not linked to your account.' });
+  const svc = { apikey: serviceKey, Authorization: 'Bearer ' + serviceKey };
+
+  // Load the user's project (if one was supplied). An existing netlify_site_id on
+  // it means "republish to that site"; otherwise we create a new site. A projectId
+  // that isn't the user's own is rejected.
+  let project = null;
+  if (projectId) {
+    const pr = await fetch(`${SUPABASE_URL}/rest/v1/projects?select=id,netlify_site_id&id=eq.${encodeURIComponent(projectId)}&user_id=eq.${userId}&limit=1`, { headers: svc });
+    const rows = await pr.json().catch(() => []);
+    if (!pr.ok || !Array.isArray(rows) || rows.length === 0) {
+      return res.status(403).json({ error: 'That project is not linked to your account.' });
     }
+    project = rows[0];
   }
 
   try {
     let siteId, siteUrl;
-    if (existingSiteId) {
-      // Republish to the SAME site (ownership verified above).
-      const getRes = await fetch(`https://api.netlify.com/api/v1/sites/${existingSiteId}`, {
+    if (project?.netlify_site_id) {
+      // Republish to the project's own site (derived server-side, not from client).
+      const getRes = await fetch(`https://api.netlify.com/api/v1/sites/${project.netlify_site_id}`, {
         headers: { 'Authorization': `Bearer ${token}` },
       });
       const site = await getRes.json();
@@ -137,6 +140,16 @@ export default async function handler(req, res) {
       },
       body: html,
     });
+
+    // Persist the site + live URL to the project server-side (service role) —
+    // these columns are not writable by the client.
+    if (project) {
+      await fetch(`${SUPABASE_URL}/rest/v1/projects?id=eq.${project.id}`, {
+        method: 'PATCH',
+        headers: { ...svc, 'Content-Type': 'application/json', Prefer: 'return=minimal' },
+        body: JSON.stringify({ netlify_site_id: siteId, published_url: siteUrl }),
+      });
+    }
 
     return res.status(200).json({ url: siteUrl, ready: true, siteId });
 
