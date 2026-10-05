@@ -7,7 +7,7 @@ import PricingPage from "./screens/PricingPage.jsx";
 import ProjectsDashboard from "./screens/ProjectsDashboard.jsx";
 import PreviewPage from "./screens/PreviewPage.jsx";
 import { Check, Arrow } from "./ui/kit";
-import { isPlaceholderPriceId } from "./config/plans";
+import { isPlaceholderPriceId, SUBSCRIPTION_PLANS } from "./config/plans";
 
 /* ─────────────────────────────────────────────────────────────────────────────
    CONSTANTS
@@ -1028,7 +1028,7 @@ function BuilderPanel({ form, up, togSec, onNext, ready, credits, user, onBuyCre
       <div style={{ padding:"14px 22px", borderTop:"1px solid #f3f4f6", background:"white" }}>
         <button onClick={onNext} disabled={!ready}
           style={{ width:"100%", padding:"13px", background:ready?"#2563eb":"#e5e7eb", color:ready?"white":"#9ca3af", border:"none", borderRadius:10, fontSize:14, fontWeight:600, cursor:ready?"pointer":"not-allowed", fontFamily:"inherit", display:"flex", alignItems:"center", justifyContent:"center", gap:8, transition:"all .2s" }}>
-          {ready ? (user && credits > 0 ? "Generate my page" : "See pricing & continue") : "Fill in required fields first"}
+          {ready ? (user && credits >= GENERATION_CREDITS ? "Generate my page" : "See plans & continue") : "Fill in required fields first"}
           {ready && <Arrow color="currentColor"/>}
         </button>
         {!ready && (
@@ -1049,7 +1049,7 @@ function BuilderPanel({ form, up, togSec, onNext, ready, credits, user, onBuyCre
 /* ─────────────────────────────────────────────────────────────────────────────
    PRICING WALL
 ───────────────────────────────────────────────────────────────────────────── */
-function PricingWall({ form, onBack, onPurchase }) {
+function PricingWall({ form, onBack, onSubscribe }) {
   const pal = PALETTES.find(p => p.id === form.palette) || PALETTES[0];
   return (
     <div style={{ minHeight:"100vh", background:"#fafaf9", fontFamily:"'Geist',sans-serif" }}>
@@ -1080,33 +1080,21 @@ function PricingWall({ form, onBack, onPurchase }) {
         </div>
         <div style={{ textAlign:"center", marginBottom:36 }}>
           <div style={{ fontSize:11, fontWeight:700, color:"#2563eb", letterSpacing:2, textTransform:"uppercase", marginBottom:10 }}>ONE LAST STEP</div>
-          <h1 style={{ fontSize:"clamp(26px,4vw,40px)", fontWeight:700, color:"#16181d", letterSpacing:"-0.02em", marginBottom:10 }}>Your page is ready to generate</h1>
+          <h1 style={{ fontSize:"clamp(26px,4vw,40px)", fontWeight:700, color:"#16181d", letterSpacing:"-0.02em", marginBottom:10 }}>Choose a plan to continue</h1>
           <p style={{ fontSize:15, color:"#6b7280", maxWidth:480, margin:"0 auto", lineHeight:1.7 }}>
-            Choose a plan to generate and download your <strong style={{ color:"#111827" }}>{form.name}</strong> landing page.
+            Subscribe to generate and publish <strong style={{ color:"#111827" }}>{form.name}</strong> — you get a fresh batch of credits every month.
           </p>
         </div>
         <div style={{ display:"grid", gridTemplateColumns:"repeat(3,1fr)", gap:18, marginBottom:36 }}>
-          {PLANS.map(plan => (
-            <div key={plan.id} style={{ background:"white", borderRadius:16, padding:"28px 24px", position:"relative", border:plan.badge?`2px solid ${"#2563eb"}`:"1px solid #e5e7eb", boxShadow:plan.badge?`0 4px 30px ${"#2563eb"}18`:"0 1px 3px rgba(0,0,0,.04)", transition:"transform .2s,box-shadow .2s" }}
-              onMouseEnter={e => { e.currentTarget.style.transform="translateY(-3px)"; e.currentTarget.style.boxShadow=plan.badge?`0 8px 40px ${"#2563eb"}28`:"0 8px 24px rgba(0,0,0,.08)"; }}
-              onMouseLeave={e => { e.currentTarget.style.transform="translateY(0)"; e.currentTarget.style.boxShadow=plan.badge?`0 4px 30px ${"#2563eb"}18`:"0 1px 3px rgba(0,0,0,.04)"; }}>
-              {plan.badge && <div style={{ position:"absolute", top:-12, left:"50%", transform:"translateX(-50%)", background:"#2563eb", color:"white", padding:"3px 14px", borderRadius:100, fontSize:9, fontWeight:800, letterSpacing:1.5, whiteSpace:"nowrap" }}>{plan.badge}</div>}
+          {SUBSCRIPTION_PLANS.map(plan => (
+            <div key={plan.id} style={{ background:"white", borderRadius:16, padding:"28px 24px", position:"relative", border:plan.popular?"2px solid #2563eb":"1px solid #e5e7eb", boxShadow:plan.popular?"0 4px 30px #2563eb18":"0 1px 3px rgba(0,0,0,.04)" }}>
+              {plan.popular && <div style={{ position:"absolute", top:-12, left:"50%", transform:"translateX(-50%)", background:"#2563eb", color:"white", padding:"3px 14px", borderRadius:100, fontSize:9, fontWeight:800, letterSpacing:1.5, whiteSpace:"nowrap" }}>MOST POPULAR</div>}
               <div style={{ fontSize:10, fontWeight:700, color:"#2563eb", letterSpacing:2, textTransform:"uppercase", marginBottom:10 }}>{plan.name}</div>
-              <div style={{ background:`${"#2563eb"}10`, border:`1px solid ${"#2563eb"}30`, borderRadius:10, padding:"14px 16px", marginBottom:14, display:"flex", alignItems:"center", justifyContent:"space-between" }}>
-                <div>
-                  <div style={{ fontSize:11, color:"#2563eb", fontWeight:700, letterSpacing:1, textTransform:"uppercase", marginBottom:2 }}>Credits</div>
-                  <div style={{ fontSize:36, fontWeight:700, color:"#16181d", lineHeight:1, letterSpacing:"-0.02em" }}>{plan.credits}</div>
-                </div>
-                <div style={{ textAlign:"right" }}>
-                  <div style={{ fontSize:11, color:"#9ca3af", marginBottom:2 }}>per page</div>
-                  <div style={{ fontSize:16, fontWeight:700, color:"#2563eb" }}>{plan.perPage}</div>
-                </div>
+              <div style={{ display:"flex", alignItems:"baseline", gap:5, marginBottom:4 }}>
+                <span style={{ fontSize:38, fontWeight:700, color:"#16181d", letterSpacing:"-0.02em" }}>${plan.price}</span>
+                <span style={{ fontSize:13, color:"#9ca3af" }}>/mo</span>
               </div>
-              <div style={{ marginBottom:4, display:"flex", alignItems:"baseline", gap:6 }}>
-                <span style={{ fontSize:38, fontWeight:700, color:"#16181d", letterSpacing:"-0.02em" }}>{plan.price}</span>
-                <span style={{ fontSize:12, color:"#9ca3af" }}>one-time · no subscription</span>
-              </div>
-              <div style={{ fontSize:11, color:"#6b7280", marginBottom:16 }}>{plan.desc}</div>
+              <div style={{ fontSize:12, color:"#6b7280", marginBottom:16 }}>{plan.credits} credits/mo · ~{plan.websites} websites</div>
               <div style={{ display:"flex", flexDirection:"column", gap:7, marginBottom:20 }}>
                 {plan.features.map(f => (
                   <div key={f} style={{ display:"flex", gap:8, fontSize:12, color:"#374151", alignItems:"flex-start" }}>
@@ -1114,14 +1102,14 @@ function PricingWall({ form, onBack, onPurchase }) {
                   </div>
                 ))}
               </div>
-              <button onClick={() => onPurchase(plan)} style={{ width:"100%", padding:"12px", borderRadius:10, fontFamily:"'Geist',sans-serif", fontSize:13, fontWeight:700, cursor:"pointer", background:plan.badge?"#2563eb":"transparent", border:plan.badge?"none":`2px solid ${"#2563eb"}`, color:plan.badge?"white":"#2563eb", transition:"all .2s" }}>
-                Get {plan.credits} Credits →
+              <button onClick={() => onSubscribe(plan)} style={{ width:"100%", padding:"12px", borderRadius:10, fontFamily:"'Geist',sans-serif", fontSize:13, fontWeight:600, cursor:"pointer", background:plan.popular?"#2563eb":"transparent", border:plan.popular?"none":"2px solid #2563eb", color:plan.popular?"white":"#2563eb", transition:"all .2s" }}>
+                Choose {plan.name}
               </button>
             </div>
           ))}
         </div>
         <div style={{ display:"flex", justifyContent:"center", gap:32, fontSize:12, color:"#9ca3af", flexWrap:"wrap" }}>
-          {["Secure checkout via Paddle","1 credit = 1 full landing page","Credits never expire","14-day money-back guarantee"].map(t => <span key={t} style={{ display:"inline-flex", alignItems:"center", gap:6 }}><Check size={12}/> {t}</span>)}
+          {["Billed monthly","Cancel anytime","Secure checkout via Paddle"].map(t => <span key={t} style={{ display:"inline-flex", alignItems:"center", gap:6 }}><Check size={12}/> {t}</span>)}
         </div>
       </div>
     </div>
@@ -1133,7 +1121,8 @@ function PricingWall({ form, onBack, onPurchase }) {
 ───────────────────────────────────────────────────────────────────────────── */
 // Client-side mirror of the server costs (1 page + 1 AI hero). Used only to
 // decide whether to attempt the AI hero; the server remains authoritative.
-const PAGE_PLUS_HERO_COST = 2;
+const GENERATION_CREDITS = 4;              // credits per page (mirrors api/generate.js)
+const PAGE_PLUS_HERO_COST = GENERATION_CREDITS + 1;   // page + AI hero (+1)
 
 function GeneratingScreen({ form, onDone, onError, onStage }) {
   const [pct, setPct] = useState(0);
@@ -2597,9 +2586,7 @@ export default function Sitefliq() {
         user={user} credits={credits}
         onSignIn={() => setShowAuth(true, "signin")}
         onSignOut={handleSignOut}
-        onPurchase={handlePurchase}
         onSubscribe={handleSubscribe}
-        topupPlans={PLANS}
       />
       {showAuth && <AuthModal mode={authMode} onSuccess={handleAuthSuccess} onClose={() => setShowAuth(false)}/>}
     </>
@@ -2609,7 +2596,7 @@ export default function Sitefliq() {
     <>
       <GS/>
       <ToastContainer/>
-      <PricingWall form={form} onBack={() => setScreen("builder")} onPurchase={handlePurchase}/>
+      <PricingWall form={form} onBack={() => setScreen("builder")} onSubscribe={handleSubscribe}/>
       {showAuth && <AuthModal mode={authMode} onSuccess={handleAuthSuccess} onClose={() => setShowAuth(false)}/>}
     </>
   );
@@ -2659,7 +2646,7 @@ export default function Sitefliq() {
               user={user}
               onBuyCredits={() => setScreen("pricing_wall")}
               onNext={() => {
-                if (user && credits > 0) setScreen("generating");
+                if (user && credits >= GENERATION_CREDITS) setScreen("generating");
                 else setScreen("pricing_wall");
               }}
             />

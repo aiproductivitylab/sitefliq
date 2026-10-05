@@ -1,5 +1,6 @@
 // api/paddle-webhook.js — Vercel serverless function
 import crypto from 'crypto';
+import { subscriptionByPriceId } from '../src/config/plans.js';
 
 // Paddle signs the RAW request body. Vercel's automatic JSON body parser would
 // re-serialize it and change the bytes, breaking the signature — so we turn the
@@ -66,97 +67,92 @@ export default async function handler(req, res) {
 
     // 2. Signature is valid — now it's safe to parse the body.
     const event = JSON.parse(rawBody);
-    if (event.event_type !== 'transaction.completed') return res.status(200).json({ received: true });
-
-    const transaction = event.data;
-
-    // Only the user ID comes from the browser (custom_data). The plan and credit
-    // amount are derived server-side from the Paddle price ID so a tampered
-    // browser payload can't award the wrong number of credits.
-    const customData = transaction.custom_data || {};
-    const userId = customData.user_id;
-    if (!userId) return res.status(400).json({ error: 'Missing user_id' });
-
-    // Price ID → plan + credits. Source of truth for what each purchase grants.
-    const PRICE_TO_PLAN = {
-      pri_01kjxa8pggzk3j8hekhsadx0pe: { plan: 'starter', credits: 3 },
-      pri_01kjxachhq3afcqc0gj54x2yq7: { plan: 'pro',     credits: 10 },
-      pri_01kjxafb31r7g5gc23se78j10a: { plan: 'agency',  credits: 25 },
-    };
-
-    const priceId = transaction.items?.[0]?.price?.id;
-    const mapped = PRICE_TO_PLAN[priceId];
-    if (!mapped) {
-      console.error(`Unknown Paddle price ID on transaction ${transaction.id}: ${priceId}`);
-      return res.status(400).json({ error: 'Unknown price ID' });
-    }
-    const { plan, credits: creditsToAdd } = mapped;
+    const type = event.event_type;
+    const data = event.data || {};
 
     const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_KEY;
     if (!SUPABASE_SERVICE_KEY) return res.status(500).json({ error: 'Server configuration error' });
+    const sh = { apikey: SUPABASE_SERVICE_KEY, Authorization: 'Bearer ' + SUPABASE_SERVICE_KEY, 'Content-Type': 'application/json' };
 
-    const supabaseHeaders = {
-      'apikey': SUPABASE_SERVICE_KEY,
-      'Authorization': 'Bearer ' + SUPABASE_SERVICE_KEY,
-      'Content-Type': 'application/json'
+    const priceIdOf = (o) => o?.items?.[0]?.price?.id;
+    const refill = async (userId, credits) => {
+      const r = await fetch(SUPABASE_URL + '/rest/v1/rpc/refill_monthly_credits', {
+        method: 'POST', headers: sh, body: JSON.stringify({ p_user_id: userId, p_amount: credits }),
+      });
+      return r.ok;
+    };
+    const userBySubscription = async (subId) => {
+      if (!subId) return null;
+      const r = await fetch(`${SUPABASE_URL}/rest/v1/subscriptions?select=user_id&paddle_subscription_id=eq.${encodeURIComponent(subId)}&limit=1`, { headers: sh });
+      const rows = await r.json().catch(() => []);
+      return (r.ok && Array.isArray(rows) && rows[0]) ? rows[0].user_id : null;
     };
 
-    // Idempotency: Paddle can deliver the same webhook more than once. If we've
-    // already recorded this transaction, acknowledge it without double-crediting.
-    const existingRes = await fetch(
-      SUPABASE_URL + '/rest/v1/transactions?select=id&limit=1&paddle_transaction_id=eq.' + encodeURIComponent(transaction.id),
-      { headers: supabaseHeaders }
-    );
-    if (!existingRes.ok) {
-      const detail = await existingRes.text();
-      console.error(`Idempotency lookup failed for ${transaction.id} (HTTP ${existingRes.status}): ${detail}`);
-      return res.status(500).json({ error: 'Idempotency lookup failed' });
-    }
-    const existing = await existingRes.json();
-    if (!Array.isArray(existing)) {
-      console.error(`Idempotency lookup returned unexpected payload for ${transaction.id}: ${JSON.stringify(existing)}`);
-      return res.status(500).json({ error: 'Idempotency lookup failed' });
-    }
-    if (existing.length > 0) {
-      console.log(`Transaction ${transaction.id} already processed — skipping`);
-      return res.status(200).json({ success: true, already_processed: true });
-    }
-
-    // Add credits. This must succeed before we acknowledge — on any non-2xx we
-    // log the error and return 500 so Paddle retries the delivery.
-    const creditRes = await fetch(SUPABASE_URL + '/rest/v1/rpc/add_credits', {
-      method: 'POST',
-      headers: supabaseHeaders,
-      body: JSON.stringify({ p_user_id: userId, p_amount: creditsToAdd })
-    });
-    if (!creditRes.ok) {
-      const detail = await creditRes.text();
-      console.error(`add_credits failed for user ${userId}, transaction ${transaction.id} (HTTP ${creditRes.status}): ${detail}`);
-      return res.status(500).json({ error: 'Failed to add credits' });
+    // ── Subscription lifecycle: keep the subscriptions table in sync ──
+    if (type === 'subscription.created' || type === 'subscription.updated') {
+      const userId = data.custom_data?.user_id || await userBySubscription(data.id);
+      const plan = subscriptionByPriceId(priceIdOf(data));
+      if (!userId || !plan) {
+        console.error(`${type}: missing user/plan (sub ${data.id}, price ${priceIdOf(data)})`);
+        return res.status(200).json({ received: true });
+      }
+      await fetch(`${SUPABASE_URL}/rest/v1/subscriptions?on_conflict=paddle_subscription_id`, {
+        method: 'POST',
+        headers: { ...sh, Prefer: 'resolution=merge-duplicates,return=minimal' },
+        body: JSON.stringify({
+          paddle_subscription_id: data.id,
+          user_id: userId,
+          paddle_customer_id: data.customer_id || null,
+          plan: plan.id,
+          status: data.status || null,
+          monthly_credits: plan.credits,
+          current_period_end: data.current_billing_period?.ends_at || null,
+        }),
+      });
+      // Reflect the (new) allotment now: on create for the first period, and on an
+      // active update (e.g. a plan change). refill SETS, so this is idempotent.
+      if (data.status === 'active' || data.status === 'trialing') await refill(userId, plan.credits);
+      return res.status(200).json({ success: true });
     }
 
-    // Log the transaction — only after credits were granted. This row is also
-    // the idempotency marker. If the insert fails we log loudly but still return
-    // 200: the credits are already granted, and returning 500 here would make
-    // Paddle retry and double-credit (no marker row exists yet to stop it).
-    const logRes = await fetch(SUPABASE_URL + '/rest/v1/transactions', {
-      method: 'POST',
-      headers: supabaseHeaders,
-      body: JSON.stringify({
-        user_id: userId,
-        plan: plan,
-        amount: transaction.details?.totals?.total || 0,
-        credits_added: creditsToAdd,
-        paddle_transaction_id: transaction.id
-      })
-    });
-    if (!logRes.ok) {
-      const detail = await logRes.text();
-      console.error(`Transaction log insert failed for ${transaction.id} (HTTP ${logRes.status}) — credits WERE granted: ${detail}`);
+    if (type === 'subscription.canceled') {
+      // Keep access until the period ends — only flag status; don't zero credits.
+      await fetch(`${SUPABASE_URL}/rest/v1/subscriptions?paddle_subscription_id=eq.${encodeURIComponent(data.id)}`, {
+        method: 'PATCH',
+        headers: { ...sh, Prefer: 'return=minimal' },
+        body: JSON.stringify({ status: 'canceled', current_period_end: data.current_billing_period?.ends_at || null }),
+      });
+      return res.status(200).json({ success: true });
     }
 
-    console.log(`Added ${creditsToAdd} credits to user ${userId} for plan ${plan}`);
-    return res.status(200).json({ success: true, credits_added: creditsToAdd });
+    // ── Recurring (and first) subscription payment → refill monthly credits ──
+    if (type === 'transaction.completed') {
+      const plan = subscriptionByPriceId(priceIdOf(data));
+      if (!plan) { console.error(`transaction ${data.id}: unknown price ${priceIdOf(data)}`); return res.status(200).json({ received: true }); }
+      const userId = data.custom_data?.user_id || await userBySubscription(data.subscription_id);
+      if (!userId) { console.error(`transaction ${data.id}: no user match`); return res.status(200).json({ received: true }); }
+
+      // Idempotency: don't double-process the same transaction id.
+      const exRes = await fetch(SUPABASE_URL + '/rest/v1/transactions?select=id&limit=1&paddle_transaction_id=eq.' + encodeURIComponent(data.id), { headers: sh });
+      if (!exRes.ok) { console.error(`idempotency lookup failed ${data.id}: ${await exRes.text()}`); return res.status(500).json({ error: 'Idempotency lookup failed' }); }
+      const ex = await exRes.json();
+      if (!Array.isArray(ex)) return res.status(500).json({ error: 'Idempotency lookup failed' });
+      if (ex.length > 0) return res.status(200).json({ success: true, already_processed: true });
+
+      const ok = await refill(userId, plan.credits);
+      if (!ok) { console.error(`refill failed for ${userId} on transaction ${data.id}`); return res.status(500).json({ error: 'Failed to refill credits' }); }
+
+      const logRes = await fetch(SUPABASE_URL + '/rest/v1/transactions', {
+        method: 'POST', headers: sh,
+        body: JSON.stringify({ user_id: userId, plan: plan.id, amount: data.details?.totals?.total || 0, credits_added: plan.credits, paddle_transaction_id: data.id }),
+      });
+      if (!logRes.ok) console.error(`transaction log insert failed ${data.id} (credits already refilled): ${await logRes.text()}`);
+
+      console.log(`Refilled ${plan.credits} monthly credits for ${userId} (${plan.id})`);
+      return res.status(200).json({ success: true, credits: plan.credits });
+    }
+
+    return res.status(200).json({ received: true });
 
   } catch (err) {
     console.error('Webhook error:', err);

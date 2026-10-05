@@ -5,9 +5,9 @@
 //  imported by the pricing page (to open Paddle checkout) and will be imported
 //  by the Paddle webhook to map a subscription payment -> monthly credit refill.
 //
-//  To go live: in the Paddle dashboard create the 3 recurring monthly prices,
-//  then paste each price's id (looks like `pri_01h...`) over the PLACEHOLDER
-//  strings below. Nothing else needs to change on the client to start checkout.
+//  Live Paddle monthly price IDs. Pro and Business reuse the ids that were the
+//  old one-time packs (now converted to monthly); the old Starter pack id is
+//  deleted. Update here if prices change — the webhook reads the same values.
 // ═══════════════════════════════════════════════════════════════════════════
 
 export const SUBSCRIPTION_PLANS = [
@@ -17,7 +17,7 @@ export const SUBSCRIPTION_PLANS = [
     price: 25,            // USD / month
     credits: 100,         // monthly credit allotment
     websites: 25,         // marketed "websites per month" (1 website = 4 credits)
-    priceId: "PADDLE_PRICE_STARTER_PLACEHOLDER",   // <-- replace with pri_... from Paddle
+    priceId: "pri_01m469ea9nrscg0h40p5np8x9x",
     tagline: "For solo operators getting started.",
     features: [
       "25 websites per month",
@@ -35,7 +35,7 @@ export const SUBSCRIPTION_PLANS = [
     price: 50,
     credits: 200,
     websites: 50,
-    priceId: "PADDLE_PRICE_PRO_PLACEHOLDER",       // <-- replace with pri_... from Paddle
+    priceId: "pri_01kjxachhq3afcqc0gj54x2yq7",    
     tagline: "For freelancers and small agencies.",
     features: [
       "50 websites per month",
@@ -52,7 +52,7 @@ export const SUBSCRIPTION_PLANS = [
     price: 100,
     credits: 500,
     websites: 125,
-    priceId: "PADDLE_PRICE_BUSINESS_PLACEHOLDER",  // <-- replace with pri_... from Paddle
+    priceId: "pri_01kjxafb31r7g5gc23se78j10a",
     tagline: "For agencies and resellers at volume.",
     features: [
       "125 websites per month",

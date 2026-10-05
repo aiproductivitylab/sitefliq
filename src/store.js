@@ -80,6 +80,12 @@ export const sb = {
     const r = await this.req(`/rest/v1/projects?id=eq.${id}&select=*&limit=1`);
     return (r.ok && Array.isArray(r.data) && r.data[0]) ? r.data[0] : null;
   },
+  // The signed-in user's subscription (RLS returns only their own row), or null.
+  async getSubscription() {
+    if (!this._token) return null;
+    const r = await this.req("/rest/v1/subscriptions?select=plan,status,current_period_end&order=updated_at.desc&limit=1");
+    return (r.ok && Array.isArray(r.data) && r.data[0]) ? r.data[0] : null;
+  },
   // Public — resolves a shared project by token via the SECURITY DEFINER RPC.
   async getSharedProject(token) {
     const r = await this.req("/rest/v1/rpc/get_shared_project", {

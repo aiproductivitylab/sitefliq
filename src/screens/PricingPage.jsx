@@ -1,12 +1,36 @@
 // Pricing — premium B2B redesign.
 // Monthly subscription plans come from src/config/plans.js (the single source of
-// truth for the Paddle price IDs). One-time credit top-ups stay as a small
-// secondary section and keep working through the existing onPurchase/Paddle flow.
+// truth for the Paddle price IDs). One-time top-ups are not for sale yet.
+import { useEffect, useState } from "react";
+import { sb } from "../store";
 import { theme as t } from "../ui/theme";
 import { Container, Eyebrow, Heading, Text, Button, Card, Badge, Check, MarketingNav, MarketingFooter } from "../ui/kit";
 import { SUBSCRIPTION_PLANS as SUBSCRIPTIONS } from "../config/plans";
 
-export default function PricingPage({ onBuild, onHome, onMarketing, user, credits, onSignIn, onSignOut, onPurchase, onSubscribe, topupPlans = [] }) {
+export default function PricingPage({ onBuild, onHome, onMarketing, user, credits, onSignIn, onSignOut, onSubscribe }) {
+  const [sub, setSub] = useState(null);       // the user's subscription row, if any
+  const [portalBusy, setPortalBusy] = useState(false);
+  const [portalErr, setPortalErr] = useState("");
+
+  useEffect(() => {
+    if (user) sb.getSubscription().then(setSub).catch(() => {});
+    else setSub(null);
+  }, [user]);
+
+  const isSubscriber = !!sub;   // active OR canceled-until-period-end both keep access
+
+  const openPortal = async () => {
+    if (portalBusy) return;
+    setPortalBusy(true); setPortalErr("");
+    try {
+      const r = await fetch("/api/portal", { method: "POST", headers: { Authorization: "Bearer " + (sb._token || "") } });
+      const d = await r.json().catch(() => ({}));
+      if (r.ok && d.url) { window.location.href = d.url; return; }
+      setPortalErr(d.error || "Couldn't open the billing portal.");
+    } catch { setPortalErr("Network error. Please try again."); }
+    setPortalBusy(false);
+  };
+
   return (
     <div style={{ background: t.color.bg, color: t.color.text, fontFamily: t.font.sans, minHeight: "100vh" }}>
       <div style={{ borderBottom: `1px solid ${t.color.border}` }}>
@@ -25,69 +49,72 @@ export default function PricingPage({ onBuild, onHome, onMarketing, user, credit
           A monthly website allowance with every feature included. One website uses 4 credits; a chat edit uses 1.
         </Text>
         <Text small muted>Billed monthly. Cancel anytime.</Text>
+        {isSubscriber && (
+          <div style={{ marginTop: 18 }}>
+            <Button variant="secondary" size="sm" onClick={openPortal} disabled={portalBusy}>
+              {portalBusy ? "Opening…" : "Manage subscription"}
+            </Button>
+            {sub?.status === "canceled" && (
+              <Text small muted style={{ marginTop: 8 }}>Your plan is canceled — access continues until the end of the billing period.</Text>
+            )}
+            {portalErr && <Text small style={{ marginTop: 8, color: t.color.danger }}>{portalErr}</Text>}
+          </div>
+        )}
       </Container>
 
       {/* Subscription cards */}
       <Container style={{ padding: "32px 24px 8px" }}>
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(280px,1fr))", gap: 20, alignItems: "start" }}>
-          {SUBSCRIPTIONS.map(p => (
-            <Card key={p.id} style={{ padding: 28, position: "relative", border: p.popular ? `1.5px solid ${t.color.accent}` : undefined, boxShadow: p.popular ? t.shadow.lg : undefined }}>
-              {p.popular && (
-                <div style={{ position: "absolute", top: -11, left: 28 }}>
-                  <Badge tone="accent" style={{ fontWeight: 700 }}>Most popular</Badge>
-                </div>
-              )}
-              <div style={{ fontSize: 14, fontWeight: 700, color: t.color.ink, marginBottom: 4 }}>{p.name}</div>
-              <Text small muted style={{ marginBottom: 18, minHeight: 38 }}>{p.tagline}</Text>
-              <div style={{ display: "flex", alignItems: "baseline", gap: 4, marginBottom: 2 }}>
-                <span style={{ fontSize: 44, fontWeight: 700, letterSpacing: "-0.03em", color: t.color.ink }}>${p.price}</span>
-                <span style={{ fontSize: 15, color: t.color.muted }}>/mo</span>
-              </div>
-              <Text small muted style={{ marginBottom: 20 }}>{p.credits} credits per month</Text>
-              <Button variant={p.popular ? "accent" : "secondary"} size="md" style={{ width: "100%" }} onClick={() => onSubscribe && onSubscribe(p)}>
-                Choose {p.name}
-              </Button>
-              <div style={{ display: "flex", flexDirection: "column", gap: 11, marginTop: 22 }}>
-                {p.features.map(f => (
-                  <div key={f} style={{ display: "flex", gap: 10, alignItems: "flex-start" }}>
-                    <span style={{ marginTop: 2 }}><Check size={15} /></span>
-                    <span style={{ fontSize: 14, color: t.color.text, lineHeight: 1.45 }}>{f}</span>
+          {SUBSCRIPTIONS.map(p => {
+            const current = isSubscriber && sub.plan === p.id;
+            return (
+              <Card key={p.id} style={{ padding: 28, position: "relative", border: p.popular ? `1.5px solid ${t.color.accent}` : undefined, boxShadow: p.popular ? t.shadow.lg : undefined }}>
+                {p.popular && (
+                  <div style={{ position: "absolute", top: -11, left: 28 }}>
+                    <Badge tone="accent" style={{ fontWeight: 700 }}>Most popular</Badge>
                   </div>
-                ))}
-              </div>
-            </Card>
-          ))}
+                )}
+                <div style={{ fontSize: 14, fontWeight: 700, color: t.color.ink, marginBottom: 4 }}>{p.name}</div>
+                <Text small muted style={{ marginBottom: 18, minHeight: 38 }}>{p.tagline}</Text>
+                <div style={{ display: "flex", alignItems: "baseline", gap: 4, marginBottom: 2 }}>
+                  <span style={{ fontSize: 44, fontWeight: 700, letterSpacing: "-0.03em", color: t.color.ink }}>${p.price}</span>
+                  <span style={{ fontSize: 15, color: t.color.muted }}>/mo</span>
+                </div>
+                <Text small muted style={{ marginBottom: 20 }}>{p.credits} credits per month</Text>
+                {current ? (
+                  <Button variant="secondary" size="md" style={{ width: "100%" }} onClick={openPortal} disabled={portalBusy}>Current plan — manage</Button>
+                ) : (
+                  <Button variant={p.popular ? "accent" : "secondary"} size="md" style={{ width: "100%" }} onClick={() => onSubscribe && onSubscribe(p)}>
+                    {isSubscriber ? `Switch to ${p.name}` : `Choose ${p.name}`}
+                  </Button>
+                )}
+                <div style={{ display: "flex", flexDirection: "column", gap: 11, marginTop: 22 }}>
+                  {p.features.map(f => (
+                    <div key={f} style={{ display: "flex", gap: 10, alignItems: "flex-start" }}>
+                      <span style={{ marginTop: 2 }}><Check size={15} /></span>
+                      <span style={{ fontSize: 14, color: t.color.text, lineHeight: 1.45 }}>{f}</span>
+                    </div>
+                  ))}
+                </div>
+              </Card>
+            );
+          })}
         </div>
         <Text small muted style={{ textAlign: "center", marginTop: 20 }}>
           Coming soon to every plan: Lead Finder, client invoicing, and custom domains.
         </Text>
       </Container>
 
-      {/* One-time top-ups (secondary) */}
-      {topupPlans.length > 0 && (
-        <Container style={{ padding: "48px 24px 16px" }}>
-          <div style={{ borderTop: `1px solid ${t.color.border}`, paddingTop: 40 }}>
-            <div style={{ textAlign: "center", marginBottom: 24 }}>
-              <Heading level="h3" style={{ marginBottom: 6 }}>Prefer to pay as you go?</Heading>
-              <Text small muted>One-time credit packs. Credits never expire. 1 credit = 1 website.</Text>
-            </div>
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(200px,1fr))", gap: 14, maxWidth: 760, margin: "0 auto" }}>
-              {topupPlans.map(p => (
-                <Card key={p.id} style={{ padding: 20, display: "flex", flexDirection: "column", gap: 10 }}>
-                  <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between" }}>
-                    <span style={{ fontSize: 15, fontWeight: 700, color: t.color.ink }}>{p.credits} credits</span>
-                    <span style={{ fontSize: 20, fontWeight: 700, color: t.color.ink }}>{p.price}</span>
-                  </div>
-                  <Button variant="secondary" size="sm" onClick={() => onPurchase(p)} style={{ width: "100%" }}>Buy pack</Button>
-                </Card>
-              ))}
-            </div>
-          </div>
-        </Container>
-      )}
+      {/* One-time top-ups — placeholder (a new top-up price is coming) */}
+      <Container style={{ padding: "48px 24px 16px" }}>
+        <div style={{ borderTop: `1px solid ${t.color.border}`, paddingTop: 40, textAlign: "center" }}>
+          <Heading level="h3" style={{ marginBottom: 6 }}>One-time top-up packs</Heading>
+          <Text small muted>Coming soon — buy extra credits without changing your plan.</Text>
+        </div>
+      </Container>
 
       <Container style={{ padding: "16px 24px 64px", textAlign: "center" }}>
-        <Text small muted>Secure checkout via Paddle. Credits never expire.</Text>
+        <Text small muted>Secure checkout via Paddle.</Text>
       </Container>
 
       <MarketingFooter onMarketing={onMarketing || onHome} />

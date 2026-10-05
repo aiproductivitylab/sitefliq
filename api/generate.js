@@ -16,11 +16,10 @@ const SUPABASE_ANON = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFz
 const GEN_MODEL = "claude-sonnet-4-6";
 const GEN_MAX_TOKENS = 24000;
 
-// Credits charged per full generation. Stays at 1 for now (one credit = one page,
-// matching today's 3/10/25 packs). Becomes 4 in Step 5 alongside the ×4 balance
-// migration — this single constant is the only thing that changes then.
-// See docs/SUBSCRIPTION_UPGRADE_PLAN.md §2.
-const GENERATION_COST = 1;
+// Credits charged per full generation (Step 5: finer credit unit — generation 4,
+// chat edit 1, AI hero +1). The ×4 balance migration (0003) rescaled existing
+// credits to match this unit.
+const GENERATION_COST = 4;
 
 // Rate limit: max generations per window, per user.
 const GEN_RATE_LIMIT = 5;
