@@ -6,6 +6,7 @@ import HomePage from "./screens/HomePage.jsx";
 import PricingPage from "./screens/PricingPage.jsx";
 import ProjectsDashboard from "./screens/ProjectsDashboard.jsx";
 import PreviewPage from "./screens/PreviewPage.jsx";
+import CheckWebsite from "./screens/CheckWebsite.jsx";
 import { Check, Arrow } from "./ui/kit";
 import { isPlaceholderPriceId, SUBSCRIPTION_PLANS } from "./config/plans";
 
@@ -484,6 +485,46 @@ function WebsiteImporter({ onImport }) {
   );
 }
 
+// Maps scraped website data (from /api/scrape-website) to builder form fields.
+// Shared by the manual WebsiteImporter and the one-click "Rebuild this site" flow
+// so both pre-fill the builder identically. Returns a partial form object.
+function importedFormFields(data) {
+  const out = {};
+  if (data.importedUrl) out.importedFrom = data.importedUrl;
+  if (data.logo) out.logo = data.logo;
+  if (data.businessName || data.title) out.name = (data.businessName || data.title.replace(/\s*[|\-–].*/, "")).trim();
+  if (data.description) out.description = data.description;
+  if (data.phone) out.phone = data.phone;
+  if (data.email) out.email = data.email;
+  if (data.address) out.location = data.address;
+  if (data.colours?.length) {
+    out.importedColours = data.colours;
+    const getSat = (hex) => {
+      const r = parseInt(hex.slice(1, 3), 16) / 255, g = parseInt(hex.slice(3, 5), 16) / 255, b = parseInt(hex.slice(5, 7), 16) / 255;
+      const max = Math.max(r, g, b), min = Math.min(r, g, b);
+      return max === 0 ? 0 : (max - min) / max;
+    };
+    const sorted = [...data.colours].sort((a, b) => getSat(b) - getSat(a));
+    const dom = sorted[0] || "#000000";
+    const r = parseInt(dom.slice(1, 3), 16), g = parseInt(dom.slice(3, 5), 16), b = parseInt(dom.slice(5, 7), 16);
+    let palette = "clean";
+    if (r > 150 && g < 100 && b < 100) palette = "ember";
+    else if (r > 180 && g > 80 && g < 160 && b < 80) palette = "ember";
+    else if (b > 120 && r < 120 && b > g) palette = "slate";
+    else if (g > 120 && r < 120 && g > b) palette = "forest";
+    else if (r > 180 && g > 150 && b < 80) palette = "gold";
+    out.palette = palette;
+    const desc = (data.description || "").toLowerCase();
+    let vibe = "warm";
+    if (/luxury|premium|elite|exclusive|high.end/.test(desc)) vibe = "elegant";
+    else if (/fast|quick|energy|power|sport|gym|fit/.test(desc)) vibe = "energetic";
+    else if (/tech|software|saas|digital|minimal/.test(desc)) vibe = "minimal";
+    else if (/bold|strong|industrial|auto|roofing|construct/.test(desc)) vibe = "bold";
+    out.vibe = vibe;
+  }
+  return out;
+}
+
 /* ─────────────────────────────────────────────────────────────────────────────
    LOGO UPLOAD
 ───────────────────────────────────────────────────────────────────────────── */
@@ -733,38 +774,8 @@ function BuilderPanel({ form, up, togSec, onNext, ready, credits, user, onBuyCre
   const [tab, setTab] = useState("info");
 
   const handleImport = (data) => {
-    if (data.importedUrl) up("importedFrom", data.importedUrl);
-    if (data.logo) up("logo", data.logo);
-    if (data.businessName || data.title) up("name", (data.businessName || data.title.replace(/\s*[|\-–].*/,"")).trim());
-    if (data.description) up("description", data.description);
-    if (data.phone) up("phone", data.phone);
-    if (data.email) up("email", data.email);
-    if (data.address) up("location", data.address);
-    if (data.colours?.length) {
-      up("importedColours", data.colours);
-      const getSat = (hex) => {
-        const r=parseInt(hex.slice(1,3),16)/255, g=parseInt(hex.slice(3,5),16)/255, b=parseInt(hex.slice(5,7),16)/255;
-        const max=Math.max(r,g,b), min=Math.min(r,g,b);
-        return max === 0 ? 0 : (max-min)/max;
-      };
-      const sorted = [...data.colours].sort((a,b) => getSat(b)-getSat(a));
-      const dom = sorted[0] || "#000000";
-      const r=parseInt(dom.slice(1,3),16), g=parseInt(dom.slice(3,5),16), b=parseInt(dom.slice(5,7),16);
-      let palette = "clean";
-      if (r>150&&g<100&&b<100) palette="ember";
-      else if (r>180&&g>80&&g<160&&b<80) palette="ember";
-      else if (b>120&&r<120&&b>g) palette="slate";
-      else if (g>120&&r<120&&g>b) palette="forest";
-      else if (r>180&&g>150&&b<80) palette="gold";
-      up("palette", palette);
-      const desc = (data.description||"").toLowerCase();
-      let vibe = "warm";
-      if (/luxury|premium|elite|exclusive|high.end/.test(desc)) vibe="elegant";
-      else if (/fast|quick|energy|power|sport|gym|fit/.test(desc)) vibe="energetic";
-      else if (/tech|software|saas|digital|minimal/.test(desc)) vibe="minimal";
-      else if (/bold|strong|industrial|auto|roofing|construct/.test(desc)) vibe="bold";
-      up("vibe", vibe);
-    }
+    const fields = importedFormFields(data);
+    for (const [k, v] of Object.entries(fields)) up(k, v);
   };
 
   return (
@@ -2414,6 +2425,46 @@ export default function Sitefliq() {
     setScreen("result");
   };
 
+  // One-click rebuild (Step 6, F6 entry point): import the target site's branding,
+  // pre-fill a fresh builder form, and drop the user into generation. The source
+  // URL is stored on the form (→ project.source_url) so the before/after preview
+  // link works. Falls back to a pre-filled builder if the importer can't scrape or
+  // required fields (industry) are still missing.
+  const rebuildFromUrl = async (url) => {
+    if (!url) return;
+    if (!user) { setShowAuth(true, "signin"); return; }
+    // Start from a clean slate so no stale fields leak from a previous build.
+    resetForm();
+    setProject(null);
+    setGeneratedHtml("");
+    setHeroUrl("");
+    setPendingHeroUrl("");
+
+    let data = null;
+    try {
+      const r = await fetch("/api/scrape-website", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ url }),
+      });
+      data = await r.json().catch(() => null);
+    } catch { /* fall through to manual */ }
+
+    const fields = (data && data.success)
+      ? importedFormFields({ ...data, importedUrl: url })
+      : { importedFrom: url };   // keep the source URL even if the scrape failed
+    for (const [k, v] of Object.entries(fields)) updateForm(k, v);
+
+    if (data && data.success) toast("Imported their site — review and generate", "success");
+    else toast("Couldn't auto-import that site — add the details and generate", "warning");
+
+    // "Straight to generation" when everything required is present and the user
+    // has the credits; otherwise land on the pre-filled builder to finish up.
+    const readyNow = fields.name && fields.description && fields.industry;
+    if (readyNow && credits >= GENERATION_CREDITS) setScreen("generating");
+    else setScreen("builder");
+  };
+
   const ready = form.name.trim() && form.industry.trim() && form.description.trim();
 
   // Session restore & URL token detection
@@ -2535,6 +2586,7 @@ export default function Sitefliq() {
         onExample={() => setScreen("example")}
         onHelp={() => setScreen("help")}
         onProjects={() => setScreen("projects")}
+        onCheck={() => setScreen("check")}
         onMarketing={goMarketing}
         user={user} credits={credits}
         onSignIn={() => setShowAuth(true, "signin")}
@@ -2560,7 +2612,25 @@ export default function Sitefliq() {
         onHome={() => setScreen("home")}
         onBuild={() => { setProject(null); setScreen("builder"); }}
         onOpen={openProject}
+        onCheck={() => setScreen("check")}
         user={user} credits={credits}
+        onSignOut={handleSignOut}
+      />
+      {showAuth && <AuthModal mode={authMode} onSuccess={handleAuthSuccess} onClose={() => setShowAuth(false)}/>}
+    </>
+  );
+
+  if (screen === "check") return (
+    <>
+      <GS/>
+      <ToastContainer/>
+      <CheckWebsite
+        onHome={() => setScreen("home")}
+        onBuild={() => { setProject(null); setScreen("builder"); }}
+        onMarketing={goMarketing}
+        onRebuild={rebuildFromUrl}
+        user={user} credits={credits}
+        onSignIn={() => setShowAuth(true, "signin")}
         onSignOut={handleSignOut}
       />
       {showAuth && <AuthModal mode={authMode} onSuccess={handleAuthSuccess} onClose={() => setShowAuth(false)}/>}

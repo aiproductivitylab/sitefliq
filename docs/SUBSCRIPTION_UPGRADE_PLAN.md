@@ -1,7 +1,8 @@
 # Sitefliq — Subscription Agency Toolkit Plan
 
 **Status:** Planning only. No feature code written yet.
-**Author:** Claude + Stefan. Created: 2026-09-30. Last updated: 2026-09-30 (build order v2).
+**Author:** Claude + Stefan. Created: 2026-09-30. Last updated: 2026-10-06 (Step 6
+start: website quality score + one-click rebuild built; Google Places cost verified).
 **Builds on:** [`TASK6-PLAN.md`](../TASK6-PLAN.md) (AI chat editing) and the current
 codebase (Paddle one-time credits, Supabase auth/credits, `/api/*` serverless
 functions on Vercel, Netlify publish).
@@ -117,14 +118,15 @@ as a **+1 credit option** (5-credit generation with AI hero, 4 with Pexels) — 
 model IDs, prices, branding/fallback, and the "full AI imagery" premium are under
 Step 3.
 
-**Lead searches (PROVISIONAL — must verify before building F5).** Lead searches
-are a separate monthly quota (not drawn from credits): Starter 5 / Pro 25 /
-Business 100, at 50 results each. The real Google Places cost per 50-result search
-is **not yet verified** and depends heavily on implementation:
+**Lead searches (cost now VERIFIED — see F5, 2026-10-06).** Lead searches are a
+separate monthly quota (not drawn from credits): Starter 5 / Pro 25 / Business 100,
+at 50 results each. The real Google Places cost per 50-result search is now
+confirmed from Google's official docs:
 
-- Field-masked Text Search (contact fields returned in the search response, ~3
-  paginated requests for 50 results): **~$0.10–0.15/search** — cheap.
-- Place-Details-per-result (one detail call per business): **~$0.85–0.95/search** — expensive.
+- **Field-masked Text Search (Enterprise SKU, 3 paginated requests for 50 results):
+  $35/1,000 req × 3 = $0.105/search** — this is the path F5 uses. ✓
+- Place-Details-per-result (one detail call per business): **~$0.85–0.95/search** —
+  expensive; **rejected** (would break the Business break-even).
 
 **Break-even lead cost per search** (the most we can pay before that tier loses
 money, at worst-case credit usage):
@@ -135,18 +137,17 @@ money, at worst-case credit usage):
 | Pro | $50 − $18.50 = $31.50 | 25 | **$1.26** |
 | Business | $100 − $46.25 = $53.75 | 100 | **$0.54** |
 
-**Business is the binding constraint: the verified 50-result Places cost must stay
-under ~$0.54/search**, or a maxed-out Business user loses us money. The cheap
-field-masked approach ($0.10–0.15) clears this comfortably; the expensive
-per-result approach ($0.85–0.95) does NOT — at ~$0.90/search a Business user maxing
-both credits and leads costs ~$136 against $100 revenue. **Before F5 ships: verify
-the real cost, implement field-masked Text Search (not per-result Place Details),
-and cap results, so Business cannot lose money.** This is why the lead limits are
-marked PROVISIONAL.
+**Business is the binding constraint: the 50-result Places cost must stay under
+~$0.54/search**, or a maxed-out Business user loses us money. The verified
+field-masked Enterprise cost is **$0.105/search** — ~5× under the limit. ✓ (The
+rejected per-result approach at ~$0.90/search would have cost a maxed Business user
+~$136 against $100 revenue — hence F5 must use field-masked Text Search, never
+per-result Place Details.)
 
-Combined worst case at the cheap provisional ($0.15/search): Starter ~60% / Pro
-~55% / Business ~39% margin — all safe. At the expensive provisional, Business goes
-negative — hence the gate above.
+Combined worst case at the **verified $0.105/search** (every credit on max-cost
+generations + every lead search used): Starter $9.78 → **61%** / Pro $21.13 →
+**58%** / Business $56.75 → **43%** margin — all safely positive. The lead limits
+(5 / 25 / 100) are therefore CONFIRMED, not provisional.
 
 **Why edits don't lose money:** targeted search/replace keeps edit **output** tiny
 (the expensive half), so a Sonnet edit is ~$0.05 — 1 credit covers it with large
@@ -356,23 +357,44 @@ no HTTPS*. This surfaces the best sales targets ("no site" / "slow, not mobile")
   same GCP key with both APIs enabled; keep server-side only — distinct from the
   browser `VITE_GOOGLE_KEY` used for Maps).
 
-**Plan limits (PROVISIONAL):** lead searches are a **separate monthly quota**, not
-credit-priced — Starter **5** / Pro **25** / Business **100** searches/month at
-**50 results each**. These limits are PROVISIONAL and must be confirmed against the
-verified Google cost (see below and the margin tables) before F5 is built, so the
-Business plan can't lose money.
+**Plan limits (CONFIRMED safe — see verified costs below):** lead searches are a
+**separate monthly quota**, not credit-priced — **keep Starter 5 / Pro 25 /
+Business 100** searches/month at **50 results each**. With the verified cost of
+**$0.105/search** these are comfortably profitable even at worst-case credit usage
+(combined worst-case margins **61% / 58% / 43%** — see the §2 margin tables). There
+is large headroom: at $0.105/search the binding Business tier only breaks even
+around **~500 searches/mo**, so these limits can be raised later for
+competitiveness without risk. Keeping them conservative at launch also protects the
+shared per-SKU free cap (below).
 
-**Monthly cost to me (PROVISIONAL — verify before building):**
-- **Google Places API (paid):** cost per 50-result search is **not yet verified**
-  and depends on implementation. Two paths: **field-masked Text Search** (contact
-  fields in the search response, ~3 paginated requests) ≈ **$0.10–0.15/search**;
-  or **Place-Details-per-result** ≈ **$0.85–0.95/search**. Business break-even is
-  **~$0.54/search** (margin tables), so F5 **must** use the field-masked approach
-  and cap results. Google Maps Platform gives a monthly free allotment per SKU (the
-  flat $200/mo credit was retired in 2025 — **verify current free tiers + exact
-  per-request SKU pricing in the GCP console before building**).
-- **PageSpeed Insights API:** **FREE** — 25,000 requests/day with a key (≈240/min
-  rate limit). $0.00.
+**Monthly cost to me — VERIFIED from Google's official docs (2026-10-06):**
+- **Google Places API (New) — Text Search:** billed **per request** at the highest
+  SKU any requested field triggers. A lead field mask of `id, displayName,
+  formattedAddress, location, websiteUri, nationalPhoneNumber` tops out at the
+  **Enterprise** SKU (`websiteUri` and the phone fields are Enterprise-tier), so the
+  whole request bills at **Text Search Enterprise = $35.00 / 1,000 requests =
+  $0.035/request** (0–100k tier). Text Search (New) returns **max 20 results/page**,
+  so **50 results = 3 paginated requests → 3 × $0.035 = $0.105 per 50-result
+  search.** That is ~5× under the ~$0.54 Business break-even. ✓
+  - **Free tier:** Text Search Enterprise has a **1,000-request/month free cap**
+    (platform-wide, per SKU) ≈ **~333 free 50-result searches/month across all
+    users combined**. The old flat $200/mo credit was retired in 2025 and replaced
+    by these per-SKU monthly free caps.
+  - **Hard rules to keep this price (do NOT break these when building F5):**
+    1. Field mask stays within the **Enterprise** tier — request only the six fields
+       above. **Never** request Atmosphere fields (`rating`, `userRatingCount`,
+       `reviews`, `priceLevel`): any one bumps the whole request to **Text Search
+       Enterprise + Atmosphere = $40/1,000 = $0.04/request** ($0.12/search).
+    2. Use **field-masked Text Search only** — never fan out to one Place Details
+       call per result (the ~$0.85–0.95/search path that would blow the Business
+       break-even).
+    3. Cap at **50 results** (3 requests); cache by `place_id`; set a **GCP billing
+       budget alert** before the first real search (the 1,000-request free cap is
+       shared across all users, not per user).
+- **PageSpeed Insights API:** **FREE** — no billing required. ~25,000 requests/day
+  and ~240/min with a free API key (harsh anonymous throttling without one). $0.00.
+  The key needs no billing account: GCP Console → enable **PageSpeed Insights API**
+  → Credentials → create an API key → set as `GOOGLE_PAGESPEED_KEY` (server-side).
 
 **What could go wrong:**
 - **Cost blowout** — Places is real money per call. Gate behind the monthly search
@@ -673,9 +695,11 @@ billing, but it is **not** launch — Step 6 must still be built and tested firs
 In roughly this order (free-API and reuse first, paid/external last):
 1. **Website quality score** (F5 scoring half) — PageSpeed is **free**; set up the
    GCP project + keys here on a pasted URL before touching paid Places.
-2. **Lead Finder** (F5 search half) — Google Places (**paid**); gate behind the
-   monthly lead-search quota, use field-masked Text Search, cache by `place_id`,
-   and set a **GCP billing budget alert** before first real search.
+2. **Lead Finder** (F5 search half) — Google Places (**paid**, cost VERIFIED at
+   **$0.105/search** via the field-masked Enterprise SKU — see F5); gate behind the
+   monthly lead-search quota (5/25/100), keep the field mask within the Enterprise
+   tier (no Atmosphere fields), cap at 50 results, cache by `place_id`, and set a
+   **GCP billing budget alert** before the first real search.
 3. **One-click rebuild from a lead** (F6) — wire lead → importer → generate → save
    as a project.
 4. **Invoicing** (F7) — client-side PDF first, then persist to the `invoices` table.
@@ -712,8 +736,8 @@ built and tested first (see §5 Launch checklist).
 $25/mo (Pro, when >500 MB / higher usage); Netlify $0 → ~$19/mo (Pro, at scale);
 Resend $0 → $20/mo (only if emailing invoices >3k/mo); PageSpeed **$0**.
 **Variable:** Anthropic per generation (~$0.16–0.37) / edit (~$0.05); Google Places
-**PROVISIONAL** per 50-result search (separate monthly quota; must be verified
-under the ~$0.54 Business break-even before F5 — see margin tables). The two real
+**$0.105 per 50-result search** (VERIFIED — Enterprise SKU × 3 requests; separate
+monthly quota, well under the ~$0.54 Business break-even — see F5 / margin tables). The two real
 cost risks to watch: **Google Places** and, only if we ever switched edits to
 full-rewrite, **Sonnet edits** — both mitigated above.
 
@@ -748,9 +772,10 @@ domains — must be verified end-to-end on the live site before any public launc
       generation cost flipped to its launch value.
 - [ ] **Step 6 — growth features:**
   - [ ] Website quality score returns correct flags (no site / slow / not mobile / no HTTPS).
-  - [ ] **Lead Finder** — real Google Places cost per 50-result search **verified**
-        under the ~$0.54 Business break-even; monthly quotas enforced; GCP budget
-        alert live.
+  - [ ] **Lead Finder** — Google Places cost per 50-result search verified at
+        **$0.105** (Enterprise SKU × 3 requests), under the ~$0.54 Business
+        break-even; field mask kept within Enterprise tier; monthly quotas
+        (5/25/100) enforced; GCP budget alert live.
   - [ ] One-click rebuild from a lead produces a saved project.
   - [ ] **Invoicing** — create → PDF export → mark paid, persisted per user.
   - [ ] **Custom domains** — connect a real domain via Netlify, DNS instructions

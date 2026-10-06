@@ -9,7 +9,7 @@ function fmtDate(iso) {
   catch { return ""; }
 }
 
-export default function ProjectsDashboard({ onHome, onBuild, onOpen, user, credits, onSignOut }) {
+export default function ProjectsDashboard({ onHome, onBuild, onOpen, onCheck, user, credits, onSignOut }) {
   const [projects, setProjects] = useState(null); // null = loading
   const [copiedId, setCopiedId] = useState(null);
 
@@ -30,7 +30,7 @@ export default function ProjectsDashboard({ onHome, onBuild, onOpen, user, credi
     <div style={{ background: t.color.bg, color: t.color.text, fontFamily: t.font.sans, minHeight: "100vh" }}>
       <div style={{ borderBottom: `1px solid ${t.color.border}` }}>
         <MarketingNav onHome={onHome} onBuild={onBuild} onSignOut={onSignOut} user={user} credits={credits}
-          links={[{ label: "Home", onClick: onHome }]} />
+          links={[{ label: "Home", onClick: onHome }, { label: "Check a site", onClick: onCheck }]} />
       </div>
 
       <Container style={{ padding: "clamp(40px,6vw,72px) 24px 64px" }}>
