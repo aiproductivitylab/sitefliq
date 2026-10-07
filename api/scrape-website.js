@@ -67,12 +67,26 @@ function ipv4IsPrivate(ip) {
   return false;
 }
 
+// Resolve an IPv4-mapped IPv6 tail to dotted IPv4. The tail may be dotted
+// ("127.0.0.1") or hex ("7f00:1" / "7f00:0001") depending on how the address was
+// written or normalised by the URL parser. Returns null if it can't be read.
+function mappedTailToIpv4(tail) {
+  if (tail.includes('.')) return tail;
+  const groups = tail.split(':').filter(Boolean).map(h => parseInt(h, 16));
+  if (groups.some(n => Number.isNaN(n) || n < 0 || n > 0xffff)) return null;
+  let hi, lo;
+  if (groups.length === 2) { [hi, lo] = groups; }
+  else if (groups.length === 1) { hi = 0; lo = groups[0]; }
+  else return null;
+  return [(hi >> 8) & 255, hi & 255, (lo >> 8) & 255, lo & 255].join('.');
+}
+
 function ipv6IsPrivate(ip) {
   let v = ip.toLowerCase();
   const pct = v.indexOf('%'); if (pct !== -1) v = v.slice(0, pct); // strip zone id
   if (v === '::1' || v === '::') return true;                      // loopback / unspecified
-  const mapped = v.match(/^::ffff:(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})$/); // IPv4-mapped
-  if (mapped) return ipv4IsPrivate(mapped[1]);
+  const mapped = v.match(/^::ffff:(.+)$/);                         // IPv4-mapped (dotted or hex)
+  if (mapped) { const d = mappedTailToIpv4(mapped[1]); return d ? ipv4IsPrivate(d) : true; }
   const first = v.split(':')[0];
   if (/^f[cd]/.test(first)) return true;          // fc00::/7 unique-local
   if (/^fe[89ab]/.test(first)) return true;       // fe80::/10 link-local
@@ -104,9 +118,12 @@ async function assertPublicUrl(raw) {
     throw new BlockedUrlError('That address is not allowed');
   }
 
-  if (net.isIP(host)) {
+  // A literal IPv6 host is bracketed in a URL (e.g. http://[::1]) — strip the
+  // brackets so net.isIP recognises it instead of falling through to DNS.
+  const hostIp = host.replace(/^\[/, '').replace(/\]$/, '');
+  if (net.isIP(hostIp)) {
     // Literal IP in the URL — validate it directly (no DNS needed).
-    if (isPrivateIp(host)) throw new BlockedUrlError('That address is not allowed');
+    if (isPrivateIp(hostIp)) throw new BlockedUrlError('That address is not allowed');
   } else {
     // Resolve and validate EVERY address the host maps to.
     let addrs;
@@ -117,6 +134,35 @@ async function assertPublicUrl(raw) {
   }
   return u;
 }
+
+const REDIRECT_CODES = new Set([301, 302, 303, 307, 308]);
+const MAX_REDIRECTS = 5;
+
+// Fetch a URL while re-validating EVERY hop against the SSRF guard. fetch()
+// follows redirects transparently by default, so a public URL could 302 to an
+// internal address (e.g. 169.254.169.254) and slip past a one-time check. We set
+// redirect: 'manual' and re-run assertPublicUrl on each Location before following.
+async function ssrfSafeFetch(rawUrl, { timeoutMs, headers = {} }) {
+  let current = rawUrl;
+  for (let redirects = 0; redirects <= MAX_REDIRECTS; redirects++) {
+    const parsed = await assertPublicUrl(current);       // scheme + DNS + private-IP check
+    const response = await fetch(parsed.toString(), {
+      headers,
+      signal: AbortSignal.timeout(timeoutMs),
+      redirect: 'manual',
+    });
+    if (!REDIRECT_CODES.has(response.status)) return response;
+    const loc = response.headers.get('location');
+    if (!loc) return response;                            // redirect without a target — hand it back
+    try { await response.body?.cancel?.(); } catch {}     // free the socket before the next hop
+    if (redirects === MAX_REDIRECTS) throw new BlockedUrlError('Too many redirects');
+    try { current = new URL(loc, parsed).toString(); }
+    catch { throw new BlockedUrlError('Invalid redirect'); }
+  }
+  throw new BlockedUrlError('Too many redirects');
+}
+
+export { isPrivateIp, assertPublicUrl, ssrfSafeFetch, BlockedUrlError };
 
 // Read a response body but abort once it exceeds maxBytes.
 async function readCappedText(response, maxBytes) {
@@ -170,14 +216,13 @@ export default async function handler(req, res) {
   const target = targetUrl.toString();
 
   try {
-    const response = await fetch(target, {
+    const response = await ssrfSafeFetch(target, {
+      timeoutMs: PAGE_TIMEOUT_MS,
       headers: {
         'User-Agent': 'Mozilla/5.0 (compatible; Sitefliq/1.0; +https://sitefliq.com)',
         'Accept': 'text/html,application/xhtml+xml',
         'Accept-Language': 'en-US,en;q=0.9',
       },
-      signal: AbortSignal.timeout(PAGE_TIMEOUT_MS),
-      redirect: 'follow',
     });
 
     if (!response.ok) {
@@ -283,9 +328,9 @@ export default async function handler(req, res) {
     let logoBase64 = null;
     if (logo) {
       try {
-        // The logo URL comes from the scraped page — SSRF-check it too before fetching.
-        const logoUrl = await assertPublicUrl(logo);
-        const logoRes = await fetch(logoUrl.toString(), { signal: AbortSignal.timeout(LOGO_TIMEOUT_MS), redirect: 'follow' });
+        // The logo URL comes from the scraped page — SSRF-check it (and every
+        // redirect hop) too before fetching.
+        const logoRes = await ssrfSafeFetch(logo, { timeoutMs: LOGO_TIMEOUT_MS });
         if (logoRes.ok) {
           const contentType = logoRes.headers.get('content-type') || 'image/png';
           const declaredLen = Number(logoRes.headers.get('content-length'));
