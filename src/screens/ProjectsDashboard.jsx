@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { sb } from "../store";
 import { theme as t } from "../ui/theme";
 import { Container, Eyebrow, Heading, Text, Button, Card, Badge, MarketingNav } from "../ui/kit";
+import ConnectDomainModal from "./ConnectDomain";
 
 function fmtDate(iso) {
   try { return new Date(iso).toLocaleDateString(undefined, { year: "numeric", month: "short", day: "numeric" }); }
@@ -12,6 +13,7 @@ function fmtDate(iso) {
 export default function ProjectsDashboard({ onHome, onBuild, onOpen, onCheck, onInvoices, user, credits, onSignOut }) {
   const [projects, setProjects] = useState(null); // null = loading
   const [copiedId, setCopiedId] = useState(null);
+  const [domainFor, setDomainFor] = useState(null); // project whose domain modal is open
 
   useEffect(() => {
     let alive = true;
@@ -64,6 +66,16 @@ export default function ProjectsDashboard({ onHome, onBuild, onOpen, onCheck, on
                   <Text small muted style={{ marginTop: 4 }}>{p.industry || "—"} · {fmtDate(p.created_at)}</Text>
                 </div>
 
+                {/* Custom domain shows as connected only once the server confirmed DNS. */}
+                {p.custom_domain && (p.domain_status === "live" || p.domain_status === "verifying") && (
+                  <a href={`https://${p.custom_domain}`} target="_blank" rel="noreferrer" style={{ fontSize: 13, fontWeight: 600, color: t.color.accent, textDecoration: "none", wordBreak: "break-all" }}>
+                    {p.custom_domain}
+                  </a>
+                )}
+                {p.custom_domain && p.domain_status === "pending" && (
+                  <Text small muted>{p.custom_domain} · waiting for DNS</Text>
+                )}
+
                 {p.published_url && (
                   <a href={p.published_url} target="_blank" rel="noreferrer" style={{ fontSize: 12, color: t.color.accent, textDecoration: "none", wordBreak: "break-all" }}>
                     {p.published_url.replace(/^https?:\/\//, "")}
@@ -73,12 +85,23 @@ export default function ProjectsDashboard({ onHome, onBuild, onOpen, onCheck, on
                 <div style={{ display: "flex", gap: 8, marginTop: "auto", flexWrap: "wrap" }}>
                   <Button variant="primary" size="sm" onClick={() => onOpen(p)}>Open</Button>
                   <Button variant="secondary" size="sm" onClick={() => copyLink(p)}>{copiedId === p.id ? "Link copied" : "Copy client link"}</Button>
+                  {p.netlify_site_id && (
+                    <Button variant="ghost" size="sm" onClick={() => setDomainFor(p)}>{p.custom_domain ? "Domain settings" : "Connect your domain"}</Button>
+                  )}
                 </div>
               </Card>
             ))}
           </div>
         )}
       </Container>
+
+      {domainFor && (
+        <ConnectDomainModal
+          project={domainFor}
+          onClose={() => setDomainFor(null)}
+          onChange={(fields) => setProjects(list => list.map(x => (x.id === domainFor.id ? { ...x, ...fields } : x)))}
+        />
+      )}
     </div>
   );
 }

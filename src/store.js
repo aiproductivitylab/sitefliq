@@ -72,7 +72,7 @@ export const sb = {
   },
   async listProjects() {
     if (!this._token) return [];
-    const r = await this.req("/rest/v1/projects?select=id,business_name,industry,share_token,published_url,netlify_site_id,created_at,updated_at&order=created_at.desc");
+    const r = await this.req("/rest/v1/projects?select=id,business_name,industry,share_token,published_url,netlify_site_id,custom_domain,domain_status,created_at,updated_at&order=created_at.desc");
     return (r.ok && Array.isArray(r.data)) ? r.data : [];
   },
   async getProject(id) {
@@ -93,6 +93,23 @@ export const sb = {
       body: JSON.stringify({ p_token: token }),
     });
     return (r.ok && Array.isArray(r.data) && r.data[0]) ? r.data[0] : null;
+  },
+
+  // ── Custom domains (Step 6, F8) — server-side only, via /api/domains ──
+  // action: "connect" (with domain) | "status" | "disconnect". Returns { ok, data }.
+  async domains(action, projectId, domain) {
+    if (!this._token) return { ok: false, data: { error: "Please sign in again." } };
+    try {
+      const r = await fetch("/api/domains", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Authorization: "Bearer " + this._token },
+        body: JSON.stringify({ action, projectId, domain }),
+      });
+      const data = await r.json().catch(() => ({}));
+      return { ok: r.ok, data };
+    } catch {
+      return { ok: false, data: { error: "Network error — check your connection and try again." } };
+    }
   },
 
   // ── Invoices (Step 6, F7) ──────────────────────────────────────────

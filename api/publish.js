@@ -87,7 +87,9 @@ export default async function handler(req, res) {
       const site = await getRes.json();
       if (!getRes.ok) return res.status(500).json({ error: site.message || 'Site not found' });
       siteId = site.id;
-      siteUrl = site.ssl_url || site.url || `https://${site.name}.netlify.app`;
+      // Always the netlify.app address: once a custom domain is attached, ssl_url/url
+      // switch to it even before DNS points here — /api/domains reports that instead.
+      siteUrl = `https://${site.default_domain || `${site.name}.netlify.app`}`;
     } else {
       // First publish: create a new Netlify site.
       const slug = name.toLowerCase().replace(/[^a-z0-9]/g, '-').replace(/-+/g, '-').replace(/^-|-$/g, '').substring(0, 40);

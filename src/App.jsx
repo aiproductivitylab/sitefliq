@@ -8,6 +8,7 @@ import ProjectsDashboard from "./screens/ProjectsDashboard.jsx";
 import PreviewPage from "./screens/PreviewPage.jsx";
 import CheckWebsite from "./screens/CheckWebsite.jsx";
 import InvoicesPage from "./screens/InvoicesPage.jsx";
+import ConnectDomainModal from "./screens/ConnectDomain.jsx";
 import { Check, Arrow } from "./ui/kit";
 import { isPlaceholderPriceId, SUBSCRIPTION_PLANS } from "./config/plans";
 
@@ -1481,12 +1482,14 @@ function ResultScreen({ html, form, onReset, onBuyMoreCredits }) {
   const [urlCopied, setUrlCopied] = useState(false);
   const [showConfetti, setShowConfetti] = useState(true);
   const [heroBusy, setHeroBusy] = useState(null); // "clean" | "branded" | null
+  const [showDomain, setShowDomain] = useState(false); // custom-domain modal (F8)
 
   const setGeneratedHtml = useAppStore(s => s.setGeneratedHtml);
   const refreshCredits = useAppStore(s => s.refreshCredits);
   const heroUrl = useAppStore(s => s.heroUrl);
   const setHeroUrl = useAppStore(s => s.setHeroUrl);
   const project = useAppStore(s => s.project);
+  const setProject = useAppStore(s => s.setProject);
 
   // When this page is backed by a saved project that was already published,
   // reflect its live URL so the result screen shows "live" + republish.
@@ -1642,6 +1645,13 @@ function ResultScreen({ html, form, onReset, onBuyMoreCredits }) {
   return (
     <>
       <ConfettiBurst active={showConfetti}/>
+      {showDomain && project && (
+        <ConnectDomainModal
+          project={{ ...project, published_url: publishedUrl, netlify_site_id: publishedSiteId }}
+          onClose={() => setShowDomain(false)}
+          onChange={(fields) => setProject({ ...useAppStore.getState().project, ...fields })}
+        />
+      )}
       <div style={{ height:"100%", display:"flex", flexDirection:"column", background:"white" }}>
         <div style={{ padding:"18px 22px", borderBottom:"1px solid #f3f4f6", overflowY:"auto", flex:1 }}>
           {/* Success header */}
@@ -1675,6 +1685,11 @@ function ResultScreen({ html, form, onReset, onBuyMoreCredits }) {
                 <button onClick={shareTwitter} style={{ flex:1, padding:"6px", background:"#16181d", color:"white", border:"none", borderRadius:6, fontSize:11, fontWeight:600, cursor:"pointer", fontFamily:"inherit" }}>Share on X</button>
                 <button onClick={shareLinkedIn} style={{ flex:1, padding:"6px", background:"#0077b5", color:"white", border:"none", borderRadius:6, fontSize:11, fontWeight:600, cursor:"pointer", fontFamily:"inherit" }}>Share on LinkedIn</button>
               </div>
+              {project?.id && publishedSiteId && (
+                <button onClick={() => setShowDomain(true)} style={{ width:"100%", marginTop:6, padding:"7px", background:"white", color:"#16181d", border:"1px solid #86efac", borderRadius:6, fontSize:11, fontWeight:600, cursor:"pointer", fontFamily:"inherit" }}>
+                  {project.custom_domain ? `Domain: ${project.custom_domain}` : "Connect your domain"}
+                </button>
+              )}
             </div>
           )}
           {hasUnpublishedChanges && (

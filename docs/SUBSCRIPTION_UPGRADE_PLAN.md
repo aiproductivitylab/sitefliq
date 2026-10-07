@@ -475,10 +475,23 @@ the DNS records to add. SSL is automatic (Let's Encrypt via Netlify).
   returns the DNS records the user must set.
 - **`GET /api/domains/status`** — polls Netlify for SSL/DNS provisioning state.
 
-**Monthly cost to me:** Netlify custom domains + SSL are **free**. Risk is
-**account-level limits**: all client sites live under one `NETLIFY_TOKEN`. Netlify
-free tier caps bandwidth (100 GB/mo) and sites; heavy use pushes you to **Netlify
-Pro ~$19/mo** (or per-seat team pricing). No per-domain fee.
+**Built (2026-10-07):** one route, `POST /api/domains` with `action` =
+`connect | status | disconnect` (single function to stay under Vercel's function
+cap). Migration `0005_custom_domains.sql` adds `custom_domain`, `domain_status`,
+`domain_checked_at` — server-written only (no client column grant). DNS is checked
+against public resolvers (1.1.1.1 / 8.8.8.8); the domain is only shown as connected
+once DNS points at the site. UI: `src/screens/ConnectDomain.jsx` (dashboard +
+result screen).
+
+**Monthly cost to me (re-verified 2026-10-07):** custom domains + SSL are free on
+every Netlify plan, but Netlify is now **credit-based** and **every self-serve plan
+(Free, Personal, Pro) is capped at 500 projects per team**. Free = 300 credits/mo
+with a hard stop (all sites pause); Pro = $20/mo for 3,000 credits (+1,500 credits
+per $10 auto-recharge). Bandwidth 20 credits/GB, production deploy 15 credits,
+web requests 2 credits/10k. The self-serve agreement grants a
+"non-sublicensable" right; formal resale needs Netlify's Reseller Addendum. Above
+~450 published sites we need Netlify Enterprise, multiple teams, or a different
+host (Cloudflare Workers for Platforms / Vercel Pro). No per-domain fee.
 
 **What could go wrong:**
 - **DNS is user-controlled** — they must add records correctly; provisioning can
