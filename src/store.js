@@ -95,6 +95,36 @@ export const sb = {
     return (r.ok && Array.isArray(r.data) && r.data[0]) ? r.data[0] : null;
   },
 
+  // ── Invoices (Step 6, F7) ──────────────────────────────────────────
+  async createInvoice(fields) {
+    if (!this._token || !this._user) return null;
+    const r = await this.req("/rest/v1/invoices", {
+      method: "POST",
+      body: JSON.stringify({ user_id: this._user.id, ...fields }),
+      prefer: "return=representation",
+    });
+    return (r.ok && Array.isArray(r.data) && r.data[0]) ? r.data[0] : null;
+  },
+  async listInvoices() {
+    if (!this._token) return [];
+    const r = await this.req("/rest/v1/invoices?select=*&order=created_at.desc");
+    return (r.ok && Array.isArray(r.data)) ? r.data : [];
+  },
+  async updateInvoice(id, fields) {
+    if (!this._token || !id) return null;
+    const r = await this.req(`/rest/v1/invoices?id=eq.${id}`, {
+      method: "PATCH",
+      body: JSON.stringify(fields),
+      prefer: "return=representation",
+    });
+    return (r.ok && Array.isArray(r.data) && r.data[0]) ? r.data[0] : null;
+  },
+  async deleteInvoice(id) {
+    if (!this._token || !id) return false;
+    const r = await this.req(`/rest/v1/invoices?id=eq.${id}`, { method: "DELETE", prefer: "return=minimal" });
+    return r.ok;
+  },
+
   async getCredits() {
     if(!this._token) return 0;
     const r = await this.req("/rest/v1/credits?select=balance&limit=1");

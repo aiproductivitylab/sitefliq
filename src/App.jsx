@@ -7,6 +7,7 @@ import PricingPage from "./screens/PricingPage.jsx";
 import ProjectsDashboard from "./screens/ProjectsDashboard.jsx";
 import PreviewPage from "./screens/PreviewPage.jsx";
 import CheckWebsite from "./screens/CheckWebsite.jsx";
+import InvoicesPage from "./screens/InvoicesPage.jsx";
 import { Check, Arrow } from "./ui/kit";
 import { isPlaceholderPriceId, SUBSCRIPTION_PLANS } from "./config/plans";
 
@@ -444,7 +445,7 @@ function WebsiteImporter({ onImport }) {
     try {
       const r = await fetch("/api/scrape-website", {
         method: "POST",
-        headers: { "Content-Type":"application/json" },
+        headers: { "Content-Type":"application/json", Authorization: "Bearer " + (sb._token || "") },
         body: JSON.stringify({ url: url.trim() }),
       });
       const data = await r.json();
@@ -2444,7 +2445,7 @@ export default function Sitefliq() {
     try {
       const r = await fetch("/api/scrape-website", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json", Authorization: "Bearer " + (sb._token || "") },
         body: JSON.stringify({ url }),
       });
       data = await r.json().catch(() => null);
@@ -2613,6 +2614,22 @@ export default function Sitefliq() {
         onBuild={() => { setProject(null); setScreen("builder"); }}
         onOpen={openProject}
         onCheck={() => setScreen("check")}
+        onInvoices={() => setScreen("invoices")}
+        user={user} credits={credits}
+        onSignOut={handleSignOut}
+      />
+      {showAuth && <AuthModal mode={authMode} onSuccess={handleAuthSuccess} onClose={() => setShowAuth(false)}/>}
+    </>
+  );
+
+  if (screen === "invoices") return (
+    <>
+      <GS/>
+      <ToastContainer/>
+      <InvoicesPage
+        onHome={() => setScreen("home")}
+        onBuild={() => { setProject(null); setScreen("builder"); }}
+        onProjects={() => setScreen("projects")}
         user={user} credits={credits}
         onSignOut={handleSignOut}
       />

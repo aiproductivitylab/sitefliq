@@ -1,13 +1,173 @@
-// api/scrape-website.js — scrapes logo, colours, meta info, contact details from a URL
+// api/scrape-website.js — scrapes logo, colours, meta info, contact details from a
+// URL. Same security model as the other routes now: a valid Supabase login is
+// required, the call is per-user rate limited, and — because this route fetches an
+// arbitrary user-supplied URL server-side — it is hardened against SSRF: only
+// http/https, and the host must resolve ONLY to public IPs (private/internal ranges
+// are blocked after DNS resolution). Responses are time- and size-capped.
+
+import dns from 'node:dns/promises';
+import net from 'node:net';
+
+const SUPABASE_URL = "https://fcajlfdykudsunczdrex.supabase.co";
+const SUPABASE_ANON = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZjYWpsZmR5a3Vkc3VuY3pkcmV4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI2NTcwMjYsImV4cCI6MjA4ODIzMzAyNn0.ez9ue4RXqAUzFjG9pBk4sra9zDKC-CCBFC4pbelwGg8";
+
+const SCRAPE_RATE_LIMIT = 20;
+const SCRAPE_RATE_WINDOW_MIN = 10;
+const PAGE_TIMEOUT_MS = 8000;
+const LOGO_TIMEOUT_MS = 5000;
+const MAX_HTML_BYTES = 2_000_000;      // cap the page we download + parse
+const MAX_LOGO_BYTES = 500_000;        // logo is embedded as base64 — keep it small
+
+// ── Auth + rate limiting (shared pattern with /api/generate, /api/edit) ──────
+async function getUserId(token) {
+  if (!token) return null;
+  try {
+    const r = await fetch(SUPABASE_URL + '/auth/v1/user', {
+      headers: { apikey: SUPABASE_ANON, Authorization: 'Bearer ' + token },
+    });
+    if (!r.ok) return null;
+    const user = await r.json();
+    return user?.id || null;
+  } catch { return null; }
+}
+
+function serviceHeaders(serviceKey) {
+  return { apikey: serviceKey, Authorization: 'Bearer ' + serviceKey, 'Content-Type': 'application/json' };
+}
+
+async function underRateLimit(serviceKey, userId, action, limit, windowMin) {
+  const sinceIso = new Date(Date.now() - windowMin * 60 * 1000).toISOString();
+  const q = `${SUPABASE_URL}/rest/v1/rate_events?select=id&user_id=eq.${userId}&action=eq.${action}`
+    + `&created_at=gte.${encodeURIComponent(sinceIso)}&limit=${limit}`;
+  const r = await fetch(q, { headers: serviceHeaders(serviceKey) });
+  const rows = await r.json().catch(() => []);
+  if (Array.isArray(rows) && rows.length >= limit) return false;
+  await fetch(SUPABASE_URL + '/rest/v1/rate_events', {
+    method: 'POST', headers: serviceHeaders(serviceKey),
+    body: JSON.stringify({ user_id: userId, action }),
+  });
+  return true;
+}
+
+// ── SSRF guard ───────────────────────────────────────────────────────────────
+class BlockedUrlError extends Error {}
+
+function ipv4IsPrivate(ip) {
+  const p = ip.split('.').map(Number);
+  if (p.length !== 4 || p.some(n => Number.isNaN(n) || n < 0 || n > 255)) return true; // malformed → unsafe
+  const [a, b] = p;
+  if (a === 0) return true;                       // 0.0.0.0/8 "this host"
+  if (a === 10) return true;                      // 10.0.0.0/8
+  if (a === 127) return true;                     // loopback
+  if (a === 169 && b === 254) return true;        // 169.254.0.0/16 link-local
+  if (a === 172 && b >= 16 && b <= 31) return true; // 172.16.0.0/12
+  if (a === 192 && b === 168) return true;        // 192.168.0.0/16
+  if (a === 100 && b >= 64 && b <= 127) return true; // 100.64.0.0/10 CGNAT
+  if (a >= 224) return true;                      // 224+ multicast / reserved
+  return false;
+}
+
+function ipv6IsPrivate(ip) {
+  let v = ip.toLowerCase();
+  const pct = v.indexOf('%'); if (pct !== -1) v = v.slice(0, pct); // strip zone id
+  if (v === '::1' || v === '::') return true;                      // loopback / unspecified
+  const mapped = v.match(/^::ffff:(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})$/); // IPv4-mapped
+  if (mapped) return ipv4IsPrivate(mapped[1]);
+  const first = v.split(':')[0];
+  if (/^f[cd]/.test(first)) return true;          // fc00::/7 unique-local
+  if (/^fe[89ab]/.test(first)) return true;       // fe80::/10 link-local
+  return false;
+}
+
+function isPrivateIp(ip) {
+  const fam = net.isIP(ip);
+  if (fam === 4) return ipv4IsPrivate(ip);
+  if (fam === 6) return ipv6IsPrivate(ip);
+  return true; // not a parseable IP → treat as unsafe
+}
+
+// Parse + validate a URL and confirm its host resolves ONLY to public addresses.
+// Throws BlockedUrlError for anything disallowed. Returns the parsed URL.
+async function assertPublicUrl(raw) {
+  let target = String(raw || '').trim();
+  if (!target) throw new BlockedUrlError('URL required');
+  if (!/^https?:\/\//i.test(target)) target = 'https://' + target;
+
+  let u;
+  try { u = new URL(target); } catch { throw new BlockedUrlError('Invalid URL'); }
+  if (u.protocol !== 'http:' && u.protocol !== 'https:') {
+    throw new BlockedUrlError('Only http and https URLs are allowed');
+  }
+
+  const host = u.hostname.toLowerCase();
+  if (host === 'localhost' || host.endsWith('.localhost') || host === '') {
+    throw new BlockedUrlError('That address is not allowed');
+  }
+
+  if (net.isIP(host)) {
+    // Literal IP in the URL — validate it directly (no DNS needed).
+    if (isPrivateIp(host)) throw new BlockedUrlError('That address is not allowed');
+  } else {
+    // Resolve and validate EVERY address the host maps to.
+    let addrs;
+    try { addrs = await dns.lookup(host, { all: true }); }
+    catch { throw new BlockedUrlError('Could not resolve that address'); }
+    if (!addrs.length) throw new BlockedUrlError('Could not resolve that address');
+    for (const a of addrs) if (isPrivateIp(a.address)) throw new BlockedUrlError('That address is not allowed');
+  }
+  return u;
+}
+
+// Read a response body but abort once it exceeds maxBytes.
+async function readCappedText(response, maxBytes) {
+  const len = Number(response.headers.get('content-length'));
+  if (Number.isFinite(len) && len > maxBytes) throw new BlockedUrlError('Response too large');
+  const reader = response.body?.getReader?.();
+  if (!reader) {
+    const buf = Buffer.from(await response.arrayBuffer());
+    if (buf.byteLength > maxBytes) throw new BlockedUrlError('Response too large');
+    return buf.toString('utf8');
+  }
+  const chunks = [];
+  let total = 0;
+  while (true) {
+    const { done, value } = await reader.read();
+    if (done) break;
+    total += value.length;
+    if (total > maxBytes) { try { await reader.cancel(); } catch {} throw new BlockedUrlError('Response too large'); }
+    chunks.push(Buffer.from(value));
+  }
+  return Buffer.concat(chunks).toString('utf8');
+}
+
 export default async function handler(req, res) {
-  res.setHeader('Access-Control-Allow-Origin', '*');
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
 
-  const { url } = req.body || {};
-  if (!url) return res.status(400).json({ error: 'URL required' });
+  const serviceKey = process.env.SUPABASE_SERVICE_KEY;
+  if (!serviceKey) return res.status(500).json({ success: false, error: 'Server configuration error' });
 
-  let target = url.trim();
-  if (!target.startsWith('http')) target = 'https://' + target;
+  // 1. Auth — login required.
+  const auth = req.headers.authorization || '';
+  const token = auth.startsWith('Bearer ') ? auth.slice(7) : '';
+  const userId = await getUserId(token);
+  if (!userId) return res.status(401).json({ success: false, error: 'Please sign in to import from a website.' });
+
+  // 2. Rate limit (before any outbound fetch).
+  const allowed = await underRateLimit(serviceKey, userId, 'scrape', SCRAPE_RATE_LIMIT, SCRAPE_RATE_WINDOW_MIN);
+  if (!allowed) {
+    return res.status(429).json({ success: false, error: `Too many imports — max ${SCRAPE_RATE_LIMIT} per ${SCRAPE_RATE_WINDOW_MIN} minutes.` });
+  }
+
+  // 3. Validate + SSRF-check the target URL.
+  const { url } = req.body || {};
+  let targetUrl;
+  try {
+    targetUrl = await assertPublicUrl(url);
+  } catch (e) {
+    if (e instanceof BlockedUrlError) return res.status(400).json({ success: false, error: e.message });
+    return res.status(400).json({ success: false, error: 'Invalid URL' });
+  }
+  const target = targetUrl.toString();
 
   try {
     const response = await fetch(target, {
@@ -16,7 +176,7 @@ export default async function handler(req, res) {
         'Accept': 'text/html,application/xhtml+xml',
         'Accept-Language': 'en-US,en;q=0.9',
       },
-      signal: AbortSignal.timeout(8000),
+      signal: AbortSignal.timeout(PAGE_TIMEOUT_MS),
       redirect: 'follow',
     });
 
@@ -24,7 +184,7 @@ export default async function handler(req, res) {
       return res.status(200).json({ success: false, error: `Site returned ${response.status}` });
     }
 
-    const html = await response.text();
+    const html = await readCappedText(response, MAX_HTML_BYTES);
     const baseUrl = new URL(target).origin;
 
     const getTag = (pattern) => { const m = html.match(pattern); return m ? m[1]?.trim() : null; };
@@ -123,16 +283,21 @@ export default async function handler(req, res) {
     let logoBase64 = null;
     if (logo) {
       try {
-        const logoRes = await fetch(logo, { signal: AbortSignal.timeout(5000) });
+        // The logo URL comes from the scraped page — SSRF-check it too before fetching.
+        const logoUrl = await assertPublicUrl(logo);
+        const logoRes = await fetch(logoUrl.toString(), { signal: AbortSignal.timeout(LOGO_TIMEOUT_MS), redirect: 'follow' });
         if (logoRes.ok) {
           const contentType = logoRes.headers.get('content-type') || 'image/png';
-          const buffer = await logoRes.arrayBuffer();
-          if (buffer.byteLength < 500000) {
-            const base64 = Buffer.from(buffer).toString('base64');
-            logoBase64 = `data:${contentType};base64,${base64}`;
+          const declaredLen = Number(logoRes.headers.get('content-length'));
+          if (!Number.isFinite(declaredLen) || declaredLen <= MAX_LOGO_BYTES) {
+            const buffer = await logoRes.arrayBuffer();
+            if (buffer.byteLength < MAX_LOGO_BYTES) {
+              const base64 = Buffer.from(buffer).toString('base64');
+              logoBase64 = `data:${contentType};base64,${base64}`;
+            }
           }
         }
-      } catch (e) {}
+      } catch (e) { /* blocked or failed logo fetch — fall back to the URL */ }
     }
 
     // ── COLOURS ──
@@ -182,10 +347,13 @@ export default async function handler(req, res) {
     });
 
   } catch (err) {
+    if (err instanceof BlockedUrlError) {
+      return res.status(200).json({ success: false, error: err.message });
+    }
     console.error('Scrape error:', err);
     return res.status(200).json({
       success: false,
-      error: err.message?.includes('timeout') ? 'Site took too long to respond' : 'Could not reach that website'
+      error: err.name === 'TimeoutError' || err.message?.includes('timeout') ? 'Site took too long to respond' : 'Could not reach that website'
     });
   }
 }
